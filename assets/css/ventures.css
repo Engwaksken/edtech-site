@@ -5436,37 +5436,13 @@ body:has(.login-box) .left-panel {
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 12% 18%, rgba(252,124,16,.20), transparent 28%),
-    radial-gradient(circle at 88% 82%, rgba(255,87,34,.14), transparent 34%),
-    linear-gradient(145deg, #070707 0%, #111827 55%, #172033 100%);
+  background: linear-gradient(145deg, #102b2b 0%, #162533 100%);
   color: #fff;
 }
 
-body:has(.login-box) .left-panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-  background-size: 42px 42px;
-}
-
+body:has(.login-box) .left-panel::before,
 body:has(.login-box) .left-panel::after {
-  content: "";
-  position: absolute;
-  right: -120px;
-  bottom: -140px;
-  width: 360px;
-  height: 360px;
-  border-radius: 50%;
-  border: 1px solid rgba(252,124,16,.17);
-  box-shadow:
-    0 0 0 58px rgba(252,124,16,.045),
-    0 0 0 116px rgba(252,124,16,.025);
-  pointer-events: none;
+  content: none;
 }
 
 body:has(.login-box) .lp-top {
@@ -5489,6 +5465,24 @@ body:has(.login-box) .lp-logo {
   max-height: 72px;
   object-fit: contain;
 }
+
+body:has(.login-box) .lp-wordmark { text-decoration: none; width: fit-content; }
+body:has(.login-box) .lp-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-top: 28px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 10px;
+  color: #fff;
+  background: rgba(255,255,255,.04);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+body:has(.login-box) .lp-back-link:hover { background: rgba(255,255,255,.12); }
 
 body:has(.login-box) .lp-logo-fallback {
   display: inline-flex;

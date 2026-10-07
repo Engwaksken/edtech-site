@@ -1,3 +1,5 @@
+@import url('../vendor/fontawesome/css/all.min.css');
+
 /* Shared, scoped usability refinements. Preserve page-specific grids and branding. */
 html { scroll-padding-top: 96px; }
 body { overflow-wrap: break-word; }

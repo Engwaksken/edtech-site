@@ -8,7 +8,9 @@ const artifacts = 'C:/Users/HUMBLE~1/AppData/Local/Temp/opencode';
   try {
     for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
       const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
-      for (const route of ['/', '/login', '/admin/login', '/faqs', '/__test/portal']) {
+      // Verify local icons still work when the external icon CDN is unavailable.
+      await context.route('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/**', route => route.abort());
+      for (const route of ['/', '/login', '/forgot-password', '/admin/login', '/faqs', '/__test/portal', '/venture_resources', '/calendar', '/calendar?view=list']) {
         const page = await context.newPage();
         const errors = [];
         const failedAssets = [];
@@ -18,6 +20,8 @@ const artifacts = 'C:/Users/HUMBLE~1/AppData/Local/Temp/opencode';
         });
         const response = await page.goto(base + route, { waitUntil: 'domcontentloaded' });
         if (response.status() !== 200) throw new Error(`Page failed: ${route}`);
+        const source = await response.text();
+        if ((source.match(/<!doctype html>/gi) || []).length !== 1) throw new Error(`Duplicate document layout: ${route}`);
         await page.waitForTimeout(700);
         await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
         await page.waitForTimeout(350);
@@ -31,6 +35,40 @@ const artifacts = 'C:/Users/HUMBLE~1/AppData/Local/Temp/opencode';
           await page.locator('.faq-question').first().click();
           if (await page.locator('.faq-question').first().getAttribute('aria-expanded') !== 'true') throw new Error('FAQ state is inaccessible');
         }
+        if (route === '/login' || route === '/forgot-password') {
+          if (await page.locator('.left-panel .lp-wordmark').getAttribute('href') !== base + '/') throw new Error('Authentication logo does not link home');
+          if (await page.locator('.left-panel .lp-back-link').getAttribute('href') !== base + '/') throw new Error('Missing Back to Website link');
+          const decorations = await page.locator('.left-panel').evaluate(panel => [getComputedStyle(panel, '::before').content, getComputedStyle(panel, '::after').content]);
+          if (decorations.some(content => content !== 'none')) throw new Error('Authentication panel still has grid/circle decorations');
+        }
+        if (route === '/venture_resources' || route.startsWith('/calendar')) {
+          const container = route === '/venture_resources' ? '.venture-shell' : '.mentor-calendar-content';
+          const size = await page.locator(container).evaluate(element => {
+            const main = document.querySelector('.vp-content');
+            const style = getComputedStyle(main);
+            return { actual: element.getBoundingClientRect().width, expected: main.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) };
+          });
+          if (Math.abs(size.actual - size.expected) > 2) throw new Error(`Portal page is squeezed: ${route} (${JSON.stringify(size)})`);
+          if (await page.locator('#vpMain').count() !== 1 || await page.locator('#vpSidebar').count() !== 1) throw new Error('Duplicate portal shell');
+          if (route === '/venture_resources') {
+            await page.locator('.request-access-btn').first().click();
+          } else {
+            await page.locator('.page-actions button').first().click();
+          }
+          if (!await page.locator('#requestModal').isVisible()) throw new Error(`Request dialog did not open: ${route}`);
+          const dialog = await page.locator('#requestModal [role="dialog"]').boundingBox();
+          if (!dialog || dialog.x < 0 || dialog.x + dialog.width > viewport.width + 1) throw new Error('Request dialog overflows viewport');
+          await page.keyboard.press('Escape');
+          if (await page.locator('#requestModal').isVisible()) throw new Error('Request dialog did not close');
+          await page.evaluate(() => window.scrollTo(0, 0));
+        }
+        const fontLoaded = await page.evaluate(async () => (await document.fonts.load('900 16px "Font Awesome 6 Free"')).length > 0);
+        if (!fontLoaded) throw new Error(`Local icon webfont did not load: ${route}`);
+        const missingIcons = await page.locator('button i[class*="fa"], a.btn i[class*="fa"], .lp-back-link i').evaluateAll(icons => icons.filter(icon => {
+          const content = getComputedStyle(icon, '::before').content;
+          return content === 'none' || content === 'normal' || content === '""' || !getComputedStyle(icon).fontFamily.includes('Font Awesome 6');
+        }).length);
+        if (missingIcons) throw new Error(`Button icons missing: ${route}`);
         if (route === '/__test/portal' && viewport.width < 900) {
           if (!await page.locator('#vpSidebar').evaluate(sidebar => sidebar.inert)) throw new Error('Closed mobile sidebar remains interactive');
           await page.locator('#vpMenuBtn').click();
@@ -44,7 +82,7 @@ const artifacts = 'C:/Users/HUMBLE~1/AppData/Local/Temp/opencode';
           if (height < 44) throw new Error(`Undersized submit button: ${route} (${height}px)`);
           if (route === '/login' && await page.locator('.spinner').isVisible()) throw new Error('Sign-in spinner is visible before submission');
         }
-        const label = route === '/' ? 'home' : route.slice(1).replaceAll('/', '-');
+        const label = route === '/' ? 'home' : route.slice(1).replace(/[^a-zA-Z0-9_-]/g, '-');
         await page.screenshot({ path: path.join(artifacts, `edtech-${label}-${viewport.width}.png`), fullPage: true, animations: 'disabled', timeout: 90000 });
         const metrics = await page.evaluate(() => {
           const navigation = performance.getEntriesByType('navigation')[0];

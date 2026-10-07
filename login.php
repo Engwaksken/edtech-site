@@ -366,12 +366,12 @@ $logo_exists =
 
 <link
     rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    href="<?= h(asset_url('assets/vendor/fontawesome/css/all.min.css')) ?>"
 >
 
 <link
     rel="stylesheet"
-    href="assets/css/ventures.css"
+    href="<?= h(asset_url('assets/css/ventures.css')) ?>?v=<?= (int)filemtime(__DIR__ . '/assets/css/ventures.css') ?>"
 >
 
 </head>
@@ -388,12 +388,12 @@ $logo_exists =
 
     <div class="lp-top">
 
-        <div class="lp-wordmark">
+        <a class="lp-wordmark" href="<?= h(rtrim(SITE_URL, '/')) ?>/" aria-label="Website home">
 
             <?php if ($logo_exists): ?>
 
                 <img
-                    src="<?= h($logo_path) ?>"
+                    src="<?= h(asset_url($logo_path)) ?>"
                     alt="<?= h($site_name) ?>"
                     class="lp-logo"
                 >
@@ -412,7 +412,7 @@ $logo_exists =
 
             <?php endif; ?>
 
-        </div>
+        </a>
 
 
         <h1 class="lp-headline">
@@ -438,6 +438,11 @@ $logo_exists =
             dedicated dashboard.
 
         </p>
+
+        <a class="lp-back-link" href="<?= h(rtrim(SITE_URL, '/')) ?>/">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+            Back to Website
+        </a>
 
     </div>
 

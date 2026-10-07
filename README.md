@@ -99,6 +99,13 @@ Original shared images and optimized WebP copies are included. Rebuild optimized
 php bin/optimize-assets.php
 ```
 
+Shared button/navigation icons are served locally from `assets/vendor/fontawesome/`, including the upstream Font Awesome Free license. Rebuild these assets from the pinned npm package when needed:
+
+```bash
+npm install --prefix /private/icon-build --no-save @fortawesome/fontawesome-free@6.7.2
+php bin/build-icons.php /private/icon-build/node_modules/@fortawesome/fontawesome-free
+```
+
 ## Repository contents
 
 - Root PHP files: public and venture pages.

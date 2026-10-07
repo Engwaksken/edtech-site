@@ -341,21 +341,13 @@ function calendar_query(array $overrides = []): string
     }
     return http_build_query($query);
 }
+$page_title = 'Mentor Calendar';
+$current_nav = 'calendar';
+ob_start();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<?php require_once __DIR__ . '/includes/favicon.php'; ?>
-    <meta charset="UTF-8">
-    <title>Mentor Calendar - <?= h($venture_name) ?> Portal</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/venture.css">
     <style>
-        body{background:#f8fafc;color:#0f172a;font-family:'DM Sans',Arial,sans-serif;}
-        .mentor-calendar-page{min-height:100vh;}
-        .mentor-calendar-content{padding:24px;max-width:1500px;margin:0 auto;}
+        .mentor-calendar-page{width:100%;min-width:0;}
+        .mentor-calendar-content{width:100%;min-width:0;padding:0;max-width:none;margin:0;}
         .page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px;}
         .page-title{font-size:28px;font-weight:800;margin:0;color:#0f172a;}
         .page-sub{margin:4px 0 0;color:#64748b;font-size:14px;}
@@ -380,6 +372,8 @@ function calendar_query(array $overrides = []): string
         .stat-requested{color:#d97706}.stat-upcoming{color:#2563eb}.stat-completed{color:#059669}.stat-cancelled{color:#dc2626}
         .filter-bar{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:12px;margin-bottom:16px;box-shadow:0 1px 3px rgba(15,23,42,.06);}
         .filter-form{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+        .mentor-calendar-page .filter-form>select,.mentor-calendar-page .filter-form>input[type=month]{width:auto;min-width:160px;max-width:260px;flex:1 1 160px;}
+        @media(max-width:760px){.mentor-calendar-page .filter-form>select,.mentor-calendar-page .filter-form>input[type=month]{width:100%;min-width:0;max-width:none;}}
         .filter-form select,.filter-form input[type=month]{min-height:40px;border:1px solid #cbd5e1;border-radius:10px;padding:8px 11px;background:#fff;color:#0f172a;font-weight:650;}
         .view-toggle{display:flex;gap:6px;margin-left:auto;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px;padding:4px;}
         .view-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:9px;text-decoration:none;color:#475569;font-size:13px;font-weight:800;}
@@ -406,14 +400,15 @@ function calendar_query(array $overrides = []): string
         .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.62);backdrop-filter:blur(4px);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;}.modal-overlay.open{display:flex}.modal{width:100%;max-width:860px;max-height:90vh;overflow:auto;background:#fff;border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.22);}.modal-header,.modal-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid #e2e8f0}.modal-footer{border-top:1px solid #e2e8f0;border-bottom:0;justify-content:flex-end}.modal-title{font-size:18px;font-weight:900;margin:0}.modal-close{width:36px;height:36px;border:1px solid #e2e8f0;border-radius:999px;background:#fff;font-size:22px;line-height:1;cursor:pointer}.modal-body{padding:18px}.form-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.form-group.full{grid-column:1/-1}.form-group label{display:block;margin-bottom:6px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#475569}.form-control{width:100%;min-height:42px;border:1px solid #cbd5e1;border-radius:10px;padding:9px 11px;background:#fff;color:#0f172a}.form-control[readonly],.form-control:disabled{background:#f8fafc;color:#475569}.form-hint{font-size:12px;color:#64748b;margin-top:5px}.req{color:#dc2626}.inline-form{display:inline}.detail-row{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid #e2e8f0}.detail-row:last-child{border-bottom:0}.detail-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;font-weight:900}.detail-val{font-size:14px;color:#0f172a}.detail-sm{line-height:1.6}.detail-note{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px}.meeting-link-badge{display:inline-flex;align-items:center;gap:7px;background:#e6f1fb;color:#185fa5;padding:8px 10px;border-radius:999px;text-decoration:none;font-weight:900;font-size:12px;}.meeting-link-badge:hover{background:#dbeafe;color:#1d4ed8}.join-mini{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:5px 8px;border-radius:999px;background:#ecfdf5;color:#047857;text-decoration:none;font-size:11px;font-weight:900}.join-mini:hover{background:#d1fae5}.cal-event .fa-video{margin-left:4px;font-size:10px}.platform-cell{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.status-help{display:block;margin-top:4px;color:#64748b;font-size:11px;font-weight:700}
         body.modal-open{overflow:hidden;}
         @media(max-width:1100px){.cal-layout{grid-template-columns:1fr}.side-panel{grid-template-columns:repeat(2,minmax(0,1fr));}.side-panel .side-card:first-child{grid-column:1/-1}}
-        @media(max-width:760px){.mentor-calendar-content{padding:14px}.page-header{display:block}.page-actions{margin-top:12px}.stat-ribbon{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-form{display:grid;grid-template-columns:1fr}.view-toggle{margin-left:0;width:100%;}.view-btn{flex:1;justify-content:center}.cal-header{display:none}.cal-grid{display:block}.cal-cell{min-height:auto;border-right:0}.cal-cell.other-month{display:none}.side-panel{grid-template-columns:1fr}.form-grid-2{grid-template-columns:1fr}.form-group.full{grid-column:auto}.detail-row{grid-template-columns:1fr;gap:5px}.modal{max-height:92vh}.cal-month-nav{flex-wrap:wrap}.cal-month-title{order:-1;width:100%;text-align:center}}
+        @media(max-width:760px){.mentor-calendar-content{padding:0}.page-header{display:block}.page-actions{margin-top:12px}.stat-ribbon{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-form{display:grid;grid-template-columns:1fr}.view-toggle{margin-left:0;width:100%;}.view-btn{flex:1;justify-content:center}.cal-header{display:none}.cal-grid{display:block}.cal-cell{min-height:auto;border-right:0}.cal-cell.other-month{display:none}.side-panel{grid-template-columns:1fr}.form-grid-2{grid-template-columns:1fr}.form-group.full{grid-column:auto}.detail-row{grid-template-columns:1fr;gap:5px}.modal{max-height:92vh}.cal-month-nav{flex-wrap:wrap}.cal-month-title{order:-1;width:100%;text-align:center}}
     </style>
-</head>
-<body>
-<?php include __DIR__ . '/layout.php'; ?>
+<?php
+$portal_extra_head = ob_get_clean();
+include __DIR__ . '/layout.php';
+?>
 
-<div class="portal-main mentor-calendar-page" id="portalMain">
-    <div class="portal-content mentor-calendar-content">
+<div class="mentor-calendar-page">
+    <div class="mentor-calendar-content">
         <?php if ($flash): ?>
             <div class="flash flash-<?= h($flash['type']) ?>">
                 <i class="fa <?= $flash['type'] === 'success' ? 'fa-check-circle' : 'fa-info-circle' ?>"></i>
@@ -770,5 +765,7 @@ function getTimeFromDate(dateTime){if(!dateTime)return'';const parts=String(date
 function esc(value){if(value===null||value===undefined)return'';return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
 function escAttr(value){return esc(value).replace(/`/g,'&#096;');}
 </script>
+</main>
+</div>
 </body>
 </html>

@@ -2,7 +2,7 @@
 $admin_base_url = isset($admin_base_url) ? rtrim((string)$admin_base_url, '/') : (str_contains($_SERVER['SCRIPT_NAME'] ?? '', '/admin/') ? rtrim(substr((string)$_SERVER['SCRIPT_NAME'], 0, strpos((string)$_SERVER['SCRIPT_NAME'], '/admin/') + 6), '/') : '.');
 $favicon_path = rtrim(defined('SITE_URL') ? SITE_URL : dirname($admin_base_url), '/') . '/assets/images/favicon.png';
 $document_title = $document_title ?? (($page_title ?? 'Admin') . ' - Admin');
-$page_title = $page_title ?? 'Admin'; $page_description = $page_description ?? ''; $page_icon = $page_icon ?? 'fa-solid fa-grid-2';
+$page_title = $page_title ?? 'Admin'; $page_description = $page_description ?? ''; $page_icon = $page_icon ?? 'fa-solid fa-table-cells-large';
 $extra_css = isset($extra_css) && is_array($extra_css) ? $extra_css : []; $extra_head = $extra_head ?? ''; $body_class = $body_class ?? '';
 ?>
 <!DOCTYPE html>
@@ -42,7 +42,7 @@ $extra_css = isset($extra_css) && is_array($extra_css) ? $extra_css : []; $extra
   
     <link
         rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        href="<?= h(asset_url('assets/vendor/fontawesome/css/all.min.css')) ?>"
         referrerpolicy="no-referrer"
     >
 

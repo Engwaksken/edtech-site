@@ -15,15 +15,18 @@ $db->query("ALTER USER 'edtech_staging'@'127.0.0.1' IDENTIFIED BY '{$password}'"
 $db->query("GRANT ALL ON {$name}.* TO 'edtech_staging'@'127.0.0.1'");
 $schemas = [
     'site_settings' => 'setting_key VARCHAR(100) PRIMARY KEY, setting_value TEXT, name VARCHAR(100), value TEXT',
-    'ventures' => 'id INT PRIMARY KEY, name VARCHAR(100), status VARCHAR(30), cohort_id INT DEFAULT 0',
+    'ventures' => 'id INT PRIMARY KEY, name VARCHAR(100), status VARCHAR(30), cohort_id INT DEFAULT 0, email VARCHAR(100), logo VARCHAR(500)',
+    'cohorts' => 'id INT PRIMARY KEY, name VARCHAR(100), start_date DATE, end_date DATE',
     'venture_documents' => 'id INT PRIMARY KEY, venture_id INT, file_path VARCHAR(500)',
     'venture_messages' => 'venture_id INT, is_read INT',
     'admin_users' => 'id INT PRIMARY KEY, full_name VARCHAR(100), username VARCHAR(100), email VARCHAR(100), role VARCHAR(100), photo VARCHAR(200), status VARCHAR(30), can_manage_permissions INT DEFAULT 0',
     'role_permissions' => 'role_key VARCHAR(100), page_key VARCHAR(100), can_access INT',
-    'mentors' => 'id INT PRIMARY KEY, user_id INT, email VARCHAR(100), status VARCHAR(30)',
+    'mentors' => 'id INT PRIMARY KEY, user_id INT, email VARCHAR(100), status VARCHAR(30), full_name VARCHAR(100), photo VARCHAR(500), organisation VARCHAR(100), expertise TEXT',
+    'mentor_assignments' => 'id INT PRIMARY KEY, mentor_id INT, venture_id INT, cohort_id INT',
+    'mentor_sessions' => 'id INT PRIMARY KEY, venture_id INT, mentor_id INT, status VARCHAR(30), scheduled_at DATETIME, title VARCHAR(200), duration_minutes INT DEFAULT 60, meeting_platform VARCHAR(50), meeting_link VARCHAR(500), session_type VARCHAR(50), description TEXT, notes_shared TEXT, action_items TEXT, venture_rating INT DEFAULT 0',
     'mentor_reports' => 'id INT PRIMARY KEY, mentor_id INT, file_path VARCHAR(500)',
-    'resources' => 'id INT PRIMARY KEY, file_path VARCHAR(500), access_level VARCHAR(50), status VARCHAR(30)',
-    'resource_requests' => 'resource_id INT, venture_id INT, status VARCHAR(30)',
+    'resources' => 'id INT PRIMARY KEY, file_path VARCHAR(500), access_level VARCHAR(50), status VARCHAR(30), title VARCHAR(200), description TEXT, tags TEXT, type VARCHAR(30), category VARCHAR(100), created_at DATETIME DEFAULT CURRENT_TIMESTAMP, uploaded_by INT, file_name VARCHAR(200), file_size INT DEFAULT 0, file_ext VARCHAR(20)',
+    'resource_requests' => 'id INT PRIMARY KEY, resource_id INT, venture_id INT, status VARCHAR(30), requester_email VARCHAR(100), admin_note TEXT, download_token VARCHAR(100), token_expires DATETIME, created_at DATETIME, approved_at DATETIME',
     'session_mentors' => 'session_id INT, mentor_id INT',
     'email_settings' => 'id INT PRIMARY KEY, smtp_password VARCHAR(255), status INT',
     'mentor_google_tokens' => 'mentor_id INT PRIMARY KEY, access_token VARCHAR(255), refresh_token VARCHAR(255)',
@@ -36,12 +39,15 @@ $schemas = [
     'faqs' => 'id INT, status INT, sort_order INT, question TEXT, answer TEXT',
 ];
 foreach ($schemas as $table => $schema) {
+    $db->query("DROP TABLE IF EXISTS `{$table}`");
     $db->query("CREATE TABLE IF NOT EXISTS `{$table}` ({$schema})");
-    $db->query("DELETE FROM `{$table}`");
 }
-$db->query("INSERT INTO ventures VALUES (1,'Synthetic Venture One','active',0),(2,'Synthetic Venture Two','active',0),(3,'Inactive Venture','inactive',0)");
+$db->query("INSERT INTO ventures (id,name,status,email) VALUES (1,'Synthetic Venture One','active','venture1@example.test'),(2,'Synthetic Venture Two','active','venture2@example.test'),(3,'Inactive Venture','inactive','inactive@example.test')");
 $db->query("INSERT INTO admin_users VALUES (1,'Staging Admin','admin','admin@example.test','super-admin','','active',1),(2,'Staging Mentor','mentor','mentor@example.test','mentor','','active',0),(3,'Unprivileged Staff','staff','staff@example.test','reviewer','','active',0)");
-$db->query("INSERT INTO mentors VALUES (5,2,'mentor@example.test','active')");
+$db->query("INSERT INTO mentors (id,user_id,email,status,full_name,organisation,expertise) VALUES (5,2,'mentor@example.test','active','Staging Mentor','Fellowship programme','Product design')");
+$db->query("INSERT INTO mentor_assignments VALUES (1,5,1,0)");
+$scheduled = date('Y-m-10 10:00:00');
+$db->query("INSERT INTO mentor_sessions (id,venture_id,mentor_id,status,scheduled_at,title,meeting_platform,meeting_link,session_type) VALUES (1,1,5,'confirmed','{$scheduled}','Product design check-in','google_meet','https://meet.example.test/session','one_on_one')");
 $db->query("INSERT INTO role_permissions VALUES ('mentor','mentor_reports',1)");
 $db->query("INSERT INTO faqs VALUES (1,1,1,'Who can apply?','Eligible EdTech ventures can apply to the fellowship.')");
 foreach (['site_name'=>'EdTech Fellowship', 'site_logo'=>'assets/images/logo.png', 'site_favicon'=>'assets/images/favicon.png', 'hero_btn_text'=>'Explore the programme', 'hero_application_link'=>'#program'] as $key=>$value) {
@@ -60,8 +66,9 @@ file_put_contents($root . '/' . $resource, 'Synthetic restricted resource');
 $stmt=$db->prepare('INSERT INTO venture_documents VALUES (1,1,?)'); $stmt->bind_param('s',$fixture); $stmt->execute(); $stmt->close();
 $stmt=$db->prepare('INSERT INTO mentor_reports VALUES (1,5,?)'); $stmt->bind_param('s',$report); $stmt->execute(); $stmt->close();
 $stmt=$db->prepare('INSERT INTO mentor_reports VALUES (2,6,?)'); $stmt->bind_param('s',$otherReport); $stmt->execute(); $stmt->close();
-$stmt=$db->prepare("INSERT INTO resources VALUES (1,?,'request_required','active')"); $stmt->bind_param('s',$resource); $stmt->execute(); $stmt->close();
-$db->query("INSERT INTO resource_requests VALUES (1,1,'approved')");
+$stmt=$db->prepare("INSERT INTO resources (id,file_path,access_level,status,title,description,type,category,uploaded_by,file_name,file_ext) VALUES (1,?,'request_required','active','Mentorship workbook','A practical guide for preparing for mentor sessions.','pdf','Mentorship',1,'workbook.pdf','pdf')"); $stmt->bind_param('s',$resource); $stmt->execute(); $stmt->close();
+$db->query("INSERT INTO resources (id,access_level,status,title,description,type,category,uploaded_by,file_name,file_ext) VALUES (2,'public','active','Programme guide','Explore the programme and support available to your venture.','pdf','Programme',1,'guide.pdf','pdf'),(3,'request_required','active','Growth planning toolkit','Request this toolkit to plan your next stage of growth.','document','Growth',1,'toolkit.docx','docx')");
+$db->query("INSERT INTO resource_requests (id,resource_id,venture_id,status,requester_email) VALUES (1,1,1,'approved','venture1@example.test')");
 foreach (['DB_HOST'=>'127.0.0.1','DB_PORT'=>'13317','DB_USER'=>'edtech_staging','DB_PASS'=>$password,'DB_NAME'=>$name,'SITE_URL'=>'http://127.0.0.1:18087','APP_ENCRYPTION_KEY'=>base64_encode(random_bytes(32)),'EDTECH_STAGING'=>'1'] as $key=>$value) putenv($key.'='.$value);
 
 function staging_assert(bool $condition, string $message): void {

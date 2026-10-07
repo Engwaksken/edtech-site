@@ -337,7 +337,7 @@ $logout_url = vp_url('logout');
 
     <link
         rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        href="<?= h($base_url) ?>/assets/vendor/fontawesome/css/all.min.css"
     >
 
     <link
@@ -345,19 +345,7 @@ $logout_url = vp_url('logout');
         href="<?= h($base_url) ?>/assets/css/ventures.css?v=<?= (int)$css_version ?>"
     >
 
-    <?php if (vp_is_active($current_nav, 'calendar')): ?>
-        <style>
-            .vp-content {
-                padding: 20px;
-            }
-
-            @media (max-width: 640px) {
-                .vp-content {
-                    padding: 14px;
-                }
-            }
-        </style>
-    <?php endif; ?>
+    <?= $portal_extra_head ?? '' ?>
 </head>
 
 <body class="vp-body" data-current-nav="<?= h($current_nav) ?>">

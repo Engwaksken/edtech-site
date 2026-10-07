@@ -101,7 +101,7 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
     <!-- Font Awesome 6 -->
     <link
         rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        href="<?= h(asset_url('assets/vendor/fontawesome/css/all.min.css')) ?>"
         referrerpolicy="no-referrer"
     >
 

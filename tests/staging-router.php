@@ -48,7 +48,7 @@ if ($path === '/favicon.ico') {
     readfile($root . '/assets/images/favicon.png');
     return true;
 }
-$pages = ['/' => 'index.php', '/login' => 'login.php', '/admin/login' => 'admin/login.php', '/faqs' => 'faqs.php', '/logout' => 'logout.php', '/admin/logout' => 'admin/logout.php'];
+$pages = ['/' => 'index.php', '/login' => 'login.php', '/forgot-password' => 'forgot-password.php', '/admin/login' => 'admin/login.php', '/faqs' => 'faqs.php', '/logout' => 'logout.php', '/admin/logout' => 'admin/logout.php', '/venture_resources' => 'venture_resources.php', '/calendar' => 'calendar.php'];
 if (isset($pages[$path])) {
     require $root . '/' . $pages[$path];
     return true;

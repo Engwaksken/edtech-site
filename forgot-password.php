@@ -77,11 +77,11 @@ $contact_email = function_exists('get_setting')
     ? get_setting(
         $conn,
         'site_email',
-        'hello@example.com'
+        'edtech@hivecolab.com'
     )
-    : 'hello@example.com';
+    : 'edtech@hivecolab.com';
 
-$logo_path = 'assets/images/logo_white.png';
+$logo_path = is_file(__DIR__ . '/assets/images/logo_white.webp') ? 'assets/images/logo_white.webp' : 'assets/images/logo_white.png';
 $logo_exists = file_exists(__DIR__ . '/' . $logo_path);
 ?>
 <!DOCTYPE html>
@@ -122,12 +122,12 @@ $logo_exists = file_exists(__DIR__ . '/' . $logo_path);
 
     <link
         rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        href="<?= h(asset_url('assets/vendor/fontawesome/css/all.min.css')) ?>"
     >
 
     <link
         rel="stylesheet"
-        href="assets/css/ventures.css"
+        href="<?= h(asset_url('assets/css/ventures.css')) ?>?v=<?= (int)filemtime(__DIR__ . '/assets/css/ventures.css') ?>"
     >
 
     <style>
@@ -220,12 +220,12 @@ $logo_exists = file_exists(__DIR__ . '/' . $logo_path);
 
     <div class="lp-top">
 
-        <div class="lp-wordmark">
+        <a class="lp-wordmark" href="<?= h(rtrim(SITE_URL, '/')) ?>/" aria-label="Website home">
 
             <?php if ($logo_exists): ?>
 
                 <img
-                    src="<?= h($logo_path) ?>"
+                    src="<?= h(asset_url($logo_path)) ?>"
                     alt="<?= h($site_name) ?>"
                     class="lp-logo"
                 >
@@ -244,7 +244,7 @@ $logo_exists = file_exists(__DIR__ . '/' . $logo_path);
 
             <?php endif; ?>
 
-        </div>
+        </a>
 
         <h1 class="lp-headline">
             Your venture.<br>
@@ -258,6 +258,11 @@ $logo_exists = file_exists(__DIR__ . '/' . $logo_path);
             mentorship sessions and investor connections
             from your dedicated dashboard.
         </p>
+
+        <a class="lp-back-link" href="<?= h(rtrim(SITE_URL, '/')) ?>/">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+            Back to Website
+        </a>
 
     </div>
 

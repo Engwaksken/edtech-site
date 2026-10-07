@@ -823,34 +823,25 @@ $to_record = min(
 |--------------------------------------------------------------------------
 */
 
-include __DIR__ . '/layout.php';
+$page_title = 'Resources';
+$current_nav = 'venture_resources';
+ob_start();
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<?php require_once __DIR__ . '/includes/favicon.php'; ?>
-    <meta charset="UTF-8">
-
-    <title>Resources - Venture Dashboard</title>
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1"
-    >
-
-    <link
-        rel="stylesheet"
-        href="assets/css/portal.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-        referrerpolicy="no-referrer"
-    >
-
     <style>
+        .vp-content > .venture-wrap {
+            width: 100%;
+            min-height: 0;
+            padding: 0;
+        }
+        .vp-content > .venture-wrap > .venture-shell {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+        }
+        .resource-grid {
+            grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+        }
         .resource-uploader-section {
             margin-bottom: 38px;
         }
@@ -955,9 +946,10 @@ include __DIR__ . '/layout.php';
             }
         }
     </style>
-</head>
-
-<body>
+<?php
+$portal_extra_head = ob_get_clean();
+include __DIR__ . '/layout.php';
+?>
 
 <div class="venture-wrap">
     <div class="venture-shell">
@@ -1857,5 +1849,7 @@ include __DIR__ . '/layout.php';
 })();
 </script>
 
+</main>
+</div>
 </body>
 </html>
