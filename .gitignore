@@ -1,0 +1,49 @@
+# Dependencies are installed from composer.lock.
+/vendor/
+**/node_modules/
+
+# Uploaded documents and media contain private application data.
+/uploads/*
+!/uploads/.htaccess
+
+# Hosting-generated validation files and local infrastructure.
+/.well-known/
+/cgi-bin/
+
+# Credentials and local configuration; retain the environment-variable template.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+auth.json
+
+# Logs, dumps, backups, and runtime artifacts.
+error_log
+error_log.*
+*.log
+*.pid
+*.sql
+!/admin/database/*.sql
+*.sql.gz
+*.edenc
+*.partial.*
+/backup/
+/backups/
+/storage/
+/tmp/
+/temp/
+/coverage/
+/playwright-report/
+/test-results/
+
+# Workstation/editor metadata.
+.DS_Store
+Thumbs.db
+Desktop.ini
+/.idea/
+/.vscode/
+*.swp
+*.swo

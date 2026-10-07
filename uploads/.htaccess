@@ -1,0 +1,14 @@
+Options -Indexes -ExecCGI
+
+# Uploaded files are data, never application code (including double extensions).
+<FilesMatch "(?i)(\.(php[0-9]*|phtml|pht|phar|cgi|pl|py|sh|shtml|htaccess|user\.ini)(\.|$)|^\.)">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    <FilesMatch "(?i)\.(svg|html?|xml|js)$">
+        Header always set Content-Security-Policy "sandbox; default-src 'none'; style-src 'unsafe-inline'"
+        Header always set Content-Disposition "attachment"
+    </FilesMatch>
+</IfModule>

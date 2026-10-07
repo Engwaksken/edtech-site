@@ -1,0 +1,181 @@
+# ============================================================
+# EDTECH.HIVECOLAB.COM
+# ADMIN .HTACCESS
+# ============================================================
+#
+# Location:
+# /admin/.htaccess
+#
+# Public Admin URLs:
+#
+# /admin/login.php
+#     -> /admin/login
+#
+# /admin/verify-otp.php
+#     -> /admin/verify-otp
+#
+# /admin/users.php?page=2
+#     -> /admin/users?page=2
+#
+# PHP files continue to execute internally.
+# ============================================================
+
+
+Options -Indexes
+ServerSignature Off
+
+DirectoryIndex index.php
+
+
+# ============================================================
+# DEFAULT ADMIN ERROR PAGES
+# ============================================================
+
+ErrorDocument 400 /admin/error.php?code=400
+ErrorDocument 401 /admin/error.php?code=401
+ErrorDocument 403 /admin/error.php?code=403
+ErrorDocument 404 /admin/error.php?code=404
+ErrorDocument 429 /admin/error.php?code=429
+ErrorDocument 500 /admin/error.php?code=500
+ErrorDocument 502 /admin/error.php?code=502
+ErrorDocument 503 /admin/error.php?code=503
+
+
+# ============================================================
+# ADMIN SECURITY HEADERS
+# ============================================================
+
+<IfModule mod_headers.c>
+
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    Header always set X-Robots-Tag "noindex, nofollow"
+    <FilesMatch "\.(php|html)$">
+        Header always set Cache-Control "private, no-store, no-cache, must-revalidate, max-age=0"
+        Header always set Pragma "no-cache"
+        Header always set Expires "0"
+    </FilesMatch>
+
+</IfModule>
+
+
+# ============================================================
+# PROTECT INTERNAL / SENSITIVE FILES
+# ============================================================
+
+<FilesMatch "(?i)\.(sql|log|md|lock|env|ini|bak|conf|dist|sh|inc|phar)$">
+    Require all denied
+</FilesMatch>
+
+
+# ============================================================
+# URL REWRITING
+# ============================================================
+
+<IfModule mod_rewrite.c>
+
+    RewriteEngine On
+
+
+    # ========================================================
+    # ALLOW REAL FILES / DIRECTORIES
+    # ========================================================
+    #
+    # CSS, JS, images, uploads, fonts, etc. must continue
+    # working normally.
+    #
+    # PHP is deliberately excluded because frontend PHP
+    # requests need to be canonicalised below.
+    # ========================================================
+
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} !\.php$ [NC]
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+
+    # ========================================================
+    # ALLOW ADMIN PROCESSOR PHP FILES
+    # ========================================================
+    #
+    # Files inside /admin/includes/ are backend endpoints.
+    # Do NOT remove .php from these URLs because forms/AJAX
+    # may POST directly to them.
+    #
+    # Examples:
+    #
+    # /admin/includes/process-login.php
+    # /admin/includes/process-users.php
+    #
+    # ========================================================
+
+    RewriteRule ^includes/[^/]+\.php$ - [L,NC]
+
+
+    # ========================================================
+    # REMOVE .PHP FROM ADMIN FRONTEND URLS
+    # ========================================================
+    #
+    # THE_REQUEST contains the URL actually requested by the
+    # browser. This prevents a redirect loop after the clean
+    # URL is internally rewritten back to PHP.
+    #
+    # Example:
+    #
+    # Browser:
+    # /admin/verify-otp.php
+    #
+    # Redirect:
+    # /admin/verify-otp
+    #
+    # Query strings are preserved automatically.
+    #
+    # ========================================================
+
+    RewriteCond %{THE_REQUEST} \s/+admin/([A-Za-z0-9_-]+)\.php(?:[\s?]) [NC]
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    RewriteRule ^([A-Za-z0-9_-]+)\.php$ $1 [R=308,L,NE]
+
+
+    # ========================================================
+    # ADMIN INDEX
+    # ========================================================
+    #
+    # /admin/index.php
+    #     -> /admin/
+    #
+    # Keep this separate from the normal PHP rule so the
+    # canonical Admin homepage is simply /admin/.
+    # ========================================================
+
+    RewriteCond %{THE_REQUEST} \s/+admin/index\.php(?:[\s?]) [NC]
+    RewriteRule ^index\.php$ ./ [R=301,L,NE]
+
+
+    # ========================================================
+    # CLEAN URL -> PHP FILE
+    # ========================================================
+    #
+    # Example:
+    #
+    # /admin/verify-otp
+    #
+    # internally loads:
+    #
+    # /admin/verify-otp.php
+    #
+    # The browser continues displaying the clean URL.
+    #
+    # ========================================================
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{DOCUMENT_ROOT}/admin/$1.php -f
+    RewriteRule ^([A-Za-z0-9_-]+)$ $1.php [L,QSA]
+
+
+</IfModule>

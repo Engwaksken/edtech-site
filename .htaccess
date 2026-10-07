@@ -1,0 +1,413 @@
+# ============================================================
+# EDTECH.HIVECOLAB.COM
+# ROOT .HTACCESS
+# ============================================================
+
+Options -Indexes -MultiViews
+DirectoryIndex index.php index.html
+ServerSignature Off
+FileETag None
+
+
+# ============================================================
+# DEFAULT FRONTEND ERROR PAGES
+# ============================================================
+#
+# These errors use /error.php.
+#
+# IMPORTANT:
+# 419 is normally an application/session error, not a native Apache
+# status generated automatically. Redirect to /error.php?code=419
+# from PHP when needed.
+#
+# ============================================================
+
+ErrorDocument 400 /error?code=400
+ErrorDocument 401 /error?code=401
+ErrorDocument 403 /error?code=403
+ErrorDocument 404 /error?code=404
+ErrorDocument 429 /error?code=429
+ErrorDocument 500 /error?code=500
+ErrorDocument 502 /error?code=502
+ErrorDocument 503 /error?code=503
+
+
+# ============================================================
+# URL REWRITING
+# ============================================================
+
+<IfModule mod_rewrite.c>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Block internal helpers before any endpoint or clean-URL exceptions.
+    RewriteRule ^(?:includes/(?:config|security|encryption|backup-encryption|private-files|logout-handler|favicon|auth|header|footer|debug-pdf-convert|google-calendar-config|google-calendar-service|mail-function|pdf-function)|admin/includes/(?:auth|header|footer|sidebar|report-engine|report-schemas))(?:\.php)?/?$ - [F,L,NC]
+    RewriteRule ^admin/(?:database|cron)(?:/|$) - [F,L,NC]
+    RewriteRule ^(?:tests|bin)(?:/|$) - [F,L,NC]
+
+    # Default browser favicon and legacy admin favicon URLs share one asset.
+    RewriteRule ^(?:favicon\.ico|admin/assets/img/favicon\.png)$ assets/images/favicon.png [L,NC]
+
+    # ========================================================
+    # 1. FORCE HTTPS + CANONICAL WWW DOMAIN
+    # ========================================================
+
+    RewriteCond %{HTTPS} !=on [OR]
+    RewriteCond %{HTTP_HOST} !^www\.edtech\.hivecolab\.com$ [NC]
+    RewriteRule ^ https://www.edtech.hivecolab.com%{REQUEST_URI} [R=301,L,NE]
+
+    # Canonical page URLs must not leave relative assets under /login/, etc.
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.+)/$ /$1 [R=308,L,NE]
+
+    # Preserve existing links while checking the viewer against the owning DB row.
+    RewriteRule ^uploads/((?:ventures/(?:docs|meal-documents)|loa|loa-signed|tranche-evidence|deliverables|mentor-reports|structured-reports|session-reports|resources|responses|startup-evidence|startup-field-visits)/.+)$ private-file.php?path=uploads/$1 [B,END]
+
+
+    # ========================================================
+    # 2. BLOCK SENSITIVE DIRECTORIES
+    # ========================================================
+
+    RewriteRule ^(?:vendor|cgi-bin|logs?|backup|backups|storage/logs|\.git)(?:/|$) - [F,L,NC]
+
+
+    # ========================================================
+    # 3. KEEP BACKEND PROCESSORS AS REAL .PHP ENDPOINTS
+    # ========================================================
+    #
+    # Frontend pages are clean, but POST/AJAX processors under
+    # includes/ and admin/includes/ continue to use .php.
+    #
+    # Examples:
+    # /includes/process-login.php
+    # /includes/process-referral.php
+    # /admin/includes/process-newsletters.php
+    #
+    # ========================================================
+
+    RewriteRule ^includes/[^/]*\.php$ - [L,NC]
+    RewriteRule ^admin/includes/[^/]*\.php$ - [L,NC]
+
+
+    # ========================================================
+    # 4. PROTECT INCLUDE DIRECTORIES
+    # ========================================================
+
+    RewriteRule ^includes/(?![^/]*\.php$).* - [F,L,NC]
+    RewriteRule ^admin/includes/(?![^/]*\.php$).* - [F,L,NC]
+
+
+    # ========================================================
+    # 5. REMOVE index.php AUTOMATICALLY
+    # ========================================================
+    #
+    # /index.php       -> /
+    # /admin/index.php -> /admin/
+    #
+    # THE_REQUEST ensures internal rewrites never loop.
+    #
+    # ========================================================
+
+    RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.php(?:[\s?]) [NC]
+    RewriteRule ^(.*/)?index\.php$ /$1 [R=301,L,NE]
+
+
+    # ========================================================
+    # 6. REMOVE .PHP FROM ALL FRONTEND / PAGE URLS
+    # ========================================================
+    #
+    # /login.php             -> /login
+    # /documents.php         -> /documents
+    # /referral.php          -> /referral
+    # /admin/users.php       -> /admin/users
+    # /admin/verify-otp.php  -> /admin/verify-otp
+    #
+    # Processor endpoints above are excluded before reaching
+    # this rule.
+    #
+    # ========================================================
+
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    RewriteCond %{THE_REQUEST} \s/+(.+?)\.php(?:[\s?]) [NC]
+    RewriteCond %1 !^includes(?:/|$) [NC]
+    RewriteCond %1 !^admin/includes(?:/|$) [NC]
+    RewriteCond %1 !^(?:vendor|cgi-bin|logs?|backup|backups|storage/logs|\.git)(?:/|$) [NC]
+    RewriteRule ^(.+?)\.php$ /$1 [R=308,L,NE]
+
+
+    # ========================================================
+    # 7. ALLOW REAL STATIC FILES AND DIRECTORIES
+    # ========================================================
+    #
+    # This is deliberately AFTER the canonical .php redirect.
+    # Otherwise an existing page such as referral.php would be
+    # served before Apache had a chance to remove .php.
+    #
+    # ========================================================
+
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+
+    # ========================================================
+    # 8. HOMEPAGE
+    # ========================================================
+
+    RewriteRule ^$ index.php [L]
+
+
+    # ========================================================
+    # 9. CLEAN ADMIN URL -> PHP FILE INTERNALLY
+    # ========================================================
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{DOCUMENT_ROOT}/admin/$1.php -f
+    RewriteRule ^admin/(?!includes(?:/|$))(.+?)/?$ admin/$1.php [L,QSA,NC]
+
+
+    # ========================================================
+    # 10. CLEAN PUBLIC URL -> PHP FILE INTERNALLY
+    # ========================================================
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{DOCUMENT_ROOT}/$1.php -f
+    RewriteRule ^(.+?)/?$ $1.php [L,QSA,NC]
+
+
+    # ========================================================
+    # 11. OPTIONAL HTACCESS TEST
+    # ========================================================
+
+    RewriteRule ^htaccess-test/?$ index.php [L]
+
+</IfModule>
+
+
+# ============================================================
+# SECURITY HEADERS
+# ============================================================
+
+<IfModule mod_headers.c>
+
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+
+    Header always set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on'"
+    Header always set Content-Security-Policy "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; upgrade-insecure-requests"
+    Header always set X-XSS-Protection "0"
+
+    Header unset ETag
+
+</IfModule>
+
+
+# ============================================================
+# BLOCK SENSITIVE FILE TYPES
+# ============================================================
+
+<FilesMatch "(?i)\.(sql|log|md|lock|env|ini|bak|conf|dist|fla|psd|sh|inc|phar)$">
+    Require all denied
+</FilesMatch>
+
+
+# ============================================================
+# BLOCK PROJECT CONFIGURATION FILES
+# ============================================================
+
+<FilesMatch "(?i)^(error_log|composer\.(json|lock)|package(-lock)?\.json|yarn\.lock|phpunit\.xml|\.env(?:\..*)?|\.user\.ini|\.gitignore|\.htaccess)$">
+    Require all denied
+</FilesMatch>
+
+
+# ============================================================
+# PREVENT DIRECT WEB EXECUTION OF CRON SCRIPT
+# ============================================================
+
+<Files "send_session_reminders.php">
+    Require all denied
+</Files>
+
+
+# ============================================================
+# COMPRESSION
+# ============================================================
+
+<IfModule mod_deflate.c>
+
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+
+</IfModule>
+
+
+# ============================================================
+# BROTLI COMPRESSION
+# ============================================================
+
+<IfModule mod_brotli.c>
+
+    AddOutputFilterByType BROTLI_COMPRESS text/plain
+    AddOutputFilterByType BROTLI_COMPRESS text/html
+    AddOutputFilterByType BROTLI_COMPRESS text/css
+    AddOutputFilterByType BROTLI_COMPRESS text/javascript
+
+    AddOutputFilterByType BROTLI_COMPRESS application/javascript
+    AddOutputFilterByType BROTLI_COMPRESS application/json
+    AddOutputFilterByType BROTLI_COMPRESS application/xml
+
+    AddOutputFilterByType BROTLI_COMPRESS text/xml
+    AddOutputFilterByType BROTLI_COMPRESS image/svg+xml
+
+</IfModule>
+
+
+# ============================================================
+# BROWSER CACHE EXPIRATION
+# ============================================================
+
+<IfModule mod_expires.c>
+
+    ExpiresActive On
+
+    # Dynamic content
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType application/json "access plus 0 seconds"
+
+    # CSS / JavaScript
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+
+    # Images
+    ExpiresByType image/jpeg "access plus 6 months"
+    ExpiresByType image/jpg "access plus 6 months"
+    ExpiresByType image/png "access plus 6 months"
+    ExpiresByType image/gif "access plus 6 months"
+    ExpiresByType image/webp "access plus 6 months"
+    ExpiresByType image/avif "access plus 6 months"
+    ExpiresByType image/svg+xml "access plus 6 months"
+    ExpiresByType image/x-icon "access plus 6 months"
+
+    # Fonts
+    ExpiresByType font/ttf "access plus 6 months"
+    ExpiresByType font/otf "access plus 6 months"
+    ExpiresByType font/woff "access plus 6 months"
+    ExpiresByType font/woff2 "access plus 6 months"
+
+    # Media
+    ExpiresByType video/mp4 "access plus 1 month"
+
+    # PDFs
+    ExpiresByType application/pdf "access plus 1 day"
+
+</IfModule>
+
+
+# ============================================================
+# CACHE CONTROL
+# ============================================================
+
+<IfModule mod_headers.c>
+
+    # Static assets
+    <FilesMatch "\.(css|js|jpg|jpeg|png|gif|webp|avif|svg|ico|woff|woff2|ttf|otf|mp4)$">
+        Header set Cache-Control "public, max-age=86400, must-revalidate"
+    </FilesMatch>
+
+    # PHP / HTML should never be browser-cached.
+    #
+    # Important for:
+    # login
+    # OTP
+    # dashboards
+    # error pages
+    #
+    <FilesMatch "\.(html|php)$">
+        Header set Cache-Control "private, no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+
+    # PDFs
+    <FilesMatch "\.pdf$">
+        Header set Cache-Control "private, max-age=86400"
+    </FilesMatch>
+
+</IfModule>
+
+
+# ============================================================
+# PHP SETTINGS
+# ============================================================
+#
+# These blocks only apply when Apache mod_php is being used.
+#
+# If hosting uses:
+# PHP-FPM
+# LiteSpeed
+# CloudLinux
+#
+# configure these through:
+# .user.ini
+# MultiPHP INI Editor
+# cPanel PHP settings
+#
+# ============================================================
+
+<IfModule mod_php8.c>
+
+    php_flag display_errors Off
+    php_flag log_errors On
+
+    php_value upload_max_filesize 250M
+    php_value post_max_size 260M
+
+    php_value max_execution_time 300
+    php_value max_input_time 300
+    php_value memory_limit 256M
+
+    php_flag session.cookie_httponly On
+    php_flag session.use_strict_mode On
+    php_flag session.use_only_cookies On
+    php_flag session.cookie_secure On
+    php_value session.cookie_samesite Lax
+
+</IfModule>
+
+
+<IfModule mod_php.c>
+
+    php_flag display_errors Off
+    php_flag log_errors On
+
+    php_value upload_max_filesize 250M
+    php_value post_max_size 260M
+
+    php_value max_execution_time 300
+    php_value max_input_time 300
+    php_value memory_limit 256M
+
+    php_flag session.cookie_httponly On
+    php_flag session.use_strict_mode On
+    php_flag session.use_only_cookies On
+    php_flag session.cookie_secure On
+    php_value session.cookie_samesite Lax
+
+</IfModule>
