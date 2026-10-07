@@ -107,6 +107,9 @@ include 'layout.php';
   .tranche-form textarea, .tranche-form input[type=text]{width:100%;padding:10px 12px;border:1.5px solid #e1e4e8;border-radius:8px;font-size:13.5px;font-family:inherit;margin-bottom:10px}
   .req-response-block{margin-bottom:14px}
   .req-response-block label{display:block;font-size:12.5px;font-weight:600;color:#34495e;margin-bottom:6px}
+  .evidence-upload{margin:8px 0 4px;width:100%;padding:12px;border:1.5px dashed #cbd2d9;border-radius:8px;background:#fafbfc;font:inherit}
+  .evidence-files{margin:6px 0 12px;padding-left:20px;color:#52606d;font-size:12px}
+  .evidence-files:empty{display:none}
 
   .review-note{background:#fdecea;border-left:3px solid #e74c3c;border-radius:6px;padding:10px 14px;margin-top:10px;font-size:13px;color:#7d1a1a}
   .disbursed-note{background:#eafaf1;border-left:3px solid #27ae60;border-radius:6px;padding:10px 14px;margin-top:10px;font-size:13px;color:#1e7e46}
@@ -340,9 +343,10 @@ include 'layout.php';
             <label style="display:block;font-size:12.5px;font-weight:600;color:#34495e;margin-bottom:6px">Overall narrative (optional)</label>
             <textarea name="narrative" rows="3" placeholder="Any additional context for the review team..."></textarea>
 
-            <label style="display:block;font-size:12.5px;font-weight:600;color:#34495e;margin-bottom:6px">Supporting documents</label>
-            <input type="file" name="evidence[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png">
-            <small style="color:#7f8c8d;font-size:11px;display:block;margin-bottom:10px">Work plans, budgets, reports, receipts, etc.</small>
+            <label for="evidence-<?= $tid ?>" style="display:block;font-size:12.5px;font-weight:600;color:#34495e;margin-bottom:6px">Supporting documents (select one or more files)</label>
+            <input class="evidence-upload" type="file" id="evidence-<?= $tid ?>" name="evidence[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png">
+            <small style="color:#7f8c8d;font-size:11px;display:block">Work plans, budgets, reports, receipts, etc. You can select multiple files at once.</small>
+            <ul class="evidence-files" id="evidence-list-<?= $tid ?>" aria-live="polite"></ul>
 
             <button type="submit" class="btn btn-gold btn-sm"><i class="fa fa-paper-plane"></i> Submit for Review</button>
           </form>
@@ -378,4 +382,17 @@ function toggleTrancheForm(id) {
   const el = document.getElementById('tranche-form-' + id);
   if (el) el.classList.toggle('open');
 }
+
+document.querySelectorAll('.evidence-upload').forEach(function(input) {
+  input.addEventListener('change', function() {
+    const list = document.getElementById(input.id.replace('evidence-', 'evidence-list-'));
+    if (!list) return;
+    list.replaceChildren();
+    Array.from(input.files).forEach(function(file) {
+      const item = document.createElement('li');
+      item.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+      list.appendChild(item);
+    });
+  });
+});
 </script>

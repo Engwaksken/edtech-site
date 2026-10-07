@@ -248,30 +248,8 @@ $otpSecondsLeft = max(
 </title>
 
 <link
-    rel="icon"
-    type="image/png"
-    href="assets/images/favicon.png"
->
-
-<link
-    rel="shortcut icon"
-    type="image/png"
-    href="assets/images/favicon.png"
->
-
-<link
-    rel="apple-touch-icon"
-    href="assets/images/favicon.png"
->
-
-<link
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&display=swap"
     rel="stylesheet"
->
-
-<link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 >
 
 <link
@@ -281,43 +259,29 @@ $otpSecondsLeft = max(
 
 <style>
 
-.otp-boxes {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 10px;
-    margin-top: 8px;
-}
-
-.otp-digit {
+.otp-input {
     width: 100%;
-    min-width: 0;
     height: 58px;
-
     border: 1px solid #d9dce3;
     border-radius: 12px;
-
-    text-align: center;
-
+    padding: 0 16px;
+    letter-spacing: .35em;
+    text-align: left;
     font-size: 24px;
     font-weight: 800;
     font-family: 'Outfit', sans-serif;
-
     outline: none;
     box-sizing: border-box;
-
-    transition:
-        border-color .2s ease,
-        box-shadow .2s ease,
-        background-color .2s ease;
+    transition: border-color .2s ease, box-shadow .2s ease;
 }
 
-.otp-digit:focus {
+.otp-input:focus {
     border-color: #ff6b2c;
     box-shadow:
         0 0 0 3px rgba(255, 107, 44, .12);
 }
 
-.otp-digit:disabled {
+.otp-input:disabled {
     background: #f3f4f6;
     color: #9ca3af;
     cursor: not-allowed;
@@ -331,10 +295,6 @@ $otpSecondsLeft = max(
 }
 
 .otp-expiry {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-
     margin-top: 6px;
 
     color: #e85b20;
@@ -380,20 +340,6 @@ $otpSecondsLeft = max(
     cursor: not-allowed;
 }
 
-@media (max-width: 520px) {
-
-    .otp-boxes {
-        gap: 6px;
-    }
-
-    .otp-digit {
-        height: 50px;
-        font-size: 21px;
-        border-radius: 10px;
-    }
-
-}
-
 </style>
 
 </head>
@@ -417,8 +363,6 @@ $otpSecondsLeft = max(
             <?php else: ?>
 
                 <div class="lp-logo-fallback">
-
-                    <i class="fa fa-graduation-cap"></i>
 
                     <span>
                         <?= h($site_name) ?>
@@ -456,8 +400,6 @@ $otpSecondsLeft = max(
 
         <div class="login-tag">
 
-            <i class="fa fa-shield-alt"></i>
-
             Verification
 
         </div>
@@ -477,8 +419,6 @@ $otpSecondsLeft = max(
 
             <div class="success-box">
 
-                <i class="fa fa-check-circle"></i>
-
                 <?= h($success) ?>
 
             </div>
@@ -489,8 +429,6 @@ $otpSecondsLeft = max(
         <?php if ($error !== ''): ?>
 
             <div class="error-box">
-
-                <i class="fa fa-exclamation-circle"></i>
 
                 <?= h($error) ?>
 
@@ -512,13 +450,6 @@ $otpSecondsLeft = max(
                 value="verify"
             >
 
-            <input
-                type="hidden"
-                name="otp"
-                id="otpValue"
-            >
-
-
             <div class="form-group">
 
                 <label class="form-label">
@@ -526,26 +457,20 @@ $otpSecondsLeft = max(
                 </label>
 
 
-                <div
-                    class="otp-boxes"
-                    id="otpBoxes"
+                <input
+                    type="text"
+                    name="otp"
+                    id="otpInput"
+                    class="otp-input"
+                    inputmode="numeric"
+                    pattern="[0-9]{6}"
+                    maxlength="6"
+                    autocomplete="one-time-code"
+                    aria-label="6-digit verification code"
+                    placeholder="Enter 6-digit code"
+                    required
+                    autofocus
                 >
-
-                    <?php for ($i = 1; $i <= 6; $i++): ?>
-
-                        <input
-                            type="text"
-                            inputmode="numeric"
-                            pattern="[0-9]*"
-                            maxlength="1"
-                            class="otp-digit"
-                            aria-label="OTP digit <?= $i ?>"
-                            <?= $i === 1 ? 'autofocus' : '' ?>
-                        >
-
-                    <?php endfor; ?>
-
-                </div>
 
 
                 <div class="otp-meta">
@@ -557,8 +482,6 @@ $otpSecondsLeft = max(
                         class="otp-expiry"
                         id="otpExpiry"
                     >
-
-                        <i class="fa fa-clock"></i>
 
                         <span id="otpExpiryText">
 
@@ -590,13 +513,9 @@ $otpSecondsLeft = max(
                 id="verifyBtn"
             >
 
-                <i class="fa fa-spinner spinner"></i>
-
                 <span class="btn-text">
                     Verify &amp; Continue
                 </span>
-
-                <i class="fa fa-arrow-right btn-arrow"></i>
 
             </button>
 
@@ -626,8 +545,6 @@ $otpSecondsLeft = max(
                         : '' ?>
                 >
 
-                    <i class="fa fa-redo"></i>
-
                     <span id="resendText">
                         Resend code
                     </span>
@@ -641,8 +558,6 @@ $otpSecondsLeft = max(
                 href="login"
                 class="forgot-link"
             >
-
-                <i class="fa fa-arrow-left"></i>
 
                 Back to login
 
@@ -675,16 +590,7 @@ $otpSecondsLeft = max(
 
 <script>
 
-const digits = [
-    ...document.querySelectorAll(
-        '.otp-digit'
-    )
-];
-
-const otpValue =
-    document.getElementById(
-        'otpValue'
-    );
+const otpInput = document.getElementById('otpInput');
 
 /*
 |--------------------------------------------------------------------------
@@ -693,17 +599,8 @@ const otpValue =
 */
 
 function syncOtp() {
-
-    const value = digits
-        .map(input =>
-            input.value
-                .replace(/\D/g, '')
-        )
-        .join('');
-
-    otpValue.value = value;
-
-    return value;
+    otpInput.value = otpInput.value.replace(/\D/g, '').slice(0, 6);
+    return otpInput.value;
 }
 
 
@@ -713,127 +610,7 @@ function syncOtp() {
 |--------------------------------------------------------------------------
 */
 
-digits.forEach(
-    (input, index) => {
-
-        input.addEventListener(
-            'input',
-            () => {
-
-                input.value =
-                    input.value
-                        .replace(/\D/g, '')
-                        .slice(0, 1);
-
-                syncOtp();
-
-                if (
-                    input.value
-                    && index
-                    < digits.length - 1
-                ) {
-                    digits[
-                        index + 1
-                    ].focus();
-                }
-
-            }
-        );
-
-
-        input.addEventListener(
-            'keydown',
-            event => {
-
-                if (
-                    event.key
-                    === 'Backspace'
-                    && !input.value
-                    && index > 0
-                ) {
-                    digits[
-                        index - 1
-                    ].focus();
-                }
-
-
-                if (
-                    event.key
-                    === 'ArrowLeft'
-                    && index > 0
-                ) {
-                    event.preventDefault();
-
-                    digits[
-                        index - 1
-                    ].focus();
-                }
-
-
-                if (
-                    event.key
-                    === 'ArrowRight'
-                    && index
-                    < digits.length - 1
-                ) {
-                    event.preventDefault();
-
-                    digits[
-                        index + 1
-                    ].focus();
-                }
-
-            }
-        );
-
-
-        input.addEventListener(
-            'paste',
-            event => {
-
-                const pasted = (
-                    event.clipboardData
-                    || window.clipboardData
-                )
-                    .getData('text')
-                    .replace(/\D/g, '')
-                    .slice(0, 6);
-
-                if (!pasted) {
-                    return;
-                }
-
-                event.preventDefault();
-
-                digits.forEach(
-                    (field, i) => {
-
-                        field.value =
-                            pasted[i]
-                            || '';
-
-                    }
-                );
-
-                syncOtp();
-
-                const target =
-                    Math.min(
-                        pasted.length,
-                        6
-                    ) - 1;
-
-                if (target >= 0) {
-                    digits[
-                        target
-                    ].focus();
-                }
-
-            }
-        );
-
-    }
-);
+otpInput?.addEventListener('input', syncOtp);
 
 
 /*
@@ -880,11 +657,7 @@ function updateOtpExpiry() {
         }
 
 
-        digits.forEach(
-            field => {
-                field.disabled = true;
-            }
-        );
+        if (otpInput) otpInput.disabled = true;
 
 
         const verifyBtn =
