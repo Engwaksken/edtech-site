@@ -944,7 +944,7 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
                       <?php if ($attachmentSizeBytes > 0): ?>
                         <small>
                           Content <?= h(nl_format_bytes($contentSizeBytes)) ?>
-                          � File <?= h(nl_format_bytes($attachmentSizeBytes)) ?>
+                          - File <?= h(nl_format_bytes($attachmentSizeBytes)) ?>
                         </small>
                       <?php else: ?>
                         <small>Stored content</small>
@@ -957,7 +957,7 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
                     <?php if (!empty($nl['total_sent'])): ?><small class="nl-muted">(<?= (int)$nl['total_sent'] ?> sent)</small><?php endif; ?>
                   </td>
                   <td><span class="nl-badge <?= h($bc) ?>"><?= h(ucfirst($status)) ?></span></td>
-                  <td class="nl-muted-sm"><?= !empty($nl['sent_at']) ? h(date('M j, Y � g:i A',strtotime((string)$nl['sent_at']))) : '-' ?></td>
+                  <td class="nl-muted-sm"><?= !empty($nl['sent_at']) ? h(date('M j, Y - g:i A',strtotime((string)$nl['sent_at']))) : '-' ?></td>
                   <td class="nl-muted-sm"><?= !empty($nl['created_at']) ? h(date('M j, Y',strtotime((string)$nl['created_at']))) : '-' ?></td>
                   <td>
                     <div class="nl-tbl-actions">

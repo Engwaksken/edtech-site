@@ -24,6 +24,27 @@ body.admin-system-page { margin: 0; background: var(--nl-bg); color: var(--nl-te
 body.admin-system-page *, body.admin-system-page *::before, body.admin-system-page *::after { box-sizing: border-box; }
 body.admin-system-page .admin-main { min-height: 100vh; width: auto; max-width: none; background: var(--nl-bg); }
 
+/* Keep newsletter content readable even when legacy admin theme rules load. */
+body.admin-system-page #adminMain { color: #1f2937; }
+body.admin-system-page #adminMain .nl-page-pad,
+body.admin-system-page #adminMain .nl-card,
+body.admin-system-page #adminMain .nl-modal,
+body.admin-system-page #adminMain .nl-stat-card { color: #1f2937; }
+body.admin-system-page #adminMain .nl-muted,
+body.admin-system-page #adminMain .nl-muted-sm,
+body.admin-system-page #adminMain .nl-muted-xs,
+body.admin-system-page #adminMain .nl-stat-label,
+body.admin-system-page #adminMain .nl-stat-description,
+body.admin-system-page #adminMain .nl-preview-label { color: #596579; }
+body.admin-system-page #adminMain .nl-form-group label,
+body.admin-system-page #adminMain .nl-tiny-label,
+body.admin-system-page #adminMain .hero-control-section label { color: #344054; }
+body.admin-system-page #adminMain .nl-form-control,
+body.admin-system-page #adminMain .etag-input,
+body.admin-system-page #adminMain .range-num { color: #1f2937; }
+body.admin-system-page #adminMain .nl-form-control::placeholder,
+body.admin-system-page #adminMain .etag-input::placeholder { color: #687386; opacity: 1; }
+
 .nl-topbar { background: linear-gradient(135deg, #111827, #1f2937); color: #fff; padding: 24px 28px 0; box-shadow: 0 5px 18px rgba(15,23,42,.12); }
 .nl-topbar-inner { max-width: 1600px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
 .nl-crumb { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,.7); font-size: 13px; margin-bottom: 8px; }
