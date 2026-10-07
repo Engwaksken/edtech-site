@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/environment.php';
+
 if (!defined('GOOGLE_CALENDAR_CLIENT_ID')) {
     define('GOOGLE_CALENDAR_CLIENT_ID', getenv('GOOGLE_CALENDAR_CLIENT_ID') ?: '');
 }

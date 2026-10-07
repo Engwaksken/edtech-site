@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/environment.php';
 require_once __DIR__ . '/security.php';
 
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
@@ -41,6 +42,9 @@ try {
     }
 } catch (Throwable $exception) {
     error_log('Database initialization failed: ' . $exception->getMessage());
+    if (PHP_SAPI === 'cli') {
+        throw new RuntimeException('Database initialization failed: ' . $exception->getMessage());
+    }
     http_response_code(503);
     header('Retry-After: 60');
     exit('We are temporarily unable to load this page. Please try again shortly.');

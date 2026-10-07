@@ -42,7 +42,7 @@ ErrorDocument 503 /error?code=503
     RewriteBase /
 
     # Block internal helpers before any endpoint or clean-URL exceptions.
-    RewriteRule ^(?:includes/(?:config|security|encryption|backup-encryption|private-files|logout-handler|favicon|auth|header|footer|debug-pdf-convert|google-calendar-config|google-calendar-service|mail-function|pdf-function)|admin/includes/(?:auth|header|footer|sidebar|report-engine|report-schemas))(?:\.php)?/?$ - [F,L,NC]
+    RewriteRule ^(?:includes/(?:config|environment|security|encryption|backup-encryption|private-files|logout-handler|favicon|auth|header|footer|debug-pdf-convert|google-calendar-config|google-calendar-service|mail-function|pdf-function)|admin/includes/(?:auth|header|footer|sidebar|report-engine|report-schemas))(?:\.php)?/?$ - [F,L,NC]
     RewriteRule ^admin/(?:database|cron)(?:/|$) - [F,L,NC]
     RewriteRule ^(?:tests|bin)(?:/|$) - [F,L,NC]
 

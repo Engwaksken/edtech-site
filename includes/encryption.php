@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/environment.php';
+
 function site_encryption_key(): string
 {
     $encoded = getenv('APP_ENCRYPTION_KEY') ?: '';

@@ -27,7 +27,7 @@ cd edtech-site
 composer install --no-dev --optimize-autoloader
 ```
 
-Configure the following in the PHP/server process environment:
+Configure the following in a `.env` file beside `composer.json`, or in the PHP/server process environment:
 
 | Variable | Purpose |
 | --- | --- |
@@ -40,7 +40,9 @@ Configure the following in the PHP/server process environment:
 | `SITE_URL` | Public HTTPS base URL. |
 | `APP_ENCRYPTION_KEY` | Base64-encoded 32-byte encryption key. |
 
-`.env.example` documents these variables. PHP does **not** automatically load a `.env` file in this application; set the variables through your hosting configuration or process environment.
+Copy `.env.example` to `.env` and replace the placeholders with your actual values. The shared bootstrap loads this file automatically for web requests and CLI commands, including before the encryption-key check. It locates the file relative to the application, not the terminal's current directory. Already-defined server/shell variables take precedence; correct or unset stale shell exports when testing `.env` values.
+
+Use single quotes around passwords that contain literal `$`, `#`, spaces, or other special characters, for example `DB_PASS='your actual password'`. The `.env` file is ignored by Git and blocked from HTTP access by the Apache configuration. Do not commit it. To keep configuration outside the public document root, set the server/shell variable `APP_ENV_FILE` to the absolute path of a private environment file instead. A configured private file must exist and be readable by PHP.
 
 The repository does not contain a complete database dump or customer uploads. Restore the application schema/data and uploads from an authorized private backup. Reviewed incremental SQL migrations are kept under `admin/database/` and should be applied to the corresponding existing schema after taking a backup.
 
@@ -54,7 +56,7 @@ Generate a permanent key:
 php bin/secure-storage.php generate-key
 ```
 
-Store the generated value as `APP_ENCRYPTION_KEY` outside the repository and document root. Keep a protected copy separate from database and file backups; losing it prevents decryption of encrypted secrets and backups.
+Store the generated value as `APP_ENCRYPTION_KEY` in the protected environment configuration and keep a protected copy separate from database and file backups; losing it prevents decryption of encrypted secrets and backups. Prefer a server environment variable or a private file outside the document root using `APP_ENV_FILE`. Reuse the existing key if any records or backups have already been encrypted.
 
 With the database and key configured, encrypt existing SMTP and Google Calendar secret values:
 
@@ -79,6 +81,7 @@ Full database and upload-volume encryption is a separate hosting/storage configu
 
 ```bash
 php tests/security-check.php
+php tests/environment-check.php
 php tests/audit-check.php
 composer audit --locked --no-interaction
 composer check-platform-reqs --no-interaction

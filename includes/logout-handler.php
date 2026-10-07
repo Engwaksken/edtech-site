@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/environment.php';
 require_once __DIR__ . '/security.php';
 
 function site_handle_logout(string $login, string $cancel, string $base): void

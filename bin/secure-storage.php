@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-// CLI only. Configure DB_* and APP_ENCRYPTION_KEY in the process environment.
+// CLI only. Configure DB_* and APP_ENCRYPTION_KEY in .env or the process environment.
 // php bin/secure-storage.php generate-key
 // php bin/secure-storage.php migrate-secrets
 // php bin/secure-storage.php backup-encrypt /private/backup.sql /private/backup.edenc
@@ -10,9 +10,8 @@ if (PHP_SAPI !== 'cli') {
     http_response_code(404);
     exit;
 }
-require_once __DIR__ . '/../includes/backup-encryption.php';
-
 try {
+    require_once __DIR__ . '/../includes/backup-encryption.php';
     $command = $argv[1] ?? '';
     if ($command === 'generate-key') {
         echo base64_encode(random_bytes(32)) . PHP_EOL;
