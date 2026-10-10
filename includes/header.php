@@ -118,7 +118,7 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
         type="image/png"
     >
     <link rel="apple-touch-icon" href="<?= h($favicon_path) ?>">
-    <meta name="theme-color" content="#b94c08">
+    <meta name="theme-color" content="#fc7f10">
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QY3FG79QBV"></script>
 <script>

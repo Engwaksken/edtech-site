@@ -59,15 +59,15 @@ body.admin-system-page #adminMain .etag-input::placeholder { color: #687386; opa
 .nl-tab.active { color: var(--nl-navy); background: var(--nl-bg); }
 
 .nl-page-pad { max-width: 1600px; width: 100%; margin: 0 auto; padding: 24px 28px 48px; }
-.nl-stats-grid { display: grid; grid-template-columns: repeat(5, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.nl-stat-card { --stat-color: var(--nl-primary); --stat-soft: #fff7ed; position: relative; min-width: 0; min-height: 132px; display: flex; align-items: center; gap: 16px; padding: 20px; overflow: hidden; background: #fff; border: 1px solid var(--nl-border); border-radius: var(--nl-radius); box-shadow: var(--nl-shadow); transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.nl-stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+.nl-stat-card { --stat-color: var(--nl-primary); --stat-soft: #fff7ed; position: relative; min-width: 0; min-height: 92px; display: flex; align-items: center; gap: 12px; padding: 14px; overflow: hidden; background: #fff; border: 1px solid var(--nl-border); border-radius: var(--nl-radius); box-shadow: var(--nl-shadow); transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
 .nl-stat-card::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--stat-color); }
 .nl-stat-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--stat-color) 35%, var(--nl-border)); box-shadow: 0 14px 32px rgba(15, 23, 42, .11); }
-.nl-stat-icon { width: 52px; height: 52px; flex: 0 0 52px; display: grid; place-items: center; border-radius: 14px; background: var(--stat-soft); color: var(--stat-color); font-size: 21px; }
+.nl-stat-icon { width: 42px; height: 42px; flex: 0 0 42px; display: grid; place-items: center; border-radius: 12px; background: var(--stat-soft); color: var(--stat-color); font-size: 18px; }
 .nl-stat-content { min-width: 0; }
 .nl-stat-label { margin-bottom: 5px; overflow: hidden; color: var(--nl-muted); font-size: 12px; font-weight: 750; line-height: 1.3; letter-spacing: .045em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
-.nl-stat-value { color: var(--nl-navy); font-size: clamp(25px, 2.2vw, 32px); font-weight: 850; line-height: 1; }
-.nl-stat-description { margin-top: 7px; overflow: hidden; color: var(--nl-muted); font-size: 12px; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+.nl-stat-value { color: var(--nl-navy); font-size: clamp(22px, 1.8vw, 27px); font-weight: 850; line-height: 1; }
+.nl-stat-description { margin-top: 4px; overflow: hidden; color: var(--nl-muted); font-size: 11px; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
 .nl-stat-card-primary { --stat-color: #f97316; --stat-soft: #fff7ed; }
 .nl-stat-card-success { --stat-color: #16a34a; --stat-soft: #f0fdf4; }
 .nl-stat-card-info { --stat-color: #0284c7; --stat-soft: #f0f9ff; }
@@ -225,7 +225,7 @@ textarea.nl-form-control { min-height: 90px; resize: vertical; }
 .newsletter-embed-preview iframe { width: 100%; height: 100%; border: 0; background: #fff; }
 
 @media (max-width: 1200px) {
-  .nl-stats-grid { grid-template-columns: repeat(3, minmax(180px,1fr)); }
+  .nl-stats-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
   .nl-builder-workspace { grid-template-columns: 220px minmax(0,1fr); }
   .nl-settings { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--nl-border); max-height: 340px; }
   .nl-builder-top-fields { grid-template-columns: repeat(2,minmax(0,1fr)); }

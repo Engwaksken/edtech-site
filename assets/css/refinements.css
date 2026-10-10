@@ -23,8 +23,8 @@ body :is(.btn-icon, .icon-btn, .vp-menu-btn, .vp-notif-btn, .vp-sidebar-close, .
     min-width: 44px;
     min-height: 44px;
 }
-body :is(.btn-primary, .nav-login-btn) { background: #b94c08; border-color: #b94c08; color: #fff; }
-body :is(.btn-primary, .nav-login-btn):hover { background: #963c06; border-color: #963c06; color: #fff; }
+body :is(.btn-primary, .nav-login-btn) { background: #fc7f10; border-color: #fc7f10; color: #fff; }
+body :is(.btn-primary, .nav-login-btn):hover { background: #e06900; border-color: #e06900; color: #fff; }
 body :is(.btn, .vp-btn):hover { transform: translateY(-1px); }
 body :is(.card, .dashboard-card, .stat-card, .metric-card, .widget):hover { transform: none; }
 body :is(a, button, input, select, textarea, [tabindex]):focus-visible {

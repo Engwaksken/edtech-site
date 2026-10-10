@@ -825,13 +825,6 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
       </div>
       <div class="nl-topbar-actions">
         <button class="nl-btn nl-btn-ghost nl-btn-sm" type="button" onclick="NL.openSubsModal()"><i class="fa fa-users"></i> Subscribers</button>
-        <button
-          class="nl-btn nl-btn-ghost nl-btn-sm"
-          type="button"
-          onclick="document.getElementById('smtpTestModal').classList.add('active')"
-        >
-          <i class="fa fa-paper-plane"></i> Test SMTP
-        </button>
         <button class="nl-btn nl-btn-ghost nl-btn-sm" type="button" onclick="NL.openPdfModal()"><i class="fa fa-file-pdf"></i> Upload PDF</button>
         <button class="nl-btn nl-btn-primary nl-btn-sm" type="button" onclick="NL.openBuilder()"><i class="fa fa-magic"></i> Design Newsletter</button>
       </div>
@@ -1325,70 +1318,6 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
     <div class="nl-modal-header"><span class="nl-modal-title"><i class="fa fa-trash"></i> Delete Newsletter</span><button class="nl-modal-close" type="button" onclick="NL.cancelDeleteNewsletter()">&times;</button></div>
     <div class="nl-modal-body"><p>Delete this newsletter permanently? This cannot be undone.</p></div>
     <div class="nl-modal-footer"><button type="button" class="nl-btn nl-btn-secondary" onclick="NL.cancelDeleteNewsletter()">Cancel</button><button type="button" class="nl-btn nl-btn-danger" onclick="NL.executeDeleteNewsletter()"><i class="fa fa-trash"></i> Delete</button></div>
-  </div>
-</div>
-
-<!-- SMTP TEST -->
-<div class="modal-overlay" id="smtpTestModal">
-  <div class="nl-modal" style="max-width:460px">
-    <div class="nl-modal-header">
-      <span class="nl-modal-title">
-        <i class="fa fa-paper-plane"></i>
-        Test SMTP Email
-      </span>
-
-      <button
-        class="nl-modal-close"
-        type="button"
-        onclick="document.getElementById('smtpTestModal').classList.remove('active')"
-      >&times;</button>
-    </div>
-
-    <form
-      method="POST"
-      action="newsletters"
-    >
-      <input
-        type="hidden"
-        name="newsletter_action"
-        value="test_email"
-      >
-
-      <div class="nl-modal-body">
-        <div class="nl-form-group">
-          <label>Recipient Email</label>
-          <input
-            type="email"
-            name="email"
-            class="nl-form-control"
-            placeholder="you@example.com"
-            required
-          >
-        </div>
-
-        <p class="nl-muted-sm">
-          This sends one test message using the active PHPMailer SMTP settings.
-        </p>
-      </div>
-
-      <div class="nl-modal-footer">
-        <button
-          type="button"
-          class="nl-btn nl-btn-secondary"
-          onclick="document.getElementById('smtpTestModal').classList.remove('active')"
-        >
-          Cancel
-        </button>
-
-        <button
-          type="submit"
-          class="nl-btn nl-btn-primary"
-        >
-          <i class="fa fa-paper-plane"></i>
-          Send Test Email
-        </button>
-      </div>
-    </form>
   </div>
 </div>
 
