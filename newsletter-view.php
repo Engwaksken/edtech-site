@@ -71,6 +71,7 @@ $site_name = nlv_setting($conn, 'site_name', 'Newsletter');
 $site_logo = nlv_setting($conn, 'site_logo', '');
 
 $id = (int)($_GET['id'] ?? 0);
+$is_embed = isset($_GET['embed']) && $_GET['embed'] === '1';
 
 $stmt = $conn->prepare("SELECT * FROM newsletters WHERE id=? AND status='sent' LIMIT 1");
 if (!$stmt) {
@@ -151,9 +152,13 @@ $logo_url = $site_logo !== '' ? nlv_public_url($site_logo) : '';
 .reader-nav{max-width:900px;margin:20px auto 0;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.copy-ok{background:#16a34a!important;border-color:#16a34a!important;color:#fff!important}
 @media(max-width:700px){.reader-top-inner{align-items:flex-start;flex-direction:column}.reader-actions{width:100%}.reader-btn{flex:1;justify-content:center}.reader-main{padding:14px 0 34px}.reader-title-card{border-radius:0;margin-bottom:0}.newsletter-paper{border-radius:0;box-shadow:none}.reader-shell{max-width:100%}.pdf-frame{height:70vh}}
 @media print{.reader-top,.reader-title-card,.reader-nav{display:none!important}.reader-main{padding:0;background:#fff}.newsletter-paper{box-shadow:none}.pdf-frame{height:100vh}}
+<?php if ($is_embed): ?>
+html,body{background:#fff!important}.reader-main{padding:0!important}.reader-shell{max-width:none!important;width:100%}.newsletter-paper{min-height:0!important;border-radius:0!important;box-shadow:none!important}.pdf-reader{border:0!important;border-radius:0!important;padding:12px!important}.pdf-frame{height:85vh}
+<?php endif; ?>
 </style>
 </head>
 <body>
+<?php if (!$is_embed): ?>
 <header class="reader-top">
   <div class="reader-top-inner">
     <a class="reader-brand" href="newsletter.php">
@@ -168,15 +173,18 @@ $logo_url = $site_logo !== '' ? nlv_public_url($site_logo) : '';
     </div>
   </div>
 </header>
+<?php endif; ?>
 
 <main class="reader-main">
   <div class="reader-shell">
+    <?php if (!$is_embed): ?>
     <section class="reader-title-card">
       <div class="reader-kicker">Newsletter</div>
       <h1><?= h($subject) ?></h1>
       <?php if ($preheader): ?><p class="reader-preheader"><?= h($preheader) ?></p><?php endif; ?>
       <?php if ($sent_at): ?><div class="reader-date"><i class="fa fa-calendar-alt"></i> <?= h($sent_at) ?></div><?php endif; ?>
     </section>
+    <?php endif; ?>
 
     <?php if ($pdf_url): ?>
       <section class="pdf-reader">
@@ -200,6 +208,7 @@ $logo_url = $site_logo !== '' ? nlv_public_url($site_logo) : '';
   </div>
 </main>
 
+<?php if (!$is_embed): ?>
 <nav class="reader-nav">
 <?php
 $prev = null;
@@ -212,6 +221,7 @@ if ($nstmt) { $nstmt->bind_param('i', $id); $nstmt->execute(); $next = $nstmt->g
   <?php if ($prev): ?><a class="reader-btn" href="newsletter-view.php?id=<?= (int)$prev['id'] ?>"><i class="fa fa-arrow-left"></i> Previous</a><?php endif; ?>
   <?php if ($next): ?><a class="reader-btn" href="newsletter-view.php?id=<?= (int)$next['id'] ?>">Next <i class="fa fa-arrow-right"></i></a><?php endif; ?>
 </nav>
+<?php endif; ?>
 
 <script>
 const NEWSLETTER_URL = <?= json_encode($canonical) ?>;

@@ -991,6 +991,10 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
                           title="Send"><i class="fa fa-paper-plane"></i></button>
                       <?php endif; ?>
 
+                      <?php if ($status === 'sent'): ?>
+                        <a class="nl-btn nl-btn-sm nl-btn-secondary nl-btn-icon" href="<?= h(nl_site_url() . '/newsletter-view.php?id=' . (int)$nl['id'] . '&embed=1') ?>" target="_blank" rel="noopener" title="Preview embed"><i class="fa fa-code"></i></a>
+                      <?php endif; ?>
+
                       <form method="POST" action="newsletters" class="nl-inline-form" onsubmit="return NL.confirmDeleteNewsletter(this)">
                         <input type="hidden" name="newsletter_action" value="delete">
                         <input type="hidden" name="id" value="<?= (int)$nl['id'] ?>">
@@ -999,6 +1003,12 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
                     </div>
                   </td>
                 </tr>
+                <?php if ($status === 'sent'): ?>
+                <tr class="nl-embed-row"><td colspan="8" style="padding:0 14px 12px">
+                  <label for="newsletter-embed-<?= (int)$nl['id'] ?>" class="nl-muted-sm">Embed on another website — copy this iframe code</label>
+                  <textarea id="newsletter-embed-<?= (int)$nl['id'] ?>" readonly rows="2" onclick="this.select()" style="display:block;width:100%;margin-top:5px;font:12px monospace;resize:vertical" aria-label="Iframe embed code for <?= h($nl['subject'] ?? 'newsletter') ?>"><?= h('<iframe src="' . nl_site_url() . '/newsletter-view.php?id=' . (int)$nl['id'] . '&embed=1" title="' . (string)($nl['subject'] ?? 'Newsletter') . '" width="100%" height="800" style="border:0" loading="lazy"></iframe>') ?></textarea>
+                </td></tr>
+                <?php endif; ?>
               <?php endwhile; ?>
               </tbody>
             </table>
