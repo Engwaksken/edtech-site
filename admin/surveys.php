@@ -18,18 +18,92 @@ function survey_base_url(): string
     return rtrim(SITE_URL, '/');
 }
 
-$surveys = $conn->query("
-    SELECT
-        s.*,
-        COUNT(DISTINCT q.id)                                        AS questions_count,
-        COUNT(DISTINCT r.id)                                        AS responses_count,
-        SUM(CASE WHEN q.field_type = 'file_upload' THEN 1 ELSE 0 END) AS file_questions_count
+$search = trim((string)($_GET['q'] ?? ''));
+$status_filter = trim((string)($_GET['status'] ?? ''));
+$period_filter = trim((string)($_GET['period'] ?? ''));
+$page = max(1, (int)($_GET['page'] ?? 1));
+$per_page = 10;
+$period_sql = [
+    '7days' => 'DATE_SUB(NOW(), INTERVAL 7 DAY)',
+    '30days' => 'DATE_SUB(NOW(), INTERVAL 30 DAY)',
+    '90days' => 'DATE_SUB(NOW(), INTERVAL 90 DAY)',
+    'year' => 'DATE_FORMAT(NOW(), "%Y-01-01 00:00:00")',
+];
+
+$where = [];
+$params = [];
+$types = '';
+if ($search !== '') {
+    $where[] = '(s.title LIKE ? OR s.description LIKE ?)';
+    $like = '%' . $search . '%';
+    $params[] = $like;
+    $params[] = $like;
+    $types .= 'ss';
+}
+if (in_array($status_filter, ['draft', 'published', 'closed'], true)) {
+    $where[] = 's.status = ?';
+    $params[] = $status_filter;
+    $types .= 's';
+} else {
+    $status_filter = '';
+}
+if (isset($period_sql[$period_filter])) {
+    $where[] = 's.created_at >= ' . $period_sql[$period_filter];
+} else {
+    $period_filter = '';
+}
+$where_sql = $where ? ' WHERE ' . implode(' AND ', $where) : '';
+
+$count_stmt = $conn->prepare('SELECT COUNT(*) AS total FROM surveys s' . $where_sql);
+if ($count_stmt) {
+    if ($types !== '') $count_stmt->bind_param($types, ...$params);
+    $count_stmt->execute();
+    $total_surveys = (int)($count_stmt->get_result()->fetch_assoc()['total'] ?? 0);
+    $count_stmt->close();
+} else {
+    $total_surveys = 0;
+}
+$total_pages = max(1, (int)ceil($total_surveys / $per_page));
+$page = min($page, $total_pages);
+$offset = ($page - 1) * $per_page;
+$query_params = $params;
+$query_types = $types . 'ii';
+$query_params[] = $per_page;
+$query_params[] = $offset;
+$surveys = $conn->prepare("
+    SELECT s.*,
+        COALESCE(q.questions_count, 0) AS questions_count,
+        COALESCE(r.responses_count, 0) AS responses_count,
+        COALESCE(q.file_questions_count, 0) AS file_questions_count
     FROM surveys s
-    LEFT JOIN survey_questions q ON q.survey_id = s.id
-    LEFT JOIN survey_responses r ON r.survey_id = s.id
-    GROUP BY s.id
+    LEFT JOIN (
+        SELECT survey_id, COUNT(*) AS questions_count,
+            SUM(CASE WHEN field_type = 'file_upload' THEN 1 ELSE 0 END) AS file_questions_count
+        FROM survey_questions GROUP BY survey_id
+    ) q ON q.survey_id = s.id
+    LEFT JOIN (
+        SELECT survey_id, COUNT(*) AS responses_count
+        FROM survey_responses GROUP BY survey_id
+    ) r ON r.survey_id = s.id
+    $where_sql
     ORDER BY s.created_at DESC
+    LIMIT ? OFFSET ?
 ");
+if ($surveys) {
+    $surveys->bind_param($query_types, ...$query_params);
+    $surveys->execute();
+    $surveys = $surveys->get_result();
+}
+
+function survey_page_url(int $page, string $search, string $status, string $period): string
+{
+    return '?' . http_build_query(array_filter([
+        'q' => $search,
+        'status' => $status,
+        'period' => $period,
+        'page' => $page,
+    ], static fn($value) => $value !== '' && $value !== null));
+}
 
 $site_name = function_exists('get_setting')
     ? get_setting($conn, 'site_name', 'EdTech Fellowship')
@@ -70,11 +144,34 @@ $site_name = function_exists('get_setting')
     <div class="page-header">
       <div>
         <h1 class="page-title">Survey Manager</h1>
-        <p class="page-subtitle">Create Typeform-style surveys and share external links with ventures.</p>
+        <p class="page-subtitle">Create surveys, review responses, and manage publication settings.</p>
       </div>
       <button class="btn btn-primary" onclick="openSurveyModal()" type="button">
         <i class="fa fa-plus"></i> New Survey
       </button>
+    </div>
+
+    <div class="filter-bar">
+      <form method="get" action="surveys.php">
+        <input class="form-control filter-search" type="search" name="q" value="<?= survey_h($search) ?>" placeholder="Search survey title or description" aria-label="Search surveys">
+        <select class="form-control" name="status" aria-label="Filter by status">
+          <option value="">All statuses</option>
+          <?php foreach (['draft' => 'Draft', 'published' => 'Published', 'closed' => 'Closed'] as $value => $label): ?>
+            <option value="<?= survey_h($value) ?>" <?= $status_filter === $value ? 'selected' : '' ?>><?= survey_h($label) ?></option>
+          <?php endforeach; ?>
+        </select>
+        <select class="form-control" name="period" aria-label="Filter by period">
+          <option value="">All time</option>
+          <option value="7days" <?= $period_filter === '7days' ? 'selected' : '' ?>>Last 7 days</option>
+          <option value="30days" <?= $period_filter === '30days' ? 'selected' : '' ?>>Last 30 days</option>
+          <option value="90days" <?= $period_filter === '90days' ? 'selected' : '' ?>>Last 90 days</option>
+          <option value="year" <?= $period_filter === 'year' ? 'selected' : '' ?>>This year</option>
+        </select>
+        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i> Apply</button>
+        <?php if ($search !== '' || $status_filter !== '' || $period_filter !== ''): ?>
+          <a class="btn btn-secondary" href="surveys.php"><i class="fa fa-times"></i> Clear</a>
+        <?php endif; ?>
+      </form>
     </div>
 
     <div class="card">
@@ -86,7 +183,7 @@ $site_name = function_exists('get_setting')
               <th class="text-center">Status</th>
               <th class="text-center">Questions</th>
               <th class="text-center">Responses</th>
-              <th>External Link</th>
+              <th>Public Page</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -107,11 +204,6 @@ $site_name = function_exists('get_setting')
               <td class="survey-link-cell">
                 <div class="survey-title-wrap">
                   <strong><?= survey_h($s['title']) ?></strong>
-                  <?php if (!empty($s['description'])): ?>
-                    <small class="survey-description">
-                      <?= survey_h(mb_strimwidth((string)$s['description'], 0, 90, '...')) ?>
-                    </small>
-                  <?php endif; ?>
                   <?php if ($has_files): ?>
                     <span class="file-badge">
                       <i class="fa fa-paperclip"></i>
@@ -130,34 +222,21 @@ $site_name = function_exists('get_setting')
 
               <!-- Questions count -->
               <td class="text-center">
-                <div class="stat-cell">
-                  <span class="stat-num"><?= (int)$s['questions_count'] ?></span>
-                  <span class="stat-label">question<?= (int)$s['questions_count'] !== 1 ? 's' : '' ?></span>
-                </div>
+                <span class="stat-num"><?= (int)$s['questions_count'] ?></span>
               </td>
 
               <!-- Responses count -->
               <td class="text-center">
-                <div class="stat-cell">
-                  <span class="stat-num"><?= (int)$s['responses_count'] ?></span>
-                  <span class="stat-label">response<?= (int)$s['responses_count'] !== 1 ? 's' : '' ?></span>
-                </div>
+                <span class="stat-num"><?= (int)$s['responses_count'] ?></span>
               </td>
 
-              <!-- External link -->
+              <!-- Public survey page -->
               <td class="survey-link-cell">
                 <div class="survey-link-actions">
-                  <button class="copy-btn"
-                          id="copy-<?= (int)$s['id'] ?>"
-                          type="button"
-                          onclick="copyLink('<?= survey_h($link) ?>', <?= (int)$s['id'] ?>)">
-                    <i class="fa fa-copy"></i> Copy
-                  </button>
-                  <a href="<?= survey_h($link) ?>" target="_blank" class="btn btn-sm btn-secondary">
-                    <i class="fa fa-external-link-alt"></i> Open
+                  <a href="<?= survey_h($link) ?>" target="_blank" rel="noopener" class="btn btn-sm btn-secondary">
+                    <i class="fa fa-eye"></i> View
                   </a>
                 </div>
-                <div class="survey-link-box"><?= survey_h($link) ?></div>
               </td>
 
               <!-- Actions -->
@@ -200,11 +279,11 @@ $site_name = function_exists('get_setting')
               <td colspan="6">
                 <div class="survey-empty">
                   <div class="empty-icon"><i class="fa fa-poll"></i></div>
-                  <h3>No surveys yet</h3>
-                  <p>Create your first baseline, needs assessment, follow-up, or exit survey.</p>
-                  <button class="btn btn-primary" onclick="openSurveyModal()" type="button">
-                    <i class="fa fa-plus"></i> Create Survey
-                  </button>
+                  <h3><?= $total_surveys > 0 ? 'No surveys match these filters' : 'No surveys yet' ?></h3>
+                  <p><?= $total_surveys > 0 ? 'Try adjusting your search or filters.' : 'Create your first baseline, needs assessment, follow-up, or exit survey.' ?></p>
+                  <?php if ($total_surveys === 0): ?>
+                    <button class="btn btn-primary" onclick="openSurveyModal()" type="button"><i class="fa fa-plus"></i> Create Survey</button>
+                  <?php endif; ?>
                 </div>
               </td>
             </tr>
@@ -214,6 +293,19 @@ $site_name = function_exists('get_setting')
         </table>
       </div>
     </div>
+
+    <?php if ($total_surveys > 0): ?>
+      <div class="pagination-wrap">
+        <div class="pagination-info">Showing <?= number_format(min($total_surveys, $offset + 1)) ?>–<?= number_format(min($total_surveys, $offset + ($surveys ? $surveys->num_rows : 0))) ?> of <?= number_format($total_surveys) ?> surveys</div>
+        <nav class="pagination" aria-label="Survey pages">
+          <?php if ($page > 1): ?><a href="<?= survey_h(survey_page_url($page - 1, $search, $status_filter, $period_filter)) ?>" aria-label="Previous page"><i class="fa fa-chevron-left"></i></a><?php endif; ?>
+          <?php for ($page_number = max(1, $page - 2); $page_number <= min($total_pages, $page + 2); $page_number++): ?>
+            <?php if ($page_number === $page): ?><span class="current" aria-current="page"><?= $page_number ?></span><?php else: ?><a href="<?= survey_h(survey_page_url($page_number, $search, $status_filter, $period_filter)) ?>"><?= $page_number ?></a><?php endif; ?>
+          <?php endfor; ?>
+          <?php if ($page < $total_pages): ?><a href="<?= survey_h(survey_page_url($page + 1, $search, $status_filter, $period_filter)) ?>" aria-label="Next page"><i class="fa fa-chevron-right"></i></a><?php endif; ?>
+        </nav>
+      </div>
+    <?php endif; ?>
   </div>
 </div>
 
@@ -406,28 +498,6 @@ function pickColor(hex, swatchEl) {
   if (swatchEl) swatchEl.classList.add('active');
 }
 
-/* -- Copy link ---------------------------------------- */
-function copyLink(text, surveyId) {
-  navigator.clipboard.writeText(text).then(function () {
-    const btn = document.getElementById('copy-' + surveyId);
-    if (!btn) return;
-    btn.classList.add('copied');
-    btn.innerHTML = '<i class="fa fa-check"></i> Copied!';
-    setTimeout(function () {
-      btn.classList.remove('copied');
-      btn.innerHTML = '<i class="fa fa-copy"></i> Copy';
-    }, 2200);
-  }).catch(function () {
-    // Fallback for browsers without clipboard API
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    alert('Link copied to clipboard.');
-  });
-}
 </script>
 </body>
 </html>
