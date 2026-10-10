@@ -852,13 +852,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (button.classList.contains('js-rename-folder')) {
             window.renameFolder(parseInt(button.dataset.folderId || '0', 10), button.dataset.folderName || '');
         }
-    });
+    }, true);
 
     document.addEventListener('submit', function (event) {
         var form = event.target.closest('.js-delete-folder-form');
         if (!form) return;
         var folderName = form.dataset.folderName || 'this folder';
-        if (!window.confirm('Delete folder \'" + "' + folderName + '" + "\'? It must be empty.')) {
+        if (!window.confirm("Delete folder '" + folderName + "'? It must be empty.")) {
             event.preventDefault();
         }
     });
@@ -990,9 +990,13 @@ document.addEventListener('DOMContentLoaded', function () {
     window.openNewFolderModal = function () { openDocModal('newFolderModal'); };
 
     window.renameFolder = function (id, currentName) {
-        document.getElementById('rename_folder_id').value = id;
-        document.getElementById('rename_folder_name').value = currentName;
+        var idField = document.getElementById('rename_folder_id');
+        var nameField = document.getElementById('rename_folder_name');
+        if (!idField || !nameField) return;
+        idField.value = id;
+        nameField.value = currentName;
         openDocModal('renameFolderModal');
+        window.setTimeout(function () { nameField.focus(); nameField.select(); }, 80);
     };
 
     // ---------------------------------------------------------
