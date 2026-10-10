@@ -300,12 +300,29 @@ body.vp-sidebar-open {
 }
 
 .vp-nav-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   padding: 14px 10px 7px;
   font-size: 10px;
   font-weight: 900;
   letter-spacing: .12em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, .3);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.vp-nav-label::-webkit-details-marker { display: none; }
+.vp-nav-label:hover { color: rgba(255,255,255,.68); }
+.vp-nav-section-chevron { font-size: 9px; letter-spacing: 0; transition: transform .18s ease; }
+.vp-nav-section[open] > .vp-nav-label .vp-nav-section-chevron { transform: rotate(180deg); }
+.vp-nav-section-links { display: block; }
+
+@media (max-width: 640px) {
+  .vp-nav-label { min-height: 42px; padding-top: 10px; padding-bottom: 8px; }
 }
 
 .vp-nav a,

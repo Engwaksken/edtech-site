@@ -451,13 +451,24 @@ $logout_url = vp_url('logout');
 
         <?php foreach ($nav_sections as $section_label => $items): ?>
 
-            <div class="vp-nav-section">
+            <?php
+            $section_id = 'vp-nav-' . substr(sha1((string)$section_label), 0, 10);
+            $section_active = false;
+            foreach ($items as $section_item) {
+                if (vp_is_active($current_nav, (string)($section_item[0] ?? ''))) {
+                    $section_active = true;
+                    break;
+                }
+            }
+            ?>
+            <details class="vp-nav-section" <?= $section_active ? 'open' : '' ?>>
 
-                <div class="vp-nav-label">
+                <summary class="vp-nav-label" aria-controls="<?= h($section_id) ?>">
+                    <span><?= h($section_label) ?></span>
+                    <i class="fas fa-chevron-down vp-nav-section-chevron" aria-hidden="true"></i>
+                </summary>
 
-                    <?= h($section_label) ?>
-
-                </div>
+                <div class="vp-nav-section-links" id="<?= h($section_id) ?>">
 
                 <?php foreach ($items as [$href, $icon, $label, $badge]): ?>
 
@@ -473,7 +484,9 @@ $logout_url = vp_url('logout');
 
                 <?php endforeach; ?>
 
-            </div>
+                </div>
+
+            </details>
 
         <?php endforeach; ?>
 
