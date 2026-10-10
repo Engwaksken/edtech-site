@@ -92,6 +92,18 @@ a { text-decoration:none; color:inherit; transition:var(--transition); }
   padding:14px 20px 4px;
   white-space:nowrap; overflow:hidden;
 }
+.nav-group > .nav-section-label {
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  cursor:pointer; list-style:none; user-select:none;
+}
+.nav-group > .nav-section-label::-webkit-details-marker { display:none; }
+.nav-group-chevron { font-size:.65rem; transition:transform .2s ease; }
+.nav-group[open] > .nav-section-label .nav-group-chevron { transform:rotate(180deg); }
+.nav-group > .nav-list { padding-bottom:4px; }
+.admin-sidebar.collapsed .nav-group > .nav-section-label { padding:9px 23px 4px; }
+.admin-sidebar.collapsed .nav-group > .nav-section-label span { display:none; }
+.admin-sidebar.collapsed .nav-group-chevron { display:block; }
+.admin-sidebar.collapsed .nav-group > .nav-section-label { opacity:1; }
 .admin-sidebar.collapsed .nav-section-label { opacity:0; }
 
 .nav-list { list-style:none; }

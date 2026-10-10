@@ -220,6 +220,9 @@ textarea.nl-form-control { min-height: 90px; resize: vertical; }
 .nl-palette { border: 1px solid var(--nl-border); border-radius: 12px; padding: 14px; background: #f8fafc; }
 .nl-palette-tall { min-height: 500px; }
 .preview-frame { min-height: 680px; }
+.newsletter-embed-modal { width: min(920px, 100%); }
+.newsletter-embed-preview { height: min(56vh, 520px); min-height: 260px; border: 1px solid var(--nl-border); border-radius: 9px; overflow: hidden; background: #f8fafc; }
+.newsletter-embed-preview iframe { width: 100%; height: 100%; border: 0; background: #fff; }
 
 @media (max-width: 1200px) {
   .nl-stats-grid { grid-template-columns: repeat(3, minmax(180px,1fr)); }

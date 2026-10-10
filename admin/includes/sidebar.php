@@ -839,11 +839,23 @@ $display_logo = sidebar_logo_exists($site_logo);
                 }
                 ?>
 
-                <div class="nav-section-label">
-                    <?= h($groupName) ?>
-                </div>
+                <?php
+                $groupId = 'nav-group-' . substr(sha1((string)$groupName), 0, 10);
+                $groupIsActive = false;
+                foreach ($items as $groupItem) {
+                    if (sidebar_is_active_url((string)($groupItem['page_url'] ?? ''), $current_page)) {
+                        $groupIsActive = true;
+                        break;
+                    }
+                }
+                ?>
+                <details class="nav-group" <?= $groupIsActive ? 'open' : '' ?>>
+                    <summary class="nav-section-label" aria-controls="<?= h($groupId) ?>">
+                        <span><?= h($groupName) ?></span>
+                        <i class="fa-solid fa-chevron-down nav-group-chevron" aria-hidden="true"></i>
+                    </summary>
 
-                <ul class="nav-list">
+                <ul class="nav-list" id="<?= h($groupId) ?>">
 
                     <?php foreach ($items as $item): ?>
 
@@ -898,6 +910,7 @@ $display_logo = sidebar_logo_exists($site_logo);
                     <?php endforeach; ?>
 
                 </ul>
+                </details>
 
             <?php endforeach; ?>
 
@@ -921,11 +934,13 @@ $display_logo = sidebar_logo_exists($site_logo);
 
         <?php endif; ?>
 
-        <div class="nav-section-label">
-            Account
-        </div>
+        <details class="nav-group nav-account">
+            <summary class="nav-section-label" aria-controls="nav-account-list">
+                <span>Account</span>
+                <i class="fa-solid fa-chevron-down nav-group-chevron" aria-hidden="true"></i>
+            </summary>
 
-        <ul class="nav-list">
+        <ul class="nav-list" id="nav-account-list">
 
             <li class="nav-item">
 
@@ -949,6 +964,7 @@ $display_logo = sidebar_logo_exists($site_logo);
             </li>
 
         </ul>
+        </details>
 
     </nav>
 

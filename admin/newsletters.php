@@ -963,6 +963,7 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
                     <div class="nl-tbl-actions">
                       <?php if ($isPdf): ?>
                         <a href="<?= h(nl_asset_url($pdfPath)) ?>" target="_blank" rel="noopener" class="nl-btn nl-btn-sm nl-btn-secondary nl-btn-icon" title="View PDF"><i class="fa fa-eye"></i></a>
+                        <a href="<?= h(nl_asset_url($pdfPath)) ?>" download class="nl-btn nl-btn-sm nl-btn-secondary nl-btn-icon" title="Download PDF"><i class="fa fa-download"></i></a>
                       <?php else: ?>
                         <button
                           class="nl-btn nl-btn-sm nl-btn-secondary nl-btn-icon"
@@ -992,7 +993,7 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
                       <?php endif; ?>
 
                       <?php if ($status === 'sent'): ?>
-                        <a class="nl-btn nl-btn-sm nl-btn-secondary nl-btn-icon" href="<?= h(nl_site_url() . '/newsletter-view.php?id=' . (int)$nl['id'] . '&embed=1') ?>" target="_blank" rel="noopener" title="Preview embed"><i class="fa fa-code"></i></a>
+                        <button class="nl-btn nl-btn-sm nl-btn-secondary nl-btn-icon" type="button" onclick='NL.openEmbed(<?= (int)$nl['id'] ?>,<?= json_encode((string)($nl['subject'] ?? 'Newsletter'), JSON_HEX_TAG|JSON_HEX_QUOT|JSON_HEX_APOS|JSON_HEX_AMP) ?>)' title="Preview embed"><i class="fa fa-code"></i></button>
                       <?php endif; ?>
 
                       <form method="POST" action="newsletters" class="nl-inline-form" onsubmit="return NL.confirmDeleteNewsletter(this)">
@@ -1003,12 +1004,6 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
                     </div>
                   </td>
                 </tr>
-                <?php if ($status === 'sent'): ?>
-                <tr class="nl-embed-row"><td colspan="8" style="padding:0 14px 12px">
-                  <label for="newsletter-embed-<?= (int)$nl['id'] ?>" class="nl-muted-sm">Embed on another website — copy this iframe code</label>
-                  <textarea id="newsletter-embed-<?= (int)$nl['id'] ?>" readonly rows="2" onclick="this.select()" style="display:block;width:100%;margin-top:5px;font:12px monospace;resize:vertical" aria-label="Iframe embed code for <?= h($nl['subject'] ?? 'newsletter') ?>"><?= h('<iframe src="' . nl_site_url() . '/newsletter-view.php?id=' . (int)$nl['id'] . '&embed=1" title="' . (string)($nl['subject'] ?? 'Newsletter') . '" width="100%" height="800" style="border:0" loading="lazy"></iframe>') ?></textarea>
-                </td></tr>
-                <?php endif; ?>
               <?php endwhile; ?>
               </tbody>
             </table>
@@ -1398,6 +1393,22 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
 </div>
 
 <!-- PREVIEW -->
+<div class="modal-overlay" id="newsletterEmbedModal" aria-hidden="true">
+  <div class="nl-modal newsletter-embed-modal" role="dialog" aria-modal="true" aria-labelledby="newsletterEmbedTitle">
+    <div class="nl-modal-header">
+      <span class="nl-modal-title"><i class="fa fa-code"></i> <span id="newsletterEmbedTitle">Newsletter Embed Preview</span></span>
+      <button class="nl-modal-close" type="button" onclick="NL.closeEmbed()" aria-label="Close">&times;</button>
+    </div>
+    <div class="nl-modal-body">
+      <p class="nl-muted-sm" style="margin-bottom:10px">Preview of the published newsletter as it will appear when embedded.</p>
+      <div class="newsletter-embed-preview"><iframe id="newsletterEmbedFrame" title="Newsletter embed preview"></iframe></div>
+      <label for="newsletterEmbedCode" class="nl-muted-sm" style="display:block;margin:14px 0 5px">Copy this code into your website</label>
+      <textarea id="newsletterEmbedCode" class="nl-form-control" rows="3" readonly onclick="this.select()" aria-label="Newsletter iframe embed code"></textarea>
+      <button type="button" class="nl-btn nl-btn-primary" style="margin-top:10px" onclick="NL.copyEmbedCode(this)"><i class="fa fa-copy"></i> Copy embed code</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="previewModal">
   <div class="nl-modal nl-preview-dialog">
     <div class="nl-modal-header">
@@ -1507,6 +1518,45 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 <?php endif; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (!window.NL) return;
+  window.NL.openEmbed = function (id, subject) {
+    var url = window.NL_SITE_URL + '/newsletter-view.php?id=' + encodeURIComponent(id) + '&embed=1';
+    var title = String(subject || 'Newsletter');
+    var code = '<iframe src="' + url + '" title="' + title.replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]; }) + '" width="100%" height="800" style="border:0" loading="lazy"></iframe>';
+    $('newsletterEmbedTitle').textContent = title + ' — Embed Preview';
+    $('newsletterEmbedFrame').src = url;
+    $('newsletterEmbedCode').value = code;
+    $('newsletterEmbedModal').classList.add('open');
+    $('newsletterEmbedModal').setAttribute('aria-hidden', 'false');
+  };
+  window.NL.closeEmbed = function () {
+    $('newsletterEmbedModal').classList.remove('open');
+    $('newsletterEmbedModal').setAttribute('aria-hidden', 'true');
+    $('newsletterEmbedFrame').src = 'about:blank';
+  };
+  window.NL.copyEmbedCode = function (button) {
+    var field = $('newsletterEmbedCode');
+    field.select();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(field.value).then(function () {
+        button.innerHTML = '<i class="fa fa-check"></i> Copied';
+        setTimeout(function () { button.innerHTML = '<i class="fa fa-copy"></i> Copy embed code'; }, 1600);
+      }).catch(function () { document.execCommand('copy'); });
+    } else {
+      document.execCommand('copy');
+    }
+  };
+  $('newsletterEmbedModal').addEventListener('click', function (event) {
+    if (event.target === this) window.NL.closeEmbed();
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && $('newsletterEmbedModal').classList.contains('open')) window.NL.closeEmbed();
+  });
+});
+</script>
 
 <script>
 /*
