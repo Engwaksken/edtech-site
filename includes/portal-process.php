@@ -627,6 +627,32 @@ function pp_document_folder_redirect(?int $folder_id = null): void {
     vp_redir($page);
 }
 
+function pp_document_is_json_request(): bool
+{
+    $requestedWith = strtolower(trim((string)($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')));
+    $accept = strtolower((string)($_SERVER['HTTP_ACCEPT'] ?? ''));
+    return $requestedWith === 'xmlhttprequest' || str_contains($accept, 'application/json');
+}
+
+function pp_document_json_response(bool $success, string $message = '', array $extra = []): void
+{
+    if (!$success) http_response_code(422);
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
+    while (ob_get_level() > 0) ob_end_clean();
+    echo json_encode(array_merge(['success' => $success, 'message' => $message], $extra));
+    exit;
+}
+
+function pp_document_move_finish(bool $success, string $message, ?int $returnFolder = null): void
+{
+    if (pp_document_is_json_request()) {
+        pp_document_json_response($success, $message);
+    }
+    vp_flash($message, $success ? 'success' : 'error');
+    pp_document_folder_redirect($returnFolder);
+}
+
 
 function pp_clean_folder_name(string $name): string {
     $name = preg_replace('/[\x00-\x1F\x7F]/u', '', trim($name)) ?? '';
@@ -1619,6 +1645,49 @@ if (isset($ppDocumentActionAliases[$action])) {
 // Make the folder schema available before any document action runs.
 pp_ensure_document_folders($conn);
 
+if ($action === 'list_folders') {
+    $stmt = $conn->prepare("
+        SELECT id, parent_id, folder_name
+        FROM venture_document_folders
+        WHERE venture_id = ?
+        ORDER BY folder_name ASC, id ASC
+    ");
+    if (!$stmt) {
+        pp_document_json_response(false, 'Could not load your folders.');
+    }
+    $stmt->bind_param('i', $venture_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $childrenByParent = [];
+    while ($row = $result->fetch_assoc()) {
+        $parentId = (int)($row['parent_id'] ?? 0);
+        $childrenByParent[$parentId][] = [
+            'id' => (int)$row['id'],
+            'name' => (string)$row['folder_name'],
+        ];
+    }
+    $stmt->close();
+
+    $flatFolders = [];
+    $visitedFolders = [];
+    $appendChildren = function (int $parentId, int $depth) use (&$appendChildren, &$flatFolders, &$visitedFolders, &$childrenByParent): void {
+        foreach ($childrenByParent[$parentId] ?? [] as $folder) {
+            $folderId = (int)$folder['id'];
+            if (isset($visitedFolders[$folderId])) continue;
+            $visitedFolders[$folderId] = true;
+            $flatFolders[] = [
+                'id' => $folderId,
+                'name' => $folder['name'],
+                'depth' => $depth,
+            ];
+            $appendChildren($folderId, $depth + 1);
+        }
+    };
+    $appendChildren(0, 0);
+
+    pp_document_json_response(true, '', ['folders' => $flatFolders]);
+}
+
 
 /*
 |--------------------------------------------------------------------------
@@ -1969,26 +2038,22 @@ if ($action === 'move_document_folder') {
     );
 
     if ($folder_id <= 0 || !pp_folder_exists($conn, $venture_id, $folder_id)) {
-        vp_flash('Folder not found.', 'error');
-        pp_document_folder_redirect();
+        pp_document_move_finish(false, 'Folder not found.');
     }
 
     if ($target_folder_id > 0 && !pp_folder_exists($conn, $venture_id, $target_folder_id)) {
-        vp_flash('Destination folder not found.', 'error');
-        pp_document_folder_redirect();
+        pp_document_move_finish(false, 'Destination folder not found.');
     }
 
     if ($target_folder_id === $folder_id) {
-        vp_flash('A folder cannot be moved into itself.', 'error');
-        pp_document_folder_redirect($folder_id);
+        pp_document_move_finish(false, 'A folder cannot be moved into itself.', $folder_id);
     }
 
     if (
         $target_folder_id > 0
         && pp_folder_is_descendant($conn, $venture_id, $target_folder_id, $folder_id)
     ) {
-        vp_flash('A folder cannot be moved inside one of its own subfolders.', 'error');
-        pp_document_folder_redirect($folder_id);
+        pp_document_move_finish(false, 'A folder cannot be moved inside one of its own subfolders.', $folder_id);
     }
 
     if ($target_folder_id > 0) {
@@ -2009,14 +2074,14 @@ if ($action === 'move_document_folder') {
         $stmt->bind_param('ii', $folder_id, $venture_id);
     }
 
-    if ($stmt->execute()) {
-        vp_flash('Folder moved successfully.');
-    } else {
-        vp_flash('Failed to move folder: ' . $stmt->error, 'error');
-    }
+    $moved = $stmt->execute();
+    $error = $stmt->error;
     $stmt->close();
-
-    pp_document_folder_redirect($target_folder_id > 0 ? $target_folder_id : null);
+    pp_document_move_finish(
+        $moved,
+        $moved ? 'Folder moved successfully.' : 'Failed to move folder: ' . $error,
+        $target_folder_id > 0 ? $target_folder_id : null
+    );
 }
 
 
@@ -2030,13 +2095,11 @@ if ($action === 'move_document') {
     );
 
     if ($document_id <= 0) {
-        vp_flash('Invalid document.', 'error');
-        pp_document_folder_redirect();
+        pp_document_move_finish(false, 'Invalid document.');
     }
 
     if ($target_folder_id > 0 && !pp_folder_exists($conn, $venture_id, $target_folder_id)) {
-        vp_flash('Destination folder not found.', 'error');
-        pp_document_folder_redirect();
+        pp_document_move_finish(false, 'Destination folder not found.');
     }
 
     $check = $conn->prepare("
@@ -2051,8 +2114,7 @@ if ($action === 'move_document') {
     $check->close();
 
     if (!$doc) {
-        vp_flash('Document not found.', 'error');
-        pp_document_folder_redirect();
+        pp_document_move_finish(false, 'Document not found.');
     }
 
     if ($target_folder_id > 0) {
@@ -2073,14 +2135,14 @@ if ($action === 'move_document') {
         $stmt->bind_param('ii', $document_id, $venture_id);
     }
 
-    if ($stmt->execute()) {
-        vp_flash('Document moved successfully.');
-    } else {
-        vp_flash('Failed to move document: ' . $stmt->error, 'error');
-    }
+    $moved = $stmt->execute();
+    $error = $stmt->error;
     $stmt->close();
-
-    pp_document_folder_redirect($target_folder_id > 0 ? $target_folder_id : null);
+    pp_document_move_finish(
+        $moved,
+        $moved ? 'Document moved successfully.' : 'Failed to move document: ' . $error,
+        $target_folder_id > 0 ? $target_folder_id : null
+    );
 }
 
 

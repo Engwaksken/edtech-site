@@ -259,6 +259,10 @@ include 'layout.php';
   padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;
   box-shadow:0 6px 20px rgba(0,0,0,.25);
 }
+.doc-notice-message{display:flex;align-items:flex-start;gap:12px;color:var(--ink);font-size:14px;line-height:1.6;white-space:pre-line}
+.doc-notice-icon{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border-radius:50%;background:#fff3e0;color:#c65b00}
+.doc-notice-footer{display:flex;justify-content:flex-end;gap:8px}
+.doc-notice-footer .btn{min-width:94px}
 
 .section-label{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:4px 0 10px}
 
@@ -796,6 +800,23 @@ $has_docs    = !empty($docs_arr);
 </div>
 </div>
 
+<!-- Customized notice/confirmation dialog for document actions -->
+<div class="vp-modal-overlay" id="docNoticeModal" aria-hidden="true">
+<div class="vp-modal" role="alertdialog" aria-modal="true" aria-labelledby="docNoticeTitle" aria-describedby="docNoticeMessage">
+  <div class="vp-modal-header">
+    <div class="vp-modal-title" id="docNoticeTitle">Documents</div>
+    <button type="button" class="vp-modal-close" onclick="closeDocNotice(false)" aria-label="Close">&times;</button>
+  </div>
+  <div class="vp-modal-body">
+    <div class="doc-notice-message" id="docNoticeMessage"><span class="doc-notice-icon"><i class="fa fa-info"></i></span><span></span></div>
+  </div>
+  <div class="vp-modal-footer doc-notice-footer">
+    <button type="button" class="btn btn-outline" id="docNoticeCancel" onclick="closeDocNotice(false)">Cancel</button>
+    <button type="button" class="btn btn-primary" id="docNoticeAccept" onclick="closeDocNotice(true)">OK</button>
+  </div>
+</div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -857,10 +878,20 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('submit', function (event) {
         var form = event.target.closest('.js-delete-folder-form');
         if (!form) return;
-        var folderName = form.dataset.folderName || 'this folder';
-        if (!window.confirm("Delete folder '" + folderName + "'? It must be empty.")) {
-            event.preventDefault();
+        if (form.dataset.confirmed === '1') {
+            delete form.dataset.confirmed;
+            return;
         }
+        event.preventDefault();
+        var folderName = form.dataset.folderName || 'this folder';
+        window.showDocNotice("Delete folder '" + folderName + "'? The folder must be empty.", {
+            title: 'Delete folder', confirm: true, danger: true, acceptLabel: 'Delete'
+        }).then(function (confirmed) {
+            if (!confirmed) return;
+            form.dataset.confirmed = '1';
+            if (typeof form.requestSubmit === 'function') form.requestSubmit();
+            else form.submit();
+        });
     });
 
     window.toggleOtherCategoryName = function () {
@@ -974,8 +1005,49 @@ document.addEventListener('DOMContentLoaded', function () {
         var modal = document.getElementById(id);
         if (!modal) return;
         modal.classList.remove('open');
-        document.body.classList.remove('doc-modal-open');
+        if (!document.querySelector('.vp-modal-overlay.open, .doc-modal-overlay.open')) {
+            document.body.classList.remove('doc-modal-open');
+        }
     }
+
+    var docNoticeResolver = null;
+    window.showDocNotice = function (message, options) {
+        options = options || {};
+        var modal = document.getElementById('docNoticeModal');
+        var title = document.getElementById('docNoticeTitle');
+        var messageText = document.querySelector('#docNoticeMessage > span:last-child');
+        var cancel = document.getElementById('docNoticeCancel');
+        var accept = document.getElementById('docNoticeAccept');
+        if (!modal || !messageText || !accept) return Promise.resolve(false);
+        if (docNoticeResolver) docNoticeResolver(false);
+        if (title) title.textContent = options.title || (options.confirm ? 'Please confirm' : 'Documents');
+        messageText.textContent = String(message || '');
+        if (cancel) {
+            cancel.style.display = options.confirm ? '' : 'none';
+            cancel.textContent = options.cancelLabel || 'Cancel';
+        }
+        accept.textContent = options.acceptLabel || (options.confirm ? 'Continue' : 'OK');
+        accept.className = 'btn ' + (options.danger ? 'btn-danger' : 'btn-primary');
+        modal.setAttribute('aria-hidden', 'false');
+        openDocModal('docNoticeModal');
+        window.setTimeout(function () { accept.focus(); }, 50);
+        return new Promise(function (resolve) { docNoticeResolver = resolve; });
+    };
+    window.closeDocNotice = function (confirmed) {
+        var modal = document.getElementById('docNoticeModal');
+        if (modal) modal.setAttribute('aria-hidden', 'true');
+        closeDocModal('docNoticeModal');
+        if (docNoticeResolver) {
+            var resolve = docNoticeResolver;
+            docNoticeResolver = null;
+            resolve(!!confirmed);
+        }
+    };
+
+    var noticeModal = document.getElementById('docNoticeModal');
+    if (noticeModal) noticeModal.addEventListener('click', function (event) {
+        if (event.target === noticeModal) window.closeDocNotice(false);
+    });
 
     // ---------------------------------------------------------
     //  FOLDER NAVIGATION
@@ -1081,6 +1153,7 @@ document.addEventListener('DOMContentLoaded', function () {
             closeDocModal('uploadModal');  closeDocModal('newFolderModal');
             closeDocModal('renameFolderModal'); closeDocModal('moveModal');
             closeDocModal('versionModal');
+            window.closeDocNotice(false);
         }
     });
 
@@ -1097,22 +1170,26 @@ document.addEventListener('DOMContentLoaded', function () {
         openDocModal('moveModal');
 
         try {
-            var res = await fetch(PROCESS + '?action=list_folders');
+            var res = await fetch(PROCESS + '?action=list_folders', {
+                headers: {'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json'}
+            });
             var data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.message || 'Could not load folders.');
             sel.innerHTML = '';
             var root = document.createElement('option');
             root.value = '0'; root.textContent = '\u2014 Vault Root \u2014';
             sel.appendChild(root);
-            if (data.success) {
-                data.folders.forEach(function (f) {
-                    if (type === 'folder' && f.id === id) return;
-                    var opt = document.createElement('option');
-                    opt.value = f.id;
-                    opt.textContent = '\u2014\u00A0'.repeat(f.depth) + f.name;
-                    sel.appendChild(opt);
-                });
-            }
-        } catch (e) { sel.innerHTML = '<option value="0">\u2014 Vault Root \u2014</option>'; }
+            data.folders.forEach(function (f) {
+                if (type === 'folder' && parseInt(f.id, 10) === parseInt(id, 10)) return;
+                var opt = document.createElement('option');
+                opt.value = f.id;
+                opt.textContent = '\u2014\u00A0'.repeat(Math.max(0, parseInt(f.depth, 10) || 0)) + f.name;
+                sel.appendChild(opt);
+            });
+        } catch (e) {
+            sel.innerHTML = '<option value="0">\u2014 Vault Root \u2014</option>';
+            await window.showDocNotice(e.message || 'Could not load destination folders.', {title:'Folder list unavailable'});
+        }
     };
 
     document.getElementById('moveConfirmBtn').addEventListener('click', async function () {
@@ -1129,11 +1206,21 @@ document.addEventListener('DOMContentLoaded', function () {
         fd.append('id', id);
         fd.append('target_folder_id', targetFolderId);
         try {
-            var res = await fetch(PROCESS, { method: 'POST', body: fd });
+            var res = await fetch(PROCESS, {
+                method: 'POST',
+                body: fd,
+                headers: {'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json'}
+            });
             var data = await res.json();
-            if (!data.success) { alert(data.message || 'Move failed.'); return false; }
+            if (!res.ok || !data.success) {
+                await window.showDocNotice(data.message || 'The item could not be moved. Please try again.', {title:'Move failed'});
+                return false;
+            }
             return true;
-        } catch (err) { alert('Move failed.'); return false; }
+        } catch (err) {
+            await window.showDocNotice(err.message || 'The move request could not be completed. Check your connection and try again.', {title:'Move failed'});
+            return false;
+        }
     }
 
     // ===========================================================
