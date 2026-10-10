@@ -687,6 +687,20 @@ if (isset($report_types[$tab]) && $mentor_reports_has_type) {
     .mr-page-ellipsis { padding:0 3px; color:#98a2b3; }
     .mr-inline-delete { display:inline-flex; margin:0; vertical-align:middle; }
     .mr-locked-scope { opacity:.82; background:#f8fafc !important; cursor:not-allowed; }
+    .mr-overview-card { margin-bottom:18px; overflow:hidden; }
+    .mr-overview-summary { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px; cursor:pointer; list-style:none; }
+    .mr-overview-summary::-webkit-details-marker { display:none; }
+    .mr-overview-summary h3 { display:flex; align-items:center; gap:9px; margin:0; font-size:1rem; }
+    .mr-overview-summary-meta { display:flex; align-items:center; gap:10px; color:#667085; font-size:.78rem; font-weight:700; }
+    .mr-overview-summary-meta .fa-chevron-down { transition:transform .18s ease; }
+    .mr-overview-card[open] .mr-overview-summary-meta .fa-chevron-down { transform:rotate(180deg); }
+    .mr-overview-card[open] .mr-overview-summary { border-bottom:1px solid #eaecf0; }
+    .mr-overview-card .stat-ribbon { padding:14px 18px 0; margin-bottom:14px; }
+    .mr-table-scroll { max-height:380px; overflow:auto; overscroll-behavior:contain; }
+    .mr-table-scroll .rl-table thead th { position:sticky; top:0; z-index:2; background:#f8fafc; }
+    .mr-table-scroll .rl-table { min-width:700px; }
+    .mr-section-tools { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+    .mr-section-tools .mr-list-controls { margin:0; }
 
     /*
      * Continue Draft can be much taller than the collapsed New Report card.
@@ -770,8 +784,11 @@ if (isset($report_types[$tab]) && $mentor_reports_has_type) {
     $overview_list  = rs_overview_list($conn, 10000);
     [$overview_list, $overviewTotal, $overviewPage, $overviewPages] = mr_paginate_rows($overview_list, 'overview_page', $reportsPerPage);
 ?>
-<div class="card legacy-style-676666d3dd" id="reports-overview">
-  <h3 class="legacy-style-e5c4883de6"><i class="fa fa-chart-simple legacy-style-c874923b8e"></i> All Reports &mdash; Overview</h3>
+<details class="card mr-overview-card legacy-style-676666d3dd" id="reports-overview" <?= isset($_GET['overview_page']) ? 'open' : '' ?>>
+  <summary class="mr-overview-summary">
+    <h3><i class="fa fa-chart-simple legacy-style-c874923b8e"></i> All Reports Overview</h3>
+    <span class="mr-overview-summary-meta"><?= number_format($overviewGrandTotal) ?> reports <span aria-hidden="true">·</span> <?= (int)$overview_stats['pending'] ?> pending <i class="fa fa-chevron-down" aria-hidden="true"></i></span>
+  </summary>
 
   <div class="stat-ribbon">
     <div class="stat-rb"><div class="stat-rb-num"><?= number_format($overviewGrandTotal) ?></div><div class="stat-rb-lbl">Total reports</div></div>
@@ -822,7 +839,7 @@ if (isset($report_types[$tab]) && $mentor_reports_has_type) {
   </table>
   </div>
   <?php mr_render_pagination('overview_page', $overviewPage, $overviewPages, $overviewTotal, 'reports-overview'); ?>
-</div>
+</details>
 <?php endif; ?>
 
 <div class="ms-tabs">
@@ -850,6 +867,7 @@ if (isset($report_types[$tab]) && $mentor_reports_has_type) {
   <?php if (!$structured_list): ?>
     <p class="legacy-style-90dbc5db20">No reports of this type yet.</p>
   <?php else: ?>
+    <div class="mr-table-scroll">
     <table class="rl-table">
       <thead><tr><th>Title</th><th>Mentor</th><th>Venture</th><th>Status</th><th>Submitted</th><th></th></tr></thead>
       <tbody>
@@ -917,6 +935,7 @@ if (isset($report_types[$tab]) && $mentor_reports_has_type) {
       <?php endforeach; ?>
       </tbody>
     </table>
+    </div>
     <?php mr_render_pagination('structured_page', $structuredPage, $structuredPages, $structuredTotal, 'structured-reports'); ?>
   <?php endif; ?>
 </div>
@@ -941,7 +960,7 @@ if (isset($report_types[$tab]) && $mentor_reports_has_type) {
       <p>No uploaded PDF reports for this category yet.</p>
     </div>
   <?php else: ?>
-    <div class="table-responsive">
+    <div class="table-responsive mr-table-scroll">
       <table class="rl-table">
         <thead><tr><th>Title</th><th>Mentor</th><th>Venture</th><th>Status</th><th>Uploaded</th><th>File</th></tr></thead>
         <tbody>

@@ -177,12 +177,14 @@ $SECTION_LABELS = [
 ];
 
 function render_closed_page($site_name, $title, $body, $icon, $accent) {
-    echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'.$title.'</title>
+    echo '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>'.iv_h($title).' - '.iv_h($site_name).'</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,600&family=Syne:wght@400;600&display=swap" rel="stylesheet">
-    <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Syne,sans-serif;background:#f9fafb;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.card{background:#fff;border-radius:20px;padding:48px 40px;max-width:440px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.1)}.icon{width:72px;height:72px;border-radius:50%;background:'.$accent.'20;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:1.8rem;color:'.$accent.'}.h1{font-family:Lora,Georgia,serif;font-style:italic;font-size:1.7rem;color:#111;margin-bottom:12px}.p{color:#6b7280;font-size:.88rem;line-height:1.7}</style>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css?v='.(int)@filemtime(__DIR__.'/assets/css/style.css').'">
+    <link rel="stylesheet" href="assets/css/interview.css?v='.(int)@filemtime(__DIR__.'/assets/css/interview.css').'">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    </head><body><div class="card"><div class="icon"><i class="fa '.$icon.'"></i></div><h1 class="h1">'.$title.'</h1><p class="p">'.$body.'</p></div></body></html>';
+    </head><body class="interview-page"><main class="iv-closed-page"><section class="iv-closed-card"><div class="iv-closed-icon" style="--closed-accent:'.iv_h($accent).'"><i class="fa '.iv_h($icon).'"></i></div><p class="iv-eyebrow">'.iv_h($site_name).' · Field Interview</p><h1>'.iv_h($title).'</h1><p>'.iv_h($body).'</p></section></main></body></html>';
     exit;
 }
 ?>
@@ -192,17 +194,18 @@ function render_closed_page($site_name, $title, $body, $icon, $accent) {
 <?php require_once __DIR__ . '/includes/favicon.php'; ?>
 <meta charset="UTF-8">
 <title><?= iv_h($interview['title']) ?> - <?= iv_h($site_name) ?></title>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="theme-color" content="#0c0f1a">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fc7f10">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Syne:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/interviews.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/style.css') ?>">
+<link rel="stylesheet" href="assets/css/interview.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/interview.css') ?>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 
 </head>
-<body>
+<body class="interview-page">
 
 <div class="prog-track"><div class="prog-fill" id="globalProg" style="width:0%"></div></div>
 
