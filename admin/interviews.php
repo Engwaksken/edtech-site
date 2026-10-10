@@ -154,9 +154,9 @@ if ($CAN_MANAGE_INTERVIEWS) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Ouftit:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/admin.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/admin.css') ?>">
-<link rel="stylesheet" href="assets/css/interviews.css">
+<link rel="stylesheet" href="assets/css/interviews.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/interviews.css') ?>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 </head>
@@ -663,6 +663,7 @@ if ($CAN_MANAGE_INTERVIEWS) {
     </div>
   <?php else: ?>
     <div class="iv-card">
+      <div class="iv-table-wrap">
       <table class="iv-table" id="respTable">
         <thead><tr>
           <th>#</th><th>Session</th><th>Venture</th><th>Interviewer</th>
@@ -696,6 +697,7 @@ if ($CAN_MANAGE_INTERVIEWS) {
           <?php endforeach; ?>
         </tbody>
       </table>
+      </div>
     </div>
   <?php endif; ?>
 <?php endif; ?>
