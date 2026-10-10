@@ -289,32 +289,30 @@ function render_closed_page($site_name, $title, $body, $icon, $accent) {
 
   <div class="layout">
 
-    <!-- Side nav (desktop only) -->
-    <nav class="side-nav" id="sideNav" aria-label="Interview sections">
-      <div style="font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);padding:0 12px;margin-bottom:4px">Sections</div>
-      <!-- Interviewer info -->
-      <button type="button" class="side-nav-item active" id="navInfo" onclick="scrollTo('infoCard')">
-        <span class="nav-dot"></span> Interviewer info
+    <nav class="iv-section-tabs" id="ivSectionTabs" role="tablist" aria-label="Interview sections">
+      <button type="button" class="iv-section-tab active" id="navInfo" role="tab" aria-selected="true" aria-controls="infoCard" tabindex="0" data-panel="infoCard">
+        <span class="iv-tab-step">1</span><span class="iv-tab-label">Interview details</span>
       </button>
-      <?php foreach ($selected_sections as $si => $skey):
-        if (!isset($SECTION_LABELS[$skey])) continue;
+      <?php $tabIndex = 1; foreach ($selected_sections as $si => $skey):
+        if (!isset($SECTION_LABELS[$skey]) || !isset($SECTION_QUESTIONS[$skey])) continue;
+        $tabIndex++;
       ?>
-        <button type="button" class="side-nav-item" id="nav_<?= $skey ?>" onclick="scrollTo('sec_<?= $skey ?>')">
-          <span class="nav-dot"></span> <?= iv_h($SECTION_LABELS[$skey]) ?>
+        <button type="button" class="iv-section-tab" id="nav_<?= iv_h($skey) ?>" role="tab" aria-selected="false" aria-controls="sec_<?= iv_h($skey) ?>" tabindex="-1" data-panel="sec_<?= iv_h($skey) ?>">
+          <span class="iv-tab-step"><?= $tabIndex ?></span><span class="iv-tab-label"><?= iv_h($SECTION_LABELS[$skey]) ?></span><span class="iv-tab-done" aria-hidden="true"><i class="fa fa-check"></i></span>
         </button>
       <?php endforeach; ?>
-      <?php if (!empty($custom_questions)): ?>
-        <button type="button" class="side-nav-item" id="navCustom" onclick="scrollTo('sec_custom')">
-          <span class="nav-dot"></span> Additional Questions
+      <?php if (!empty($custom_questions)): $tabIndex++; ?>
+        <button type="button" class="iv-section-tab" id="navCustom" role="tab" aria-selected="false" aria-controls="sec_custom" tabindex="-1" data-panel="sec_custom">
+          <span class="iv-tab-step"><?= $tabIndex ?></span><span class="iv-tab-label">Additional Questions</span><span class="iv-tab-done" aria-hidden="true"><i class="fa fa-check"></i></span>
         </button>
       <?php endif; ?>
     </nav>
 
-    <!-- Main form -->
-    <div>
+    <!-- Tab panels -->
+    <div class="iv-panel-stack">
 
       <!-- Interviewer info block -->
-      <div class="info-card" id="infoCard">
+      <div class="info-card interview-panel active" id="infoCard" role="tabpanel" aria-labelledby="navInfo">
         <h3><i class="fa fa-user-circle" style="color:var(--a2);margin-right:6px"></i>Interviewer & Interview Details</h3>
         <div class="info-grid">
           <div class="info-group">
@@ -364,8 +362,8 @@ function render_closed_page($site_name, $title, $body, $icon, $accent) {
         $lbl  = $SECTION_LABELS[$skey] ?? $skey;
         $qcount = count($qs);
       ?>
-        <div class="section-block" id="sec_<?= iv_h($skey) ?>" style="animation-delay:<?= $si * 0.05 ?>s">
-          <div class="section-head <?= $si === 0 ? 'open' : '' ?>" onclick="toggleSection('<?= $skey ?>')">
+        <section class="section-block interview-panel" id="sec_<?= iv_h($skey) ?>" role="tabpanel" aria-labelledby="nav_<?= iv_h($skey) ?>" hidden>
+          <div class="interview-panel-heading">
             <div class="section-head-left">
               <div class="section-num"><?= $si + 1 ?></div>
               <div>
@@ -373,14 +371,9 @@ function render_closed_page($site_name, $title, $body, $icon, $accent) {
                 <div class="section-subtitle"><?= $qcount ?> question<?= $qcount > 1 ? 's' : '' ?></div>
               </div>
             </div>
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="section-completion" id="done_<?= $skey ?>">
-                <i class="fa fa-check"></i>
-              </div>
-              <i class="fa fa-chevron-down section-toggle-icon"></i>
-            </div>
+            <div class="section-completion" id="done_<?= iv_h($skey) ?>"><i class="fa fa-check"></i></div>
           </div>
-          <div class="section-body <?= $si === 0 ? 'open' : '' ?>" id="body_<?= $skey ?>">
+          <div class="section-body open" id="body_<?= iv_h($skey) ?>">
             <?php foreach ($qs as $qi => $q):
               $fname = 'sec_'.$skey.'_q'.$qi;
               $is_req = $q['req'];
@@ -452,13 +445,13 @@ function render_closed_page($site_name, $title, $body, $icon, $accent) {
               </div>
             <?php endforeach; ?>
           </div>
-        </div>
+        </section>
       <?php endforeach; ?>
 
       <!-- Custom questions -->
       <?php if (!empty($custom_questions)): ?>
-        <div class="section-block" id="sec_custom" style="animation-delay:<?= count($selected_sections) * 0.05 ?>s">
-          <div class="section-head" onclick="toggleSection('custom')">
+        <section class="section-block interview-panel" id="sec_custom" role="tabpanel" aria-labelledby="navCustom" hidden>
+          <div class="interview-panel-heading">
             <div class="section-head-left">
               <div class="section-num"><?= count($selected_sections) + 1 ?></div>
               <div>
@@ -466,12 +459,9 @@ function render_closed_page($site_name, $title, $body, $icon, $accent) {
                 <div class="section-subtitle"><?= count($custom_questions) ?> question<?= count($custom_questions) > 1 ? 's' : '' ?></div>
               </div>
             </div>
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="section-completion" id="done_custom"><i class="fa fa-check"></i></div>
-              <i class="fa fa-chevron-down section-toggle-icon"></i>
-            </div>
+            <div class="section-completion" id="done_custom"><i class="fa fa-check"></i></div>
           </div>
-          <div class="section-body" id="body_custom">
+          <div class="section-body open" id="body_custom">
             <?php foreach ($custom_questions as $qi => $q):
               $fname = 'custom_q'.$qi;
               $is_req = (int)($q['required'] ?? 0) === 1;
@@ -515,17 +505,18 @@ function render_closed_page($site_name, $title, $body, $icon, $accent) {
               </div>
             <?php endforeach; ?>
           </div>
-        </div>
+        </section>
       <?php endif; ?>
 
-      <!-- Submit button (large, inside form) -->
-      <div style="text-align:center;padding:24px 0 100px">
-        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-          <i class="fa fa-paper-plane"></i> Submit interview
-        </button>
-        <p style="font-size:.72rem;color:var(--soft);margin-top:10px">
-          All required fields (<span style="color:var(--red)">*</span>) must be filled before submitting.
-        </p>
+      <div class="iv-tab-actions">
+        <button type="button" class="btn btn-secondary" id="ivPreviousTab" onclick="moveInterviewTab(-1)" disabled><i class="fa fa-arrow-left"></i> Previous</button>
+        <span id="ivTabPosition" class="iv-tab-position">Step 1</span>
+        <button type="button" class="btn btn-primary" id="ivNextTab" onclick="moveInterviewTab(1)">Next <i class="fa fa-arrow-right"></i></button>
+      </div>
+
+      <div class="iv-submit-area">
+        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn"><i class="fa fa-paper-plane"></i> Submit interview</button>
+        <p>All required fields (<span>*</span>) must be filled before submitting.</p>
       </div>
 
     </div>
@@ -544,14 +535,59 @@ function render_closed_page($site_name, $title, $body, $icon, $accent) {
 </div>
 
 <script>
-/* -- Section accordion -- */
-function toggleSection(key) {
-  const head = document.querySelector(`#sec_${key} .section-head`);
-  const body = document.getElementById('body_' + key);
-  if (!head || !body) return;
-  head.classList.toggle('open');
-  body.classList.toggle('open');
+/* -- Tabbed interview navigation -- */
+function activateInterviewTab(tab, shouldScroll) {
+  const tabs = [...document.querySelectorAll('#ivSectionTabs [role="tab"]')];
+  const selected = typeof tab === 'number' ? tabs[tab] : tab;
+  if (!selected) return;
+  const panelId = selected.dataset.panel;
+  tabs.forEach(button => {
+    const active = button === selected;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-selected', active ? 'true' : 'false');
+    button.tabIndex = active ? 0 : -1;
+  });
+  document.querySelectorAll('.interview-panel').forEach(panel => {
+    const active = panel.id === panelId;
+    panel.hidden = !active;
+    panel.classList.toggle('active', active);
+  });
+  const index = tabs.indexOf(selected);
+  const previous = document.getElementById('ivPreviousTab');
+  const next = document.getElementById('ivNextTab');
+  const position = document.getElementById('ivTabPosition');
+  if (previous) previous.disabled = index <= 0;
+  if (next) next.innerHTML = index >= tabs.length - 1 ? 'Review &amp; submit <i class="fa fa-arrow-right"></i>' : 'Next <i class="fa fa-arrow-right"></i>';
+  if (position) position.textContent = 'Step ' + (index + 1) + ' of ' + tabs.length;
+  if (shouldScroll) document.getElementById('ivSectionTabs').scrollIntoView({behavior:'smooth', block:'start'});
 }
+
+function moveInterviewTab(direction) {
+  const tabs = [...document.querySelectorAll('#ivSectionTabs [role="tab"]')];
+  const activeIndex = tabs.findIndex(tab => tab.getAttribute('aria-selected') === 'true');
+  const nextIndex = activeIndex + direction;
+  if (nextIndex >= 0 && nextIndex < tabs.length) {
+    activateInterviewTab(tabs[nextIndex], true);
+  } else if (direction > 0) {
+    document.getElementById('submitBtn')?.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+
+document.querySelectorAll('#ivSectionTabs [role="tab"]').forEach((tab, index, tabs) => {
+  tab.addEventListener('click', () => activateInterviewTab(tab, false));
+  tab.addEventListener('keydown', event => {
+    let nextIndex = null;
+    if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+    if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+    if (event.key === 'Home') nextIndex = 0;
+    if (event.key === 'End') nextIndex = tabs.length - 1;
+    if (nextIndex !== null) {
+      event.preventDefault();
+      activateInterviewTab(tabs[nextIndex], false);
+      tabs[nextIndex].focus();
+    }
+  });
+});
 
 /* -- Choice select -- */
 function selectChoice(label) {
@@ -595,60 +631,53 @@ function checkSectionDone(key) {
   });
 
   dot.classList.toggle('done', allFilled && required.length > 0);
-  if (navEl) navEl.classList.toggle('done', allFilled && required.length > 0);
+  if (navEl) {
+    navEl.classList.toggle('done', allFilled && required.length > 0);
+    navEl.setAttribute('data-complete', allFilled && required.length > 0 ? 'true' : 'false');
+  }
   updateProgress();
 }
 
 /* -- Progress -- */
 function updateProgress() {
-  const all   = document.querySelectorAll('.section-block');
-  const done  = document.querySelectorAll('.section-completion.done');
-  const total = all.length + 1; // +1 for info card
-  const pct   = Math.round((done.length / total) * 100);
+  const all = document.querySelectorAll('.section-block');
+  const done = document.querySelectorAll('.section-completion.done').length;
+  const infoRequired = [...document.querySelectorAll('#infoCard [required]')];
+  const infoDone = infoRequired.length > 0 && infoRequired.every(field => field.type === 'radio'
+    ? document.querySelector('#infoCard [name="' + field.name + '"]:checked')
+    : Boolean(field.value.trim()));
+  const infoTab = document.getElementById('navInfo');
+  if (infoTab) infoTab.classList.toggle('done', infoDone);
+  const pct = Math.round(((done + (infoDone ? 1 : 0)) / (all.length + 1)) * 100);
   document.getElementById('globalProg').style.width  = pct + '%';
   document.getElementById('bottomProg').style.width  = pct + '%';
   document.getElementById('progText').textContent    = pct + '% complete';
 }
 
-/* -- Scroll nav -- */
-function scrollTo(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
-}
-
-/* -- Intersection observer for side nav highlight -- */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const id  = e.target.id;
-      const key = id === 'infoCard' ? 'Info' : id.replace('sec_', '');
-      document.querySelectorAll('.side-nav-item').forEach(n => n.classList.remove('active'));
-      const nav = document.getElementById(id === 'infoCard' ? 'navInfo' : 'nav_' + key);
-      if (nav) nav.classList.add('active');
-    }
-  });
-}, { threshold: 0.2 });
-
-document.querySelectorAll('.section-block, #infoCard').forEach(el => observer.observe(el));
+document.querySelectorAll('#infoCard [required]').forEach(field => {
+  field.addEventListener('input', updateProgress);
+  field.addEventListener('change', updateProgress);
+});
+document.querySelectorAll('.section-block').forEach(section => checkSectionDone(section.id.replace('sec_', '')));
+updateProgress();
 
 /* -- Form submit validation -- */
 document.getElementById('ivForm').addEventListener('submit', function(e) {
   let valid = true;
+  let firstInvalid = null;
   this.querySelectorAll('[required]').forEach(el => {
     const err = document.getElementById('err_' + el.name);
     if (el.type === 'radio') {
       const checked = this.querySelector(`[name="${el.name}"]:checked`);
       if (!checked) {
         valid = false;
-        el.closest('.section-block')?.querySelector('.section-head')?.classList.add('open');
-        document.getElementById('body_' + el.closest('.section-block')?.id?.replace('sec_',''))?.classList.add('open');
+        if (!firstInvalid) firstInvalid = el;
         if (err) err.style.display = '';
       } else { if (err) err.style.display = 'none'; }
     } else {
       if (!el.value.trim()) {
         el.classList.add('err');
-        el.closest('.section-block')?.querySelector('.section-head')?.classList.add('open');
-        document.getElementById('body_' + el.closest('.section-block')?.id?.replace('sec_',''))?.classList.add('open');
+        if (!firstInvalid) firstInvalid = el;
         if (err) err.style.display = '';
         valid = false;
       } else {
@@ -660,7 +689,9 @@ document.getElementById('ivForm').addEventListener('submit', function(e) {
 
   if (!valid) {
     e.preventDefault();
-    const firstErr = document.querySelector('.err, .q-err:not([style*="none"])');
+    const firstPanel = firstInvalid?.closest('.interview-panel');
+    if (firstPanel) activateInterviewTab(document.querySelector('#ivSectionTabs [aria-controls="' + firstPanel.id + '"]'), false);
+    const firstErr = firstInvalid || document.querySelector('.err, .q-err:not([style*="none"])');
     if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return false;
   }

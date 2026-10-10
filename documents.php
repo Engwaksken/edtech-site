@@ -228,6 +228,29 @@ include 'layout.php';
 .folder-card-actions{display:flex;justify-content:flex-end;gap:6px}
 .folder-card-actions form{display:inline}
 
+.drive-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-4px 0 14px}
+.drive-location{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:13px;font-weight:750}
+.drive-location i{color:#f2b93b}
+.drive-view-toggle{display:flex;gap:3px;padding:3px;border:1px solid var(--border);border-radius:9px;background:#fff}
+.drive-view-toggle button{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border:0;border-radius:6px;background:transparent;color:var(--muted);font-size:11px;font-weight:700;cursor:pointer}
+.drive-view-toggle button.active{background:#fff3e0;color:#a64b00}
+.drive-list-heading{display:none}
+.drive-list-view .drive-list-heading{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:12px;padding:8px 14px;border-bottom:1px solid var(--border);color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.drive-list-view .doc-grid{display:flex;flex-direction:column;gap:0}
+.drive-list-view .folder-card{display:grid;grid-template-columns:minmax(0,1fr) 180px;align-items:center;gap:12px;min-height:64px;padding:7px 14px;border:0;border-bottom:1px solid #edf0f4;border-radius:0;background:transparent;box-shadow:none}
+.drive-list-view .folder-card:hover,.drive-list-view .doc-card:hover{background:#f8fafc;box-shadow:none}
+.drive-list-view .folder-card-top{min-width:0;align-items:center}
+.drive-list-view .folder-icon{width:34px;height:34px;background:#fff5d8;color:#e4a900}
+.drive-list-view .folder-meta{margin:0;color:var(--muted)}
+.drive-list-view .folder-card-actions{opacity:0;transition:opacity .15s ease}
+.drive-list-view .folder-card:hover .folder-card-actions,.drive-list-view .folder-card:focus-within .folder-card-actions{opacity:1}
+.drive-list-view .doc-card{display:grid;grid-template-columns:minmax(0,1fr) 180px;align-items:center;gap:12px;padding:6px 14px;border:0;border-bottom:1px solid #edf0f4;border-radius:0;background:transparent;box-shadow:none}
+.drive-list-view .doc-card-top{min-width:0;align-items:center;padding:4px 0}
+.drive-list-view .doc-meta{line-height:1.45}
+.drive-list-view .doc-card-footer{margin:0;padding:0;border:0;background:transparent}
+.drive-list-view .visibility-badge{display:none}
+.drive-list-view .doc-card-footer>div:last-child{justify-content:flex-end}
+
 .doc-card{user-select:none}
 .doc-card.dragging{opacity:.4}
 
@@ -279,6 +302,14 @@ include 'layout.php';
   .file-viewer-actions{margin-left:auto}
   .file-viewer-actions .btn{font-size:0;width:38px;height:38px;padding:0;display:inline-flex;align-items:center;justify-content:center}
   .file-viewer-actions .btn i{font-size:14px}
+  .drive-list-view .drive-list-heading{grid-template-columns:minmax(0,1fr) auto;padding-inline:8px}
+  .drive-list-view .folder-card,.drive-list-view .doc-card{grid-template-columns:minmax(0,1fr) auto;gap:6px;padding-inline:8px}
+  .drive-list-view .folder-meta{display:none}
+  .drive-list-view .folder-card-actions{opacity:1}
+  .drive-list-view .doc-card-footer{grid-column:2;grid-row:1}
+  .drive-list-view .doc-card-top{grid-column:1;grid-row:1}
+  .drive-list-view .doc-card-footer>div:last-child{gap:2px!important}
+  .drive-list-view .doc-card-footer .btn{width:32px;height:32px}
 }
 @media (max-width: 420px){
   .folder-toolbar-row{grid-template-columns:1fr}
@@ -329,6 +360,7 @@ include 'layout.php';
 <!-- ════════════════════════════════════════════════════════════
      TAB: DOCUMENT VAULT (venture's own documents)
 ═════════════════════════════════════════════════════════════ -->
+<div class="vault-browser drive-list-view" id="vaultBrowser">
 
 <!-- Breadcrumb -->
 <div class="doc-breadcrumb">
@@ -346,6 +378,14 @@ include 'layout.php';
       </a>
     <?php endif; ?>
   <?php endforeach; ?>
+</div>
+
+<div class="drive-toolbar">
+  <div class="drive-location"><i class="fa fa-hdd"></i> <?= $current_folder_id > 0 ? h($breadcrumb ? $breadcrumb[count($breadcrumb) - 1]['folder_name'] : 'Current folder') : 'My Drive' ?></div>
+  <div class="drive-view-toggle" role="group" aria-label="Folder display mode">
+    <button type="button" data-vault-view="list" onclick="setVaultView('list')" aria-label="List view" title="List view"><i class="fa fa-list"></i><span>List</span></button>
+    <button type="button" data-vault-view="grid" onclick="setVaultView('grid')" aria-label="Grid view" title="Grid view"><i class="fa fa-th-large"></i><span>Grid</span></button>
+  </div>
 </div>
 
 <!-- Category filters -->
@@ -380,7 +420,8 @@ $has_docs    = !empty($docs_arr);
 
 <?php if ($has_folders): ?>
 <div class="section-label">Folders</div>
-<div class="doc-grid" style="margin-bottom:22px">
+<div class="drive-list-heading" aria-hidden="true"><span>Name &amp; contents</span><span>Actions</span></div>
+<div class="doc-grid drive-folder-grid" style="margin-bottom:22px">
 <?php foreach ($folders_arr as $folder): ?>
   <div class="folder-card drop-target" draggable="true"
        data-item-type="folder"
@@ -421,6 +462,7 @@ $has_docs    = !empty($docs_arr);
 
 <?php if ($has_docs): ?>
 <div class="section-label">Files</div>
+<div class="drive-list-heading" aria-hidden="true"><span>Name &amp; file details</span><span>Actions</span></div>
 <div class="doc-grid" id="docsGrid">
 <?php foreach ($docs_arr as $doc):
   [$cat_label, $cat_icon, $cat_color] = $doc_categories[$doc['category']] ?? ['Other','fa-file-alt','#6b7280'];
@@ -483,7 +525,7 @@ $has_docs    = !empty($docs_arr);
 <?php endif; ?>
 
 </div><!-- /.vault-drop-zone -->
-
+</div><!-- /.vault-browser -->
 
 <?php else: ?>
 
@@ -760,6 +802,23 @@ document.addEventListener('DOMContentLoaded', function () {
     var ventureId       = <?= (int)$venture_id ?>;
     var currentFolderId = <?= (int)$current_folder_id ?>;
     var PROCESS         = 'includes/portal-process.php';
+
+    window.setVaultView = function (view) {
+        if (!['list', 'grid'].includes(view)) return;
+        var browser = document.getElementById('vaultBrowser');
+        if (!browser) return;
+        browser.classList.toggle('drive-list-view', view === 'list');
+        browser.classList.toggle('drive-grid-view', view === 'grid');
+        document.querySelectorAll('[data-vault-view]').forEach(function (button) {
+            var active = button.dataset.vaultView === view;
+            button.classList.toggle('active', active);
+            button.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+        try { localStorage.setItem('ventureDocumentsView', view); } catch (e) {}
+    };
+    var savedVaultView = 'list';
+    try { savedVaultView = localStorage.getItem('ventureDocumentsView') || 'list'; } catch (e) {}
+    window.setVaultView(savedVaultView);
 
     /* Dynamic card actions use data attributes instead of inline JavaScript.
        This prevents apostrophes/quotes in document or folder names from
