@@ -129,6 +129,7 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
   gtag('config', 'G-QY3FG79QBV');
 </script>
 
+<?php require_once __DIR__ . '/accessibility-widget.php'; ?>
 </head>
 
 <body>

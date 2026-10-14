@@ -227,6 +227,7 @@ if (isset($_GET['pdf']) && $_GET['pdf'] === '1') {
 <head>
 <meta charset="UTF-8">
 
+<?php require_once __DIR__ . '/../includes/accessibility-widget.php'; ?>
 </head>
 <body>
 

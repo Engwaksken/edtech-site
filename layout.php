@@ -346,6 +346,7 @@ $logout_url = vp_url('logout');
     >
 
     <?= $portal_extra_head ?? '' ?>
+<?php require_once __DIR__ . '/includes/accessibility-widget.php'; ?>
 </head>
 
 <body class="vp-body" data-current-nav="<?= h($current_nav) ?>">

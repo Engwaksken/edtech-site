@@ -5,3 +5,4 @@ $icon_href = htmlspecialchars($icon_base . '/assets/images/favicon.png', ENT_QUO
 ?>
 <link rel="icon" type="image/png" href="<?= $icon_href ?>">
 <link rel="apple-touch-icon" href="<?= $icon_href ?>">
+<?php require_once __DIR__ . '/accessibility-widget.php'; ?>

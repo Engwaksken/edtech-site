@@ -374,6 +374,7 @@ $logo_exists =
     href="<?= h(asset_url('assets/css/ventures.css')) ?>?v=<?= (int)filemtime(__DIR__ . '/assets/css/ventures.css') ?>"
 >
 
+<?php require_once __DIR__ . '/includes/accessibility-widget.php'; ?>
 </head>
 
 

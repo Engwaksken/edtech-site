@@ -353,6 +353,7 @@ input:focus{
 
 </style>
 
+<?php require_once __DIR__ . '/includes/accessibility-widget.php'; ?>
 </head>
 
 <body>

@@ -55,6 +55,7 @@ h1{margin:0 0 12px;font-size:28px}
 p{margin:0 0 24px;color:#64748b;line-height:1.7}
 a{display:inline-flex;align-items:center;gap:8px;background:#0f172a;color:#fff;text-decoration:none;border-radius:999px;padding:12px 22px;font-weight:700}
 </style>
+<?php require_once __DIR__ . '/includes/accessibility-widget.php'; ?>
 </head>
 <body>
 <div class="card">
@@ -318,6 +319,7 @@ foreach ($questions as $q) {
   font-weight:500;
 }
 </style>
+<?php require_once __DIR__ . '/includes/accessibility-widget.php'; ?>
 </head>
 <body>
 

@@ -66,6 +66,7 @@ $extra_css = isset($extra_css) && is_array($extra_css) ? $extra_css : []; $extra
 
     <?= $extra_head ?>
 
+<?php require_once __DIR__ . '/../../includes/accessibility-widget.php'; ?>
 </head>
 
 <body class="<?= h($body_class) ?>">

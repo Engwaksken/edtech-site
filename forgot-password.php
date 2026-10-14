@@ -212,6 +212,7 @@ $logo_exists = file_exists(__DIR__ . '/' . $logo_path);
             }
         }
     </style>
+<?php require_once __DIR__ . '/includes/accessibility-widget.php'; ?>
 </head>
 
 <body>

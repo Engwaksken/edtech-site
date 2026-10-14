@@ -229,6 +229,7 @@ if (
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
   <link rel="stylesheet" href="<?= h($admin_css_url) ?>">
   <link rel="stylesheet" href="<?= h($grant_css_url) ?>">
+<?php require_once __DIR__ . '/../includes/accessibility-widget.php'; ?>
 </head>
 <body class="grant-tracking-page">
 <?php include 'includes/sidebar.php'; ?>

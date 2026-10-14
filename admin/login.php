@@ -73,6 +73,7 @@ $site_favicon_url = $favicon_db !== '' ? admin_asset_url($favicon_db) : SITE_URL
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="<?= h(asset_url('assets/vendor/fontawesome/css/all.min.css')) ?>">
   <link rel="stylesheet" href="assets/css/admin.css?v=<?= (int)@filemtime(__DIR__ . '/assets/css/admin.css') ?>">
+<?php require_once __DIR__ . '/../includes/accessibility-widget.php'; ?>
 </head>
 
 <body class="admin-login-page">

@@ -83,6 +83,7 @@ $maskedEmail = preg_replace('/(^.).*(@.*$)/', '$1***$2', (string)($pending['emai
     .otp-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
     .otp-actions form{margin:0}
   </style>
+<?php require_once __DIR__ . '/../includes/accessibility-widget.php'; ?>
 </head>
 <body class="admin-login-page">
 <div class="login-wrap">

@@ -153,6 +153,7 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="assets/css/admin.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/admin.css') ?>">
+<?php require_once __DIR__ . '/../includes/accessibility-widget.php'; ?>
 </head>
 <body class="admin-system-page">
 
