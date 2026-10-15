@@ -14,7 +14,7 @@ include 'includes/header.php';
   </section>
 
   <section style="padding:60px 0;background:#f8f9fa">
-    <div class="container" style="max-width:800px">
+    <div class="container faq-page-list">
       <?php
       $has = false;
       while ($faq = mysqli_fetch_assoc($faqs)):

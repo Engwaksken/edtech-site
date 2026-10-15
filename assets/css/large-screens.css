@@ -24,3 +24,24 @@
 @media screen and (min-width: 2048px) and (min-height: 1100px) {
     html { zoom: var(--screen-zoom); }
 }
+
+/*
+ * Wider public-site content on big screens. The 1200px container left huge
+ * side gutters from ~1600px up (including zoomed 27"/4K viewports, whose
+ * effective width is ~1900–2050px). Long-form reading widths (article body,
+ * section intros, FAQ answers) keep their own narrower caps.
+ */
+@media screen and (min-width: 1600px) {
+    body .container,
+    body .blog-detail-hero > .container {
+        width: min(1760px, 88%);
+        max-width: none;
+    }
+    body .hive-org .hive-content,
+    body .faq-section {
+        max-width: none;
+    }
+    body .container.faq-page-list {
+        max-width: 1120px;
+    }
+}

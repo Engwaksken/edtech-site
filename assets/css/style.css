@@ -1484,6 +1484,10 @@ section {
   margin: 0 auto;
 }
 
+.faq-page-list {
+  max-width: 800px;
+}
+
 .faq-container {
   display: grid;
   gap: 16px;
