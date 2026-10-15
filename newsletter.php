@@ -369,7 +369,7 @@ if ($newsletter_bg_type === 'image' && $newsletter_bg_image !== '') {
 
 .nl-hero--dynamic .nl-hero__title {
     color: #fff;
-    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-size: clamp(2.5rem, calc(6vw / var(--screen-zoom, 1)), 5rem);
     line-height: 1.04;
     margin: 14px 0 18px;
     font-weight: 950;

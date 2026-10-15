@@ -315,7 +315,7 @@ if ($requests) {
     bottom: calc(100% + 9px);
     width: max-content;
     min-width: 140px;
-    max-width: min(360px, 70vw);
+    max-width: min(360px, calc(70vw / var(--screen-zoom, 1)));
     padding: 9px 11px;
     border-radius: 8px;
     background: #172033;

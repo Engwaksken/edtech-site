@@ -117,7 +117,7 @@ body { font-family: var(--font); color: var(--ink); background: var(--surface-2)
 .ms-hero-text h1 {
   font-family: var(--display);
   font-style: italic;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: clamp(1.6rem, calc(3vw / var(--screen-zoom, 1)), 2.2rem);
   color: #fff;
   line-height: 1.15;
   margin-bottom: 6px;
@@ -667,7 +667,7 @@ select.form-control { cursor: pointer; }
   border-radius: var(--radius-lg);
   width: 100%;
   max-width: 560px;
-  max-height: 90vh;
+  max-height: calc(90vh / var(--screen-zoom, 1));
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 60px rgba(0,0,0,.25);

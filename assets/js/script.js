@@ -165,7 +165,8 @@
           const target = document.querySelector(href);
           if (target) {
             e.preventDefault();
-            const offset = navbar ? navbar.offsetHeight : 0;
+            // offsetHeight is unzoomed CSS px; rects and scroll are screen px (large-screens.css zoom).
+            const offset = navbar ? navbar.offsetHeight * (parseFloat(getComputedStyle(document.documentElement).zoom) || 1) : 0;
             const top = target.getBoundingClientRect().top + window.scrollY - offset;
             window.scrollTo({ top, behavior: 'smooth' });
           }

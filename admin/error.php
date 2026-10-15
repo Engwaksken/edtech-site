@@ -208,7 +208,7 @@ $requestUri = (string)(
 <style>
 
 .admin-error-page {
-    min-height: 100vh;
+    min-height: calc(100vh / var(--screen-zoom, 1));
     margin: 0;
     padding: 24px;
     display: flex;
@@ -281,7 +281,7 @@ $requestUri = (string)(
 }
 
 .admin-error-body {
-    padding: clamp(28px, 6vw, 52px);
+    padding: clamp(28px, calc(6vw / var(--screen-zoom, 1)), 52px);
     text-align: center;
 }
 
@@ -300,7 +300,7 @@ $requestUri = (string)(
 
 .admin-error-body h1 {
     margin: 0;
-    font-size: clamp(1.45rem, 4vw, 2rem);
+    font-size: clamp(1.45rem, calc(4vw / var(--screen-zoom, 1)), 2rem);
     line-height: 1.25;
     letter-spacing: -.03em;
 }

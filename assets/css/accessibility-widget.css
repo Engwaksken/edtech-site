@@ -106,9 +106,9 @@ body:has(.bottom-bar) .a11yw {
   bottom: 70px;
   display: flex;
   flex-direction: column;
-  width: min(420px, calc(100vw - 2 * var(--a11yw-gap)));
+  width: min(420px, calc(100vw / var(--screen-zoom, 1) - 2 * var(--a11yw-gap)));
   max-width: none;
-  max-height: min(720px, calc(100dvh - 110px));
+  max-height: min(720px, calc(100dvh / var(--screen-zoom, 1) - 110px));
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -605,7 +605,7 @@ body:has(.bottom-bar) .a11yw {
 }
 
 .a11yw-magnifier {
-  max-width: min(520px, calc(100vw - 24px));
+  max-width: min(520px, calc(100vw / var(--screen-zoom, 1) - 24px));
   padding: 12px 16px;
   border: 3px solid #fc7f10;
   border-radius: 12px;
@@ -827,7 +827,7 @@ html.a11yw-tts body :is(p, li, h1, h2, h3, h4, h5, h6, td, th, label, blockquote
     right: 0;
     bottom: 0;
     width: 100%;
-    max-height: 88dvh;
+    max-height: calc(88dvh / var(--screen-zoom, 1));
     border-radius: 20px 20px 0 0;
     border-bottom: 0;
     padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -887,7 +887,7 @@ html.a11yw-tts body :is(p, li, h1, h2, h3, h4, h5, h6, td, th, label, blockquote
 
 @media (max-height: 520px) and (min-width: 561px) {
   .a11yw .a11yw-panel {
-    max-height: calc(100dvh - 90px);
+    max-height: calc(100dvh / var(--screen-zoom, 1) - 90px);
   }
 }
 

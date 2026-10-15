@@ -723,7 +723,7 @@ include __DIR__ . '/layout.php';
 
 .mail-shell{
     width:100%;
-    min-height:calc(100vh - 170px);
+    min-height:calc(100vh / var(--screen-zoom, 1) - 170px);
     display:grid;
     grid-template-columns:230px minmax(0,1fr);
     overflow:hidden;
@@ -1200,8 +1200,8 @@ include __DIR__ . '/layout.php';
 }
 
 .mail-compose{
-    width:min(680px,calc(100vw - 40px));
-    max-height:calc(100vh - 48px);
+    width:min(680px,calc(100vw / var(--screen-zoom, 1) - 40px));
+    max-height:calc(100vh / var(--screen-zoom, 1) - 48px);
     display:flex;
     flex-direction:column;
     overflow:hidden;
@@ -1453,8 +1453,8 @@ include __DIR__ . '/layout.php';
     }
 
     .mail-compose{
-        width:100vw;
-        max-height:94vh;
+        width:calc(100vw / var(--screen-zoom, 1));
+        max-height:calc(94vh / var(--screen-zoom, 1));
         border-radius:16px 16px 0 0;
     }
 

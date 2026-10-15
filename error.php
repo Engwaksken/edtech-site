@@ -251,7 +251,7 @@ body {
 }
 
 body {
-    min-height: 100vh;
+    min-height: calc(100vh / var(--screen-zoom, 1));
     font-family: 'Outfit', sans-serif;
     color: var(--error-ink);
     background:
@@ -269,7 +269,7 @@ body {
 }
 
 .error-page {
-    min-height: 100vh;
+    min-height: calc(100vh / var(--screen-zoom, 1));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -283,7 +283,7 @@ body {
     background: rgba(255,255,255,.97);
     border: 1px solid var(--error-border);
     border-radius: 24px;
-    padding: clamp(28px, 6vw, 58px);
+    padding: clamp(28px, calc(6vw / var(--screen-zoom, 1)), 58px);
     text-align: center;
     box-shadow:
         0 24px 70px
@@ -322,7 +322,7 @@ body {
 
 .error-code {
     margin: 0;
-    font-size: clamp(4.5rem, 18vw, 9rem);
+    font-size: clamp(4.5rem, calc(18vw / var(--screen-zoom, 1)), 9rem);
     line-height: .9;
     font-weight: 800;
     letter-spacing: -.07em;
@@ -350,7 +350,7 @@ body {
 
 .error-card h1 {
     margin: 0;
-    font-size: clamp(1.55rem, 4vw, 2.25rem);
+    font-size: clamp(1.55rem, calc(4vw / var(--screen-zoom, 1)), 2.25rem);
     line-height: 1.2;
     letter-spacing: -.035em;
 }

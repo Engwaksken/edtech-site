@@ -52,7 +52,7 @@ include 'layout.php';
   /* Modal */
   .vp-modal-overlay{position:fixed;inset:0;background:rgba(12,12,14,.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
   .vp-modal-overlay.open{opacity:1;pointer-events:all}
-  .vp-modal{background:var(--white);border-radius:14px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;margin:20px}
+  .vp-modal{background:var(--white);border-radius:14px;width:100%;max-width:480px;max-height:calc(90vh / var(--screen-zoom, 1));overflow-y:auto;margin:20px}
   .vp-modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border)}
   .vp-modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--ink)}
   .vp-modal-close{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;padding:0;line-height:1}

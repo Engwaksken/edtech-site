@@ -345,7 +345,7 @@ $fa_icons = [
         .bg-current-preview__content h2 {
             color: #fff;
             margin: 0 0 8px;
-            font-size: clamp(1.6rem, 3vw, 2.6rem);
+            font-size: clamp(1.6rem, calc(3vw / var(--screen-zoom, 1)), 2.6rem);
             line-height: 1.08;
         }
 

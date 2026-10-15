@@ -225,7 +225,7 @@ function render_closed_page($site_name, $title, $body, $icon, $accent) {
 
 <?php elseif ($show_pin_form): ?>
 <!-- -- PIN gate -- -->
-<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+<div style="min-height:calc(100vh / var(--screen-zoom, 1));display:flex;align-items:center;justify-content:center;padding:20px">
   <div>
     <div style="text-align:center;margin-bottom:8px">
       <div style="font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)"><?= iv_h($site_name) ?></div>

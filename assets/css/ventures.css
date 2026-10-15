@@ -91,7 +91,7 @@ html {
 }
 
 body {
-  min-height: 100vh;
+  min-height: calc(100vh / var(--screen-zoom, 1));
   font-family: var(--ff-base);
   background: var(--surface);
   color: var(--ink);
@@ -146,7 +146,7 @@ body.vp-sidebar-open {
   inset: 0 auto 0 0;
   z-index: 100;
   width: var(--sidebar-w);
-  min-height: 100vh;
+  min-height: calc(100vh / var(--screen-zoom, 1));
   background: linear-gradient(180deg, #000000 0%, #0f172a 100%);
   color: var(--white);
   display: flex;
@@ -420,7 +420,7 @@ body.vp-sidebar-open {
 
 .vp-main {
   margin-left: var(--sidebar-w);
-  min-height: 100vh;
+  min-height: calc(100vh / var(--screen-zoom, 1));
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1107,7 +1107,7 @@ textarea.form-control,
 .dash-welcome-text h2 {
   margin-bottom: 7px;
   font-family: var(--ff-display);
-  font-size: clamp(22px, 3vw, 30px);
+  font-size: clamp(22px, calc(3vw / var(--screen-zoom, 1)), 30px);
   font-weight: 900;
   letter-spacing: -.03em;
 }
@@ -1445,7 +1445,7 @@ textarea.form-control,
 
 .shell {
   display: flex;
-  min-height: 100vh;
+  min-height: calc(100vh / var(--screen-zoom, 1));
 }
 
 .main {
@@ -1478,7 +1478,7 @@ textarea.form-control,
   right: -18px;
   bottom: -22px;
   font-family: var(--ff-display);
-  font-size: clamp(90px, 10vw, 160px);
+  font-size: clamp(90px, calc(10vw / var(--screen-zoom, 1)), 160px);
   font-weight: 900;
   color: rgba(255, 255, 255, .045);
   letter-spacing: -6px;
@@ -1522,7 +1522,7 @@ textarea.form-control,
 h1.hero-title {
   margin-bottom: 14px;
   font-family: var(--ff-display);
-  font-size: clamp(30px, 4.5vw, 54px);
+  font-size: clamp(30px, calc(4.5vw / var(--screen-zoom, 1)), 54px);
   font-weight: 900;
   line-height: 1.06;
   letter-spacing: -.035em;
@@ -1609,7 +1609,7 @@ h1.hero-title em {
 .hero-editorial .hero-wordmark {
   font-family: var(--ff-serif);
   font-style: italic;
-  font-size: clamp(80px, 9vw, 148px);
+  font-size: clamp(80px, calc(9vw / var(--screen-zoom, 1)), 148px);
   color: rgba(255, 255, 255, .04);
   letter-spacing: -.02em;
 }
@@ -2334,7 +2334,7 @@ h1.hero-title em {
   border-radius: var(--r-xl);
   width: 100%;
   max-width: 640px;
-  max-height: 92vh;
+  max-height: calc(92vh / var(--screen-zoom, 1));
   overflow-y: auto;
   box-shadow: var(--sh-lg);
   display: flex;
@@ -2589,7 +2589,7 @@ h1.hero-title em {
 .doc-modal,
 .team-modal {
   max-width: 520px;
-  max-height: 90vh;
+  max-height: calc(90vh / var(--screen-zoom, 1));
   overflow-y: auto;
   transform: translateY(18px) scale(.98);
   transition: transform .2s ease;
@@ -2603,7 +2603,7 @@ h1.hero-title em {
   transform: translateY(0) scale(1);
 }
 
-.detail-modal { max-width: 640px; max-height: 92vh; overflow-y: auto; display: flex; flex-direction: column; }
+.detail-modal { max-width: 640px; max-height: calc(92vh / var(--screen-zoom, 1)); overflow-y: auto; display: flex; flex-direction: column; }
 .ci-modal { max-width: 380px; padding: 32px 28px; text-align: center; }
 
 @keyframes mpop {
@@ -2763,8 +2763,8 @@ h1.hero-title em {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 100vw;
-  min-height: 100vh;
+  width: calc(100vw / var(--screen-zoom, 1));
+  min-height: calc(100vh / var(--screen-zoom, 1));
   padding: 24px;
   background: rgba(0, 0, 0, .55);
   backdrop-filter: blur(5px);
@@ -2777,7 +2777,7 @@ h1.hero-title em {
 
 .vp-logout-modal-card {
   width: min(100%, 420px);
-  max-height: calc(100vh - 48px);
+  max-height: calc(100vh / var(--screen-zoom, 1) - 48px);
   overflow-y: auto;
   background: #ffffff;
   color: #0f172a;
@@ -3619,7 +3619,7 @@ h1.hero-title em {
 .meal-stat .val {
   color: var(--primary);
   font-family: var(--ff-display);
-  font-size: clamp(20px, 2vw, 26px);
+  font-size: clamp(20px, calc(2vw / var(--screen-zoom, 1)), 26px);
   font-weight: 850;
   line-height: 1.1;
   overflow-wrap: anywhere;
@@ -4365,8 +4365,8 @@ details.add-card > summary::-webkit-details-marker {
   position: fixed !important;
   inset: 0 !important;
   z-index: 2147483000 !important;
-  width: 100vw !important;
-  height: 100dvh !important;
+  width: calc(100vw / var(--screen-zoom, 1)) !important;
+  height: calc(100dvh / var(--screen-zoom, 1)) !important;
   margin: 0 !important;
   padding: 18px !important;
 
@@ -4410,7 +4410,7 @@ body > .meal-modal {
   position: relative !important;
   width: min(780px, 100%) !important;
   max-width: 100% !important;
-  max-height: calc(100dvh - 36px) !important;
+  max-height: calc(100dvh / var(--screen-zoom, 1) - 36px) !important;
   margin: auto !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -4660,7 +4660,7 @@ body.meal-modal-open {
   .meal-confirm-card,
   .meal-message-card {
     width: 100% !important;
-    max-height: calc(100dvh - 16px) !important;
+    max-height: calc(100dvh / var(--screen-zoom, 1) - 16px) !important;
     border-radius: 13px !important;
   }
 
@@ -4752,7 +4752,7 @@ body.meal-modal-open {
 
 .vp-profile-hero h2 {
   font-family: var(--ff-display);
-  font-size: clamp(22px, 3vw, 30px);
+  font-size: clamp(22px, calc(3vw / var(--screen-zoom, 1)), 30px);
   line-height: 1.15;
   font-weight: 900;
   margin-bottom: 6px;
@@ -5110,7 +5110,7 @@ body.meal-modal-open {
 
 .mentor-calendar-page .mc-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(17, 24, 39, .45); z-index: 9990; align-items: center; justify-content: center; padding: 16px; }
 .mentor-calendar-page .mc-modal-overlay.open { display: flex; }
-.mentor-calendar-page .mc-modal { background: var(--mc-surface); border-radius: var(--mc-radius-lg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, .18); }
+.mentor-calendar-page .mc-modal { background: var(--mc-surface); border-radius: var(--mc-radius-lg); width: 100%; max-width: 520px; max-height: calc(90vh / var(--screen-zoom, 1)); overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, .18); }
 .mentor-calendar-page .mc-modal-sm { max-width: 420px; }
 .mentor-calendar-page .mc-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--mc-border); }
 .mentor-calendar-page .mc-modal-title { font-size: 16px; font-weight: 700; }
@@ -5186,14 +5186,14 @@ body.meal-modal-open {
 }
 
 @media (max-width: 900px) {
-  .vp-sidebar { width: min(86vw, 320px); transform: translateX(-105%); box-shadow: 24px 0 70px rgba(15, 23, 42, .34); }
+  .vp-sidebar { width: min(calc(86vw / var(--screen-zoom, 1)), 320px); transform: translateX(-105%); box-shadow: 24px 0 70px rgba(15, 23, 42, .34); }
   .vp-sidebar.open { transform: translateX(0); }
   .vp-sidebar-close { display: inline-grid; place-items: center; }
   .vp-main { margin-left: 0 !important; width: 100%; }
   .vp-topbar { height: auto; min-height: 62px; padding: 10px 16px; }
   .vp-menu-btn { display: inline-grid; }
-  .vp-page-title { max-width: 52vw; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .vp-page-subtitle { display: block; max-width: 52vw; }
+  .vp-page-title { max-width: calc(52vw / var(--screen-zoom, 1)); font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vp-page-subtitle { display: block; max-width: calc(52vw / var(--screen-zoom, 1)); }
   .vp-content { padding: 18px 16px 28px; }
   .vp-flash { margin: 14px 16px 20px; }
 
@@ -5261,7 +5261,7 @@ body.meal-modal-open {
 }
 
 @media (max-width: 640px) {
-  .vp-sidebar { width: min(92vw, 310px); }
+  .vp-sidebar { width: min(calc(92vw / var(--screen-zoom, 1)), 310px); }
   .vp-sidebar-brand { min-height: 68px; padding: 16px; }
   .vp-venture-info { padding: 14px 16px; }
   .vp-nav { padding: 12px 10px; }
@@ -5274,8 +5274,8 @@ body.meal-modal-open {
   .vp-user-chip { padding: 4px; }
   .vp-user-chip-name { display: none; }
   .vp-notif-btn, .vp-menu-btn { width: 36px; height: 36px; }
-  .vp-page-title { max-width: 44vw; font-size: 15px; }
-  .vp-page-subtitle { max-width: 44vw; font-size: 11.5px; }
+  .vp-page-title { max-width: calc(44vw / var(--screen-zoom, 1)); font-size: 15px; }
+  .vp-page-subtitle { max-width: calc(44vw / var(--screen-zoom, 1)); font-size: 11.5px; }
   .vp-content { padding: 14px 12px 24px; }
   .vp-flash { margin: 12px 12px 18px; }
 
@@ -5293,7 +5293,7 @@ body.meal-modal-open {
   .hero-kpi { margin: 0; padding: 0; border-right: 0; }
 
   .modal-overlay, .team-modal-overlay, .vp-modal-overlay, .doc-modal-overlay { padding: 10px; }
-  .detail-modal, .team-modal, .ci-modal { max-height: 94vh; border-radius: 16px; }
+  .detail-modal, .team-modal, .ci-modal { max-height: calc(94vh / var(--screen-zoom, 1)); border-radius: 16px; }
   .dm-head, .dm-body, .dm-footer { padding-left: 18px; padding-right: 18px; }
 
   .photo-upload-zone, .founder-toggle-wrap { flex-direction: column; align-items: flex-start; }
@@ -5327,7 +5327,7 @@ body.meal-modal-open {
   }
   .vp-modal, .doc-modal {
     width: 100%;
-    max-height: calc(100vh - 24px);
+    max-height: calc(100vh / var(--screen-zoom, 1) - 24px);
   }
   .vp-modal-footer, .doc-modal-footer {
     flex-direction: column-reverse;
@@ -5359,7 +5359,7 @@ body.meal-modal-open {
 
 
 /* Add this section to assets/css/portal.css */
-.venture-wrap{min-height:100vh;background:#f8fafc;padding:28px}
+.venture-wrap{min-height:calc(100vh / var(--screen-zoom, 1));background:#f8fafc;padding:28px}
 .venture-shell{max-width:1260px;margin:0 auto}
 .venture-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
 .venture-title h1{font-size:2rem;font-weight:900;color:#111827;margin:0 0 5px}
@@ -5435,7 +5435,7 @@ body.meal-modal-open {
    ========================================================================== */
 
 body:has(.login-box) {
-  min-height: 100vh;
+  min-height: calc(100vh / var(--screen-zoom, 1));
   margin: 0;
   display: grid;
   grid-template-columns: minmax(360px, 46%) minmax(0, 54%);
@@ -5447,8 +5447,8 @@ body:has(.login-box) {
 /* Left branding panel */
 body:has(.login-box) .left-panel {
   position: relative;
-  min-height: 100vh;
-  padding: clamp(38px, 5vw, 72px);
+  min-height: calc(100vh / var(--screen-zoom, 1));
+  padding: clamp(38px, calc(5vw / var(--screen-zoom, 1)), 72px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -5471,7 +5471,7 @@ body:has(.login-box) .lp-top {
 
 body:has(.login-box) .lp-wordmark {
   min-height: 54px;
-  margin-bottom: clamp(70px, 12vh, 135px);
+  margin-bottom: clamp(70px, calc(12vh / var(--screen-zoom, 1)), 135px);
   display: flex;
   align-items: center;
 }
@@ -5526,7 +5526,7 @@ body:has(.login-box) .lp-headline {
   margin: 0 0 22px;
   color: #fff;
   font-family: var(--ff-display);
-  font-size: clamp(42px, 5vw, 68px);
+  font-size: clamp(42px, calc(5vw / var(--screen-zoom, 1)), 68px);
   font-weight: 800;
   line-height: 1.02;
   letter-spacing: -.045em;
@@ -5550,8 +5550,8 @@ body:has(.login-box) .lp-sub {
 
 /* Right login panel */
 body:has(.login-box) .right-panel {
-  min-height: 100vh;
-  padding: 44px clamp(28px, 6vw, 96px);
+  min-height: calc(100vh / var(--screen-zoom, 1));
+  padding: 44px clamp(28px, calc(6vw / var(--screen-zoom, 1)), 96px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5587,7 +5587,7 @@ body:has(.login-box) .login-title {
   margin: 0 0 7px;
   color: var(--ink);
   font-family: var(--ff-display);
-  font-size: clamp(30px, 3vw, 40px);
+  font-size: clamp(30px, calc(3vw / var(--screen-zoom, 1)), 40px);
   font-weight: 800;
   letter-spacing: -.035em;
   line-height: 1.1;
@@ -5891,7 +5891,7 @@ body:has(.login-box) .otp-expiry {
 
   body:has(.login-box) .lp-headline {
     max-width: 680px;
-    font-size: clamp(34px, 7vw, 52px);
+    font-size: clamp(34px, calc(7vw / var(--screen-zoom, 1)), 52px);
   }
 
   body:has(.login-box) .lp-sub {

@@ -316,6 +316,12 @@
     /* ------------------------------------------------------------------ */
 
     var pointerY = Math.round(window.innerHeight / 2);
+
+    // large-screens.css may zoom <html>; pointer coordinates are in screen px
+    // while overlay styles are in zoomed CSS px, so convert between the two.
+    function screenZoom() {
+        return parseFloat(window.getComputedStyle(document.documentElement).zoom) || 1;
+    }
     var MASK_GAP = 70;
 
     function applyOverlays() {
@@ -343,7 +349,7 @@
 
     function onPointerMove(e) {
         if (state.guide || state.mask) {
-            pointerY = e.clientY;
+            pointerY = e.clientY / screenZoom();
             window.requestAnimationFrame(positionOverlays);
         }
         if (state.magnifier) {
@@ -372,14 +378,19 @@
         }
         ui.magnifier.hidden = false;
 
+        var z = screenZoom();
         var box = ui.magnifier.getBoundingClientRect();
-        var x = e.clientX + 16;
-        var y = e.clientY + 24;
-        if (x + box.width > window.innerWidth - 12) {
-            x = Math.max(12, window.innerWidth - box.width - 12);
+        var boxW = box.width / z;
+        var boxH = box.height / z;
+        var viewW = window.innerWidth / z;
+        var viewH = window.innerHeight / z;
+        var x = e.clientX / z + 16;
+        var y = e.clientY / z + 24;
+        if (x + boxW > viewW - 12) {
+            x = Math.max(12, viewW - boxW - 12);
         }
-        if (y + box.height > window.innerHeight - 12) {
-            y = Math.max(12, e.clientY - box.height - 16);
+        if (y + boxH > viewH - 12) {
+            y = Math.max(12, e.clientY / z - boxH - 16);
         }
         ui.magnifier.style.left = x + 'px';
         ui.magnifier.style.top = y + 'px';

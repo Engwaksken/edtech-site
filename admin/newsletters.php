@@ -619,10 +619,10 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
 <style>
 #previewModal{padding:16px!important}
 #previewModal .nl-preview-dialog{
-    width:min(1180px,calc(100vw - 32px))!important;
+    width:min(1180px,calc(100vw / var(--screen-zoom, 1) - 32px))!important;
     max-width:1180px!important;
-    height:calc(100vh - 32px)!important;
-    max-height:calc(100vh - 32px)!important;
+    height:calc(100vh / var(--screen-zoom, 1) - 32px)!important;
+    max-height:calc(100vh / var(--screen-zoom, 1) - 32px)!important;
     display:flex!important;
     flex-direction:column!important;
     overflow:hidden!important
@@ -655,9 +655,9 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
 @media(max-width:640px){
   #previewModal{padding:7px!important}
   #previewModal .nl-preview-dialog{
-      width:calc(100vw - 14px)!important;
-      height:calc(100dvh - 14px)!important;
-      max-height:calc(100dvh - 14px)!important
+      width:calc(100vw / var(--screen-zoom, 1) - 14px)!important;
+      height:calc(100dvh / var(--screen-zoom, 1) - 14px)!important;
+      max-height:calc(100dvh / var(--screen-zoom, 1) - 14px)!important
   }
   .nl-preview-device-label{display:none}
 }

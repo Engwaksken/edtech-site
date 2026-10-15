@@ -336,7 +336,7 @@ include 'includes/header.php';
     width: 100%;
     max-width: 760px;
     margin: 0;
-    font-size: clamp(2.5rem, 4.5vw, 4.6rem);
+    font-size: clamp(2.5rem, calc(4.5vw / var(--screen-zoom, 1)), 4.6rem);
     line-height: 1.04;
     overflow-wrap: break-word;
     word-break: normal;
@@ -367,7 +367,7 @@ include 'includes/header.php';
     }
 
     .blog-detail-hero__title {
-        font-size: clamp(2.25rem, 6vw, 3.8rem);
+        font-size: clamp(2.25rem, calc(6vw / var(--screen-zoom, 1)), 3.8rem);
     }
 }
 
@@ -389,7 +389,7 @@ include 'includes/header.php';
 
     .blog-detail-hero__title {
         max-width: 100%;
-        font-size: clamp(2rem, 9vw, 3rem);
+        font-size: clamp(2rem, calc(9vw / var(--screen-zoom, 1)), 3rem);
         line-height: 1.08;
     }
 
@@ -419,7 +419,7 @@ include 'includes/header.php';
     }
 
     .blog-detail-hero__title {
-        font-size: clamp(1.85rem, 10vw, 2.55rem);
+        font-size: clamp(1.85rem, calc(10vw / var(--screen-zoom, 1)), 2.55rem);
     }
 
     .blog-detail-hero__meta {

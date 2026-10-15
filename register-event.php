@@ -133,7 +133,7 @@ $event_date = !empty($event['event_date'])
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:'DM Sans',Arial,sans-serif;background:#f3f4f6;color:#111827}
-.page{min-height:100vh;padding:30px 16px;display:flex;justify-content:center;align-items:flex-start}
+.page{min-height:calc(100vh / var(--screen-zoom, 1));padding:30px 16px;display:flex;justify-content:center;align-items:flex-start}
 .card{width:100%;max-width:980px;background:#fff;border-radius:20px;box-shadow:0 20px 50px rgba(15,23,42,.08);overflow:hidden}
 .hero{padding:28px;background:linear-gradient(135deg,#fc7c10,#ffc107);color:#fff}
 .logo-wrap{margin-bottom:18px}

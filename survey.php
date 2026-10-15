@@ -48,7 +48,7 @@ function ps_error_page(string $title, string $message, string $home_url = '/'): 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <style>
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f8fafc;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#0f172a;padding:20px}
+body{margin:0;min-height:calc(100vh / var(--screen-zoom, 1));display:flex;align-items:center;justify-content:center;background:#f8fafc;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#0f172a;padding:20px}
 .card{max-width:520px;width:100%;background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:42px;text-align:center;box-shadow:0 18px 50px rgba(15,23,42,.10)}
 .icon{width:78px;height:78px;border-radius:999px;background:#fee2e2;color:#dc2626;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px}
 h1{margin:0 0 12px;font-size:28px}

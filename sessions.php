@@ -263,10 +263,10 @@ include __DIR__ . '/layout.php';
   }
   .modal-overlay[id^="fbModal-"].open{animation:none!important}
   .fb-report-modal-box{
-    width:min(980px,calc(100vw - 40px));
+    width:min(980px,calc(100vw / var(--screen-zoom, 1) - 40px));
     max-width:980px;
-    height:86vh;
-    max-height:86vh;
+    height:calc(86vh / var(--screen-zoom, 1));
+    max-height:calc(86vh / var(--screen-zoom, 1));
     min-height:0;
     display:flex;
     flex-direction:column;
@@ -325,10 +325,10 @@ include __DIR__ . '/layout.php';
   .fb-view-value{font-size:13px;color:#2c3e50;background:#f7f8fa;border-radius:7px;padding:8px 10px;min-height:20px;white-space:pre-wrap}
   @media(max-width:760px){
     .fb-report-modal-box{
-      width:calc(100vw - 20px);
-      max-width:calc(100vw - 20px);
-      height:calc(100dvh - 20px);
-      max-height:calc(100dvh - 20px);
+      width:calc(100vw / var(--screen-zoom, 1) - 20px);
+      max-width:calc(100vw / var(--screen-zoom, 1) - 20px);
+      height:calc(100dvh / var(--screen-zoom, 1) - 20px);
+      max-height:calc(100dvh / var(--screen-zoom, 1) - 20px);
     }
     .fb-report-modal-body{
       height:100%;
@@ -1444,7 +1444,7 @@ function showFormMessage(message, focusElement = null) {
         notice.style.left = '50%';
         notice.style.transform = 'translateX(-50%)';
         notice.style.zIndex = '1000000';
-        notice.style.maxWidth = 'calc(100vw - 30px)';
+        notice.style.maxWidth = 'calc(100vw / var(--screen-zoom, 1) - 30px)';
         notice.style.padding = '11px 16px';
         notice.style.borderRadius = '10px';
         notice.style.background = '#fff4e8';

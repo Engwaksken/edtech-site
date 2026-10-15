@@ -1,0 +1,26 @@
+/*
+ * Large-screen scaling (27" monitors, 4K/5K/8K displays, TVs).
+ *
+ * The stylesheets are sized for ~1280–1920px wide viewports, mostly in px, so
+ * on very large viewports text and controls render tiny and layouts float in a
+ * narrow column. Above 2048px we zoom the whole document proportionally, which
+ * keeps every page's tuned desktop layout but at a readable size. Both width and
+ * height must qualify, so short ultrawide monitors are not over-zoomed.
+ *
+ * Effective layout width after zoom stays between ~1780px and ~2050px.
+ * JS that mixes pointer coordinates with CSS px reads --screen-zoom
+ * (see accessibility-widget.js, script.js).
+ */
+:root { --screen-zoom: 1; }
+
+@media (min-width: 2048px) and (min-height: 1100px) { :root { --screen-zoom: 1.15; } }
+@media (min-width: 2400px) and (min-height: 1300px) { :root { --screen-zoom: 1.25; } }
+@media (min-width: 2800px) and (min-height: 1500px) { :root { --screen-zoom: 1.5; } }
+@media (min-width: 3400px) and (min-height: 1800px) { :root { --screen-zoom: 1.75; } }
+@media (min-width: 3800px) and (min-height: 2000px) { :root { --screen-zoom: 2; } }
+@media (min-width: 5000px) and (min-height: 2800px) { :root { --screen-zoom: 2.5; } }
+@media (min-width: 7000px) and (min-height: 3800px) { :root { --screen-zoom: 3.75; } }
+
+@media screen and (min-width: 2048px) and (min-height: 1100px) {
+    html { zoom: var(--screen-zoom); }
+}

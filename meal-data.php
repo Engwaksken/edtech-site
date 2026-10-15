@@ -825,8 +825,8 @@ if (!function_exists('meal_export_pdf')) {
   outline-offset:2px;
 }
 .yiw-outcomes-card{
-  width:min(820px,calc(100vw - 32px));
-  max-height:90vh;
+  width:min(820px,calc(100vw / var(--screen-zoom, 1) - 32px));
+  max-height:calc(90vh / var(--screen-zoom, 1));
 }
 .yiw-modal-intro{
   margin-bottom:14px;
@@ -883,8 +883,8 @@ if (!function_exists('meal_export_pdf')) {
 body > .meal-modal{
   position:fixed !important;
   inset:0 !important;
-  width:100vw !important;
-  height:100vh !important;
+  width:calc(100vw / var(--screen-zoom, 1)) !important;
+  height:calc(100vh / var(--screen-zoom, 1)) !important;
   z-index:2147483646 !important;
   display:none !important;
   align-items:center !important;
@@ -911,8 +911,8 @@ body > .meal-modal > .meal-modal-card{
   display:block !important;
   visibility:visible !important;
   opacity:1 !important;
-  width:min(1080px,calc(100vw - 32px)) !important;
-  max-height:90vh !important;
+  width:min(1080px,calc(100vw / var(--screen-zoom, 1) - 32px)) !important;
+  max-height:calc(90vh / var(--screen-zoom, 1)) !important;
   overflow:auto !important;
   margin:auto !important;
   background:#fff !important;
@@ -1476,8 +1476,8 @@ if (
   display:none !important;
   align-items:center !important;
   justify-content:center !important;
-  width:100vw !important;
-  height:100vh !important;
+  width:calc(100vw / var(--screen-zoom, 1)) !important;
+  height:calc(100vh / var(--screen-zoom, 1)) !important;
   padding:20px !important;
   background:rgba(15,23,42,.68) !important;
   backdrop-filter:blur(4px) !important;
@@ -1490,7 +1490,7 @@ if (
 .meal-modal-card{
   position:relative !important;
   width:min(1080px,100%) !important;
-  max-height:90vh !important;
+  max-height:calc(90vh / var(--screen-zoom, 1)) !important;
   overflow-y:auto !important;
   background:#fff !important;
   border-radius:18px !important;
@@ -1926,7 +1926,7 @@ body > .meal-modal{
 
 .meal-confirm-card,
 .meal-message-card{
-  width:min(92vw,520px);
+  width:min(calc(92vw / var(--screen-zoom, 1)),520px);
 }
 
 .meal-confirm-content{
@@ -2008,7 +2008,7 @@ body > .meal-modal{
 ============================================================ */
 
 .meal-generic-card{
-  width:min(94vw,780px);
+  width:min(calc(94vw / var(--screen-zoom, 1)),780px);
 }
 
 .meal-view-grid{

@@ -273,7 +273,7 @@ if ($partners_bg_type === 'image' && $partners_bg_image !== '') {
     .partners-bg-preview__content h2 {
       color: #fff;
       margin: 0 0 8px;
-      font-size: clamp(1.55rem, 3vw, 2.7rem);
+      font-size: clamp(1.55rem, calc(3vw / var(--screen-zoom, 1)), 2.7rem);
       line-height: 1.08;
     }
 

@@ -1060,7 +1060,7 @@ function export_pdf(mysqli $conn, string $type, array $cfg, string $sql, string 
 .meal-admin-modal.open{display:flex}
 .meal-admin-modal-card{
   width:min(820px,100%);
-  max-height:90vh;
+  max-height:calc(90vh / var(--screen-zoom, 1));
   overflow:auto;
   background:#fff;
   border-radius:16px;
@@ -1505,8 +1505,8 @@ body > #mealAdminYiwModal.meal-admin-modal{
   position:fixed !important;
   inset:0 !important;
   z-index:2147483646 !important;
-  width:100vw !important;
-  height:100vh !important;
+  width:calc(100vw / var(--screen-zoom, 1)) !important;
+  height:calc(100vh / var(--screen-zoom, 1)) !important;
   display:none !important;
   align-items:center !important;
   justify-content:center !important;
@@ -1529,8 +1529,8 @@ body > #mealAdminYiwModal.meal-admin-modal.open{
 #mealAdminYiwModal .meal-admin-modal-card{
   position:relative !important;
   display:block !important;
-  width:min(820px,calc(100vw - 32px)) !important;
-  max-height:90vh !important;
+  width:min(820px,calc(100vw / var(--screen-zoom, 1) - 32px)) !important;
+  max-height:calc(90vh / var(--screen-zoom, 1)) !important;
   overflow:auto !important;
   margin:auto !important;
   background:#fff !important;
@@ -1626,7 +1626,7 @@ body.meal-admin-modal-open{
   }
   #mealAdminYiwModal .meal-admin-modal-card{
     width:100% !important;
-    max-height:92vh !important;
+    max-height:calc(92vh / var(--screen-zoom, 1)) !important;
     border-radius:16px 16px 0 0 !important;
   }
   #mealAdminYiwModal .meal-admin-yiw-grid{
@@ -1645,8 +1645,8 @@ body > #mealDocumentDeleteModal.meal-doc-modal{
   position:fixed !important;
   inset:0 !important;
   z-index:2147483647 !important;
-  width:100vw !important;
-  height:100vh !important;
+  width:calc(100vw / var(--screen-zoom, 1)) !important;
+  height:calc(100vh / var(--screen-zoom, 1)) !important;
   display:none !important;
   align-items:center !important;
   justify-content:center !important;
@@ -1668,7 +1668,7 @@ body > #mealDocumentDeleteModal.meal-doc-modal.open{
 
 #mealDocumentDeleteModal .meal-doc-modal-card{
   position:relative !important;
-  width:min(460px,calc(100vw - 32px)) !important;
+  width:min(460px,calc(100vw / var(--screen-zoom, 1) - 32px)) !important;
   margin:auto !important;
   padding:26px !important;
   border-radius:16px !important;

@@ -27,7 +27,7 @@ body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--ink);
-  min-height: 100vh;
+  min-height: calc(100vh / var(--screen-zoom, 1));
   overflow-x: hidden;
 }
 
@@ -100,7 +100,7 @@ body::before {
 .survey-shell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: calc(100vh / var(--screen-zoom, 1));
   padding-top: 59px;
 }
 
@@ -186,7 +186,7 @@ body::before {
 }
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+  font-size: clamp(1.4rem, calc(2.6vw / var(--screen-zoom, 1)), 2.2rem);
   font-weight: 900;
   color: #fff;
   line-height: 1.15;
@@ -335,7 +335,7 @@ body::before {
 }
 .step-question {
   font-family: var(--font-display);
-  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-size: clamp(1.4rem, calc(3vw / var(--screen-zoom, 1)), 2rem);
   font-weight: 700;
   line-height: 1.25;
   margin-bottom: 10px;

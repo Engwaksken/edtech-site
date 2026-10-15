@@ -76,7 +76,7 @@ body{
 
     margin:0;
 
-    min-height:100vh;
+    min-height:calc(100vh / var(--screen-zoom, 1));
 
     display:grid;
 

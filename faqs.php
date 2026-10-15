@@ -8,7 +8,7 @@ include 'includes/header.php';
   <section style="background:linear-gradient(135deg,#000000,#222222);padding:72px 0 56px">
     <div class="container">
       <span class="section-tag" style="background:rgba(252,127,16,.2);color:#fc7f10">Support</span>
-      <h1 style="margin:14px 0 10px;font-family:'Outfit',serif;color:#fff;font-size:clamp(2rem,5vw,3.5rem)">Frequently Asked Questions</h1>
+      <h1 style="margin:14px 0 10px;font-family:'Outfit',serif;color:#fff;font-size:clamp(2rem,calc(5vw / var(--screen-zoom, 1)),3.5rem)">Frequently Asked Questions</h1>
       <p style="max-width:580px;color:rgba(255,255,255,.8);font-size:1.05rem">Key information about the Mastercard Foundation EdTech Fellowship and the application process.</p>
     </div>
   </section>

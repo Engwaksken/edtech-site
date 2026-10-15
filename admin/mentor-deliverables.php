@@ -1182,7 +1182,7 @@ $messageType = trim(
 
 .md-modal{
     width:min(760px,100%);
-    max-height:90vh;
+    max-height:calc(90vh / var(--screen-zoom, 1));
     background:#fff;
     border-radius:16px;
     box-shadow:0 24px 70px rgba(15,23,42,.30);
@@ -1257,7 +1257,7 @@ body.md-modal-open{
 
     .md-modal{
         width:100%;
-        max-height:94vh;
+        max-height:calc(94vh / var(--screen-zoom, 1));
         border-radius:16px 16px 0 0;
     }
 
