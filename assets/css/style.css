@@ -211,10 +211,14 @@ ul {
 
 .left-logo img,
 .right-logo img {
-  height: 42px;
+  height: 48px;
   width: auto;
   display: block;
   object-fit: contain;
+}
+
+.right-logo img {
+  height: 42px;
 }
 
 .left-logo,
@@ -3022,6 +3026,10 @@ section {
   }
 
   .left-logo img {
+    height: 42px;
+  }
+
+  .right-logo img {
     height: 36px;
   }
 

@@ -10,15 +10,15 @@ body .btn-login .spinner { display: none; }
 body .btn-login.loading .spinner { display: inline-block; }
 body .btn-login.loading .btn-arrow { display: none; }
 body :is(.btn.btn, .vp-btn.vp-btn, .nav-login-btn, input[type="submit"], input[type="button"]) {
-    min-height: 44px;
-    padding: 10px 16px;
+    min-height: 48px;
+    padding: 11px 18px;
     font-size: .9375rem;
     line-height: 1.35;
     white-space: normal;
     gap: 8px;
     border-radius: 10px;
 }
-body :is(.btn-sm.btn-sm, .btn-xs.btn-xs) { min-height: 40px; padding: 8px 12px; font-size: .875rem; }
+body :is(.btn-sm.btn-sm, .btn-xs.btn-xs) { min-height: 44px; padding: 9px 12px; font-size: .875rem; }
 body :is(.btn-icon, .icon-btn, .vp-menu-btn, .vp-notif-btn, .vp-sidebar-close, .topbar-btn, .nav-toggle, .mobile-toggle) {
     min-width: 44px;
     min-height: 44px;
@@ -33,7 +33,7 @@ body :is(a, button, input, select, textarea, [tabindex]):focus-visible {
 }
 body :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="submit"]):not([type="button"]) {
     font-size: 1rem;
-    min-height: 44px;
+    min-height: 48px;
 }
 body :is(.form-help, .help-text, .form-hint) { font-size: .875rem; line-height: 1.5; }
 body :is(.form-label, .form-group label) { font-size: .875rem; line-height: 1.5; }
