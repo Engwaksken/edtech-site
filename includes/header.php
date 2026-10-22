@@ -282,8 +282,7 @@ $popup_url_is_safe = $frontend_popup_button_url === ''
 $popup_image_is_safe = preg_match('~^uploads/settings/[a-zA-Z0-9_.-]+\.(?:jpe?g|png|webp|gif)$~i', $frontend_popup_image) === 1;
 $popup_image_only = $popup_image_is_safe
     && $frontend_popup_title === ''
-    && $frontend_popup_message === ''
-    && ($frontend_popup_button_text === '' || $frontend_popup_button_url === '');
+    && $frontend_popup_message === '';
 $popup_is_in_schedule = true;
 try {
     $popup_now = new DateTimeImmutable('now');
@@ -310,29 +309,55 @@ if ($frontend_popup_scope === 'selected') {
 $popup_frequency = in_array($frontend_popup_frequency, ['every_page', 'session', 'daily', 'once'], true) ? $frontend_popup_frequency : 'session';
 $popup_version = sha1(json_encode([$frontend_popup_title, $frontend_popup_message, $frontend_popup_image, $frontend_popup_button_url, $frontend_popup_start, $frontend_popup_stop], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: 'popup');
 ?>
+<?php
+$popup_has_cta = $frontend_popup_button_text !== '' && $frontend_popup_button_url !== '' && $popup_url_is_safe;
+$popup_cta_attrs = $frontend_popup_new_tab ? ' target="_blank" rel="noopener noreferrer"' : '';
+$popup_image_alt = $frontend_popup_title !== '' ? $frontend_popup_title : ($frontend_popup_button_text !== '' ? $frontend_popup_button_text : 'Announcement');
+?>
 <?php if ($frontend_popup_enabled && $popup_is_in_schedule && $popup_matches_page && ($frontend_popup_title !== '' || $frontend_popup_message !== '' || $popup_image_is_safe)): ?>
-<div class="site-popup-backdrop" id="sitePopup" data-frequency="<?= h($popup_frequency) ?>" data-delay="<?= (int)$frontend_popup_delay ?>" data-priority="<?= (int)$frontend_popup_priority ?>" data-version="<?= h($popup_version) ?>" hidden>
-  <section class="site-popup-card<?= $popup_image_only ? ' site-popup-card-image-only' : '' ?>" role="dialog" aria-modal="true" aria-labelledby="sitePopupTitle" <?= $frontend_popup_message !== '' ? 'aria-describedby="sitePopupMessage"' : '' ?>>
-    <button class="site-popup-close" type="button" aria-label="Close message" data-popup-close><i class="fas fa-times" aria-hidden="true"></i></button>
-    <span class="site-popup-kicker">Hive Colab</span>
-    <h2 id="sitePopupTitle"><?= $frontend_popup_title !== '' ? h($frontend_popup_title) : 'A message for you' ?></h2>
-    <?php if ($frontend_popup_message !== ''): ?><p id="sitePopupMessage"><?= nl2br(h($frontend_popup_message)) ?></p><?php endif; ?>
-    <?php if ($popup_image_is_safe): ?><img class="site-popup-image" src="<?= h($site_url . '/' . $frontend_popup_image) ?>" alt="<?= h($frontend_popup_title !== '' ? $frontend_popup_title : 'Popup announcement') ?>"><?php endif; ?>
-    <div class="site-popup-actions">
-      <?php if ($frontend_popup_button_text !== '' && $popup_url_is_safe && $frontend_popup_button_url !== ''): ?>
-        <a class="site-popup-cta" href="<?= h($frontend_popup_button_url) ?>" <?= $frontend_popup_new_tab ? 'target="_blank" rel="noopener noreferrer"' : '' ?>><?= h($frontend_popup_button_text) ?></a>
-      <?php endif; ?>
-      <button class="site-popup-dismiss" type="button" data-popup-close>Close</button>
-    </div>
-  </section>
+<div class="site-popup" id="sitePopup" data-frequency="<?= h($popup_frequency) ?>" data-delay="<?= (int)$frontend_popup_delay ?>" data-priority="<?= (int)$frontend_popup_priority ?>" data-version="<?= h($popup_version) ?>" hidden>
+  <div class="site-popup__overlay" data-popup-close></div>
+  <div class="site-popup__dialog<?= $popup_image_only ? ' site-popup__dialog--image' : '' ?>" role="dialog" aria-modal="true" tabindex="-1" aria-labelledby="sitePopupTitle"<?= $frontend_popup_message !== '' ? ' aria-describedby="sitePopupMessage"' : '' ?>>
+    <button class="site-popup__close" type="button" aria-label="Close" data-popup-close>
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <?php if ($popup_image_is_safe): ?>
+      <div class="site-popup__media">
+        <?php if ($popup_image_only && $popup_has_cta): ?><a href="<?= h($frontend_popup_button_url) ?>"<?= $popup_cta_attrs ?> data-popup-action><?php endif; ?>
+        <img src="<?= h($site_url . '/' . $frontend_popup_image) ?>" alt="<?= h($popup_image_alt) ?>" decoding="async">
+        <?php if ($popup_image_only && $popup_has_cta): ?></a><?php endif; ?>
+      </div>
+    <?php endif; ?>
+    <?php if ($popup_image_only): ?>
+      <h2 class="site-popup__sr-only" id="sitePopupTitle"><?= h($popup_image_alt) ?></h2>
+    <?php else: ?>
+      <div class="site-popup__body">
+        <h2 class="site-popup__title" id="sitePopupTitle"><?= $frontend_popup_title !== '' ? h($frontend_popup_title) : 'Announcement' ?></h2>
+        <?php if ($frontend_popup_message !== ''): ?><p class="site-popup__message" id="sitePopupMessage"><?= nl2br(h($frontend_popup_message)) ?></p><?php endif; ?>
+      </div>
+      <div class="site-popup__footer">
+        <?php if ($popup_has_cta): ?>
+          <button class="site-popup__btn site-popup__btn--secondary" type="button" data-popup-close>Not now</button>
+          <a class="site-popup__btn site-popup__btn--primary" href="<?= h($frontend_popup_button_url) ?>"<?= $popup_cta_attrs ?> data-popup-action><?= h($frontend_popup_button_text) ?></a>
+        <?php else: ?>
+          <button class="site-popup__btn site-popup__btn--primary" type="button" data-popup-close>Got it</button>
+        <?php endif; ?>
+      </div>
+    <?php endif; ?>
+  </div>
 </div>
 <script>
 (() => {
   const popup = document.getElementById('sitePopup');
   if (!popup) return;
+  const dialog = popup.querySelector('.site-popup__dialog');
+  const root = document.documentElement;
   const frequency = popup.dataset.frequency || 'session';
   const storageKey = 'hiveFrontendPopupDismissed:' + (popup.dataset.version || 'default');
   const dateKey = new Date().toISOString().slice(0, 10);
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  let lastFocused = null;
   const isDismissed = () => {
     try {
       if (frequency === 'session') return sessionStorage.getItem(storageKey) === '1';
@@ -341,25 +366,50 @@ $popup_version = sha1(json_encode([$frontend_popup_title, $frontend_popup_messag
     } catch (_) {}
     return false;
   };
-  const close = () => {
-    popup.hidden = true;
+  const remember = () => {
     try {
       if (frequency === 'session') sessionStorage.setItem(storageKey, '1');
       else if (frequency === 'daily') localStorage.setItem(storageKey, dateKey);
       else if (frequency === 'once') localStorage.setItem(storageKey, '1');
     } catch (_) {}
   };
-  popup.querySelectorAll('[data-popup-close]').forEach(button => button.addEventListener('click', close));
-  popup.addEventListener('click', event => { if (event.target === popup) close(); });
-  document.addEventListener('keydown', event => { if (event.key === 'Escape' && !popup.hidden) close(); });
+  const onKeydown = event => {
+    if (event.key === 'Escape') { event.preventDefault(); close(); return; }
+    if (event.key !== 'Tab') return;
+    const items = [...dialog.querySelectorAll(focusableSelector)].filter(el => el.offsetParent !== null);
+    if (!items.length) { event.preventDefault(); return; }
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (event.shiftKey && (document.activeElement === first || document.activeElement === dialog)) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  };
+  const open = () => {
+    lastFocused = document.activeElement;
+    const scrollbar = window.innerWidth - root.clientWidth;
+    if (scrollbar > 0) root.style.setProperty('--site-popup-scrollbar', scrollbar + 'px');
+    root.classList.add('site-popup-lock');
+    popup.hidden = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => popup.classList.add('is-open')));
+    dialog.focus({ preventScroll: true });
+    document.addEventListener('keydown', onKeydown);
+  };
+  const close = () => {
+    if (popup.hidden) return;
+    remember();
+    popup.classList.remove('is-open');
+    document.removeEventListener('keydown', onKeydown);
+    window.setTimeout(() => {
+      popup.hidden = true;
+      root.classList.remove('site-popup-lock');
+      root.style.removeProperty('--site-popup-scrollbar');
+      if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus({ preventScroll: true });
+    }, reduceMotion ? 0 : 200);
+  };
+  popup.querySelectorAll('[data-popup-close]').forEach(el => el.addEventListener('click', close));
+  popup.querySelectorAll('[data-popup-action]').forEach(el => el.addEventListener('click', remember));
   if (!isDismissed()) {
     const delay = Math.max(0, Math.min(3600, Number(popup.dataset.delay || 0))) * 1000;
-    window.setTimeout(() => {
-      if (!isDismissed()) {
-        popup.hidden = false;
-        popup.querySelector('.site-popup-close')?.focus({ preventScroll: true });
-      }
-    }, delay);
+    window.setTimeout(() => { if (!isDismissed()) open(); }, delay);
   }
 })();
 </script>
