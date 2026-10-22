@@ -9897,6 +9897,101 @@ body.admin-login-page .btn-primary {
 .referral-detail-section-title i{color:var(--primary,#fc7f10)}
 .referral-detail-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .referral-detail-list>div{min-width:0;padding:10px;border-radius:9px;background:#f8fafc}
+
+/* --------------------------------------------------------------------------
+   Admin-wide statistics and table system
+   A final shared layer keeps metrics and data tables consistent across pages.
+   -------------------------------------------------------------------------- */
+.admin-content :is(.stats-grid,.stats-row,.statistics-grid,.stat-grid) {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));
+  gap:16px;
+  align-items:stretch;
+}
+.admin-content :is(.stat-card,.stat-mini,.stat-tile,.referral-stat-card) {
+  min-width:0;
+  min-height:112px;
+  padding:18px 20px;
+  border:1px solid var(--border,#e2e8f0);
+  border-radius:12px;
+  background:var(--white,#fff);
+  box-shadow:0 3px 12px rgba(15,23,42,.045);
+  transition:box-shadow .18s ease,transform .18s ease;
+}
+.admin-content :is(.stat-card,.stat-mini,.stat-tile,.referral-stat-card):hover {
+  transform:translateY(-1px);
+  box-shadow:0 8px 22px rgba(15,23,42,.08);
+}
+.admin-content :is(.stat-val,.stat-value,.stat-num,.stat-mini .num,.referral-stat-value) {
+  color:var(--text,#172033);
+  font-size:clamp(1.4rem,2vw,1.85rem);
+  font-weight:800;
+  line-height:1.15;
+  font-variant-numeric:tabular-nums;
+}
+.admin-content :is(.stat-label,.stat-mini .label,.referral-stat-label) {
+  color:var(--text-muted,#64748b);
+  font-size:.76rem;
+  font-weight:700;
+  line-height:1.4;
+  letter-spacing:.035em;
+}
+.admin-content :is(.table-wrap,.table-responsive,.data-table-wrap) {
+  width:100%;
+  max-width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  border:1px solid var(--border,#e2e8f0);
+  border-radius:12px;
+  background:var(--white,#fff);
+}
+.admin-content :is(.table-wrap,.table-responsive,.data-table-wrap) > table {
+  width:100%;
+  min-width:720px;
+  margin:0;
+  border:0;
+  border-collapse:separate;
+  border-spacing:0;
+  color:var(--text,#172033);
+  font-size:.84rem;
+}
+.admin-content :is(.table-wrap,.table-responsive,.data-table-wrap) > table thead th {
+  position:sticky;
+  top:0;
+  z-index:1;
+  padding:12px 14px;
+  border:0;
+  border-bottom:1px solid var(--border,#e2e8f0);
+  background:#f8fafc;
+  color:#475569;
+  font-size:.72rem;
+  font-weight:750;
+  letter-spacing:.045em;
+  line-height:1.35;
+  text-align:left;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.admin-content :is(.table-wrap,.table-responsive,.data-table-wrap) > table tbody td {
+  padding:12px 14px;
+  border:0;
+  border-bottom:1px solid #edf1f5;
+  background:#fff;
+  color:var(--text,#172033);
+  line-height:1.45;
+  vertical-align:middle;
+}
+.admin-content :is(.table-wrap,.table-responsive,.data-table-wrap) > table tbody tr:last-child td { border-bottom:0; }
+.admin-content :is(.table-wrap,.table-responsive,.data-table-wrap) > table tbody tr:hover td { background:#f8fafc; }
+.admin-content :is(.table-wrap,.table-responsive,.data-table-wrap) > table tbody td :is(.tbl-actions,.table-actions) { flex-wrap:nowrap; }
+@media(max-width:760px) {
+  .admin-content :is(.stats-grid,.stats-row,.statistics-grid,.stat-grid) { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .admin-content :is(.stat-card,.stat-mini,.stat-tile,.referral-stat-card) { min-height:96px; padding:15px; }
+  .admin-content :is(.table-wrap,.table-responsive,.data-table-wrap) > table { min-width:680px; }
+}
+@media(max-width:460px) {
+  .admin-content :is(.stats-grid,.stats-row,.statistics-grid,.stat-grid) { grid-template-columns:1fr; }
+}
 .referral-detail-list span,.referral-detail-text>span{display:block;margin-bottom:3px;color:var(--text-muted,#64748b);font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.045em}
 .referral-detail-list strong{display:block;font-size:.8rem;line-height:1.45;word-break:break-word}
 .referral-detail-text{margin-top:12px;padding:12px;border:1px solid var(--border,#e2e8f0);border-radius:9px}
