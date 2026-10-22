@@ -49,6 +49,7 @@ $style_file_paths = [
 ];
 
 $style_version = time();
+$refinements_version = @filemtime(dirname(__DIR__) . '/assets/css/refinements.css') ?: $style_version;
 
 foreach ($style_file_paths as $file_path) {
     if (is_file($file_path)) {
@@ -109,6 +110,10 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
     <link
         rel="stylesheet"
         href="<?= h($site_url) ?>/assets/css/style.css?v=<?= (int)$style_version ?>"
+    >
+    <link
+        rel="stylesheet"
+        href="<?= h($site_url) ?>/assets/css/refinements.css?v=<?= (int)$refinements_version ?>"
     >
 
     <!-- Favicon -->
