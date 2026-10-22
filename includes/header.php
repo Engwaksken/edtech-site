@@ -275,6 +275,10 @@ $popup_url_is_safe = $frontend_popup_button_url === ''
     || (str_starts_with($frontend_popup_button_url, '/') && !str_starts_with($frontend_popup_button_url, '//'))
     || (in_array($popup_url_scheme, ['http', 'https'], true) && filter_var($frontend_popup_button_url, FILTER_VALIDATE_URL));
 $popup_image_is_safe = preg_match('~^uploads/settings/[a-zA-Z0-9_.-]+\.(?:jpe?g|png|webp|gif)$~i', $frontend_popup_image) === 1;
+$popup_image_only = $popup_image_is_safe
+    && $frontend_popup_title === ''
+    && $frontend_popup_message === ''
+    && ($frontend_popup_button_text === '' || $frontend_popup_button_url === '');
 $popup_is_in_schedule = true;
 try {
     $popup_now = new DateTimeImmutable('now');
@@ -303,7 +307,7 @@ $popup_version = sha1(json_encode([$frontend_popup_title, $frontend_popup_messag
 ?>
 <?php if ($frontend_popup_enabled && $popup_is_in_schedule && $popup_matches_page && ($frontend_popup_title !== '' || $frontend_popup_message !== '' || $popup_image_is_safe)): ?>
 <div class="site-popup-backdrop" id="sitePopup" role="dialog" aria-modal="true" aria-labelledby="sitePopupTitle" <?= $frontend_popup_message !== '' ? 'aria-describedby="sitePopupMessage"' : '' ?> data-frequency="<?= h($popup_frequency) ?>" data-delay="<?= (int)$frontend_popup_delay ?>" data-priority="<?= (int)$frontend_popup_priority ?>" data-version="<?= h($popup_version) ?>" hidden>
-  <section class="site-popup-card">
+  <section class="site-popup-card<?= $popup_image_only ? ' site-popup-card-image-only' : '' ?>">
     <button class="site-popup-close" type="button" aria-label="Close message" data-popup-close><i class="fas fa-times" aria-hidden="true"></i></button>
     <span class="site-popup-kicker">Hive Colab</span>
     <h2 id="sitePopupTitle"><?= $frontend_popup_title !== '' ? h($frontend_popup_title) : 'A message for you' ?></h2>
