@@ -126,6 +126,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
             }
         }
 
+        $popup_start = trim((string)($_POST['frontend_popup_start'] ?? ''));
+        $popup_stop = trim((string)($_POST['frontend_popup_stop'] ?? ''));
+        $normalize_popup_datetime = static function (string $value): string {
+            if ($value === '') return '';
+            $date = DateTimeImmutable::createFromFormat('!Y-m-d\TH:i', $value);
+            $errors = DateTimeImmutable::getLastErrors();
+            if (!$date || ($errors !== false && ($errors['warning_count'] > 0 || $errors['error_count'] > 0))) {
+                throw new RuntimeException('Popup start and stop times must be valid dates and times.');
+            }
+            return $date->format('Y-m-d H:i:s');
+        };
+        $popup_start = $normalize_popup_datetime($popup_start);
+        $popup_stop = $normalize_popup_datetime($popup_stop);
+        if ($popup_start !== '' && $popup_stop !== '' && strtotime($popup_stop) <= strtotime($popup_start)) {
+            throw new RuntimeException('Popup stop time must be later than its start time.');
+        }
+
+        $popup_priority = filter_var($_POST['frontend_popup_priority'] ?? '0', FILTER_VALIDATE_INT);
+        $popup_delay = filter_var($_POST['frontend_popup_delay'] ?? '0', FILTER_VALIDATE_INT);
+        if ($popup_priority === false || $popup_priority < 0 || $popup_priority > 1000) {
+            throw new RuntimeException('Popup priority must be between 0 and 1000.');
+        }
+        if ($popup_delay === false || $popup_delay < 0 || $popup_delay > 3600) {
+            throw new RuntimeException('Popup delay must be between 0 and 3600 seconds.');
+        }
+        $popup_frequency = (string)($_POST['frontend_popup_frequency'] ?? 'session');
+        if (!in_array($popup_frequency, ['every_page', 'session', 'daily', 'once'], true)) {
+            throw new RuntimeException('Select a valid popup display frequency.');
+        }
+        $popup_scope = (string)($_POST['frontend_popup_scope'] ?? 'all');
+        if (!in_array($popup_scope, ['all', 'selected'], true)) {
+            throw new RuntimeException('Select whether the popup appears on all or selected pages.');
+        }
+        $popup_pages = trim((string)($_POST['frontend_popup_pages'] ?? ''));
+
         if (!empty($_FILES['frontend_popup_image']['name'])) {
             $image_tmp = (string)($_FILES['frontend_popup_image']['tmp_name'] ?? '');
             $image_size = (int)($_FILES['frontend_popup_image']['size'] ?? 0);
@@ -145,6 +180,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
 
         save_setting($conn, 'frontend_popup_button_url', $popup_url);
         save_setting($conn, 'frontend_popup_enabled', isset($_POST['frontend_popup_enabled']) ? '1' : '0');
+        save_setting($conn, 'frontend_popup_start', $popup_start);
+        save_setting($conn, 'frontend_popup_stop', $popup_stop);
+        save_setting($conn, 'frontend_popup_priority', (string)$popup_priority);
+        save_setting($conn, 'frontend_popup_frequency', $popup_frequency);
+        save_setting($conn, 'frontend_popup_delay', (string)$popup_delay);
+        save_setting($conn, 'frontend_popup_scope', $popup_scope);
+        save_setting($conn, 'frontend_popup_pages', $popup_pages);
+        save_setting($conn, 'frontend_popup_new_tab', isset($_POST['frontend_popup_new_tab']) ? '1' : '0');
         if ($popup_image !== null) {
             save_setting($conn, 'frontend_popup_image', $popup_image);
         } elseif (isset($_POST['frontend_popup_remove_image'])) {

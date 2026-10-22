@@ -126,6 +126,60 @@ $active_settings_tab = ($_POST['settings_active_tab'] ?? 'general') === 'popup' 
               </div>
 
               <div class="form-group">
+                <label for="popupStart">Start Showing</label>
+                <input id="popupStart" type="datetime-local" name="frontend_popup_start" class="form-control"
+                       value="<?= !empty($settings['frontend_popup_start']) ? h(date('Y-m-d\\TH:i', strtotime($settings['frontend_popup_start']))) : '' ?>">
+                <small>Leave blank to show immediately.</small>
+              </div>
+              <div class="form-group">
+                <label for="popupStop">Stop Showing</label>
+                <input id="popupStop" type="datetime-local" name="frontend_popup_stop" class="form-control"
+                       value="<?= !empty($settings['frontend_popup_stop']) ? h(date('Y-m-d\\TH:i', strtotime($settings['frontend_popup_stop']))) : '' ?>">
+                <small>Leave blank to keep the popup active until disabled.</small>
+              </div>
+              <div class="form-group">
+                <label for="popupPriority">Priority</label>
+                <input id="popupPriority" type="number" name="frontend_popup_priority" class="form-control" min="0" max="1000" step="1"
+                       value="<?= h($settings['frontend_popup_priority'] ?? '0') ?>">
+                <small>Higher values indicate higher priority when multiple popup campaigns are added.</small>
+              </div>
+              <div class="form-group">
+                <label for="popupFrequency">Show How Often</label>
+                <select id="popupFrequency" name="frontend_popup_frequency" class="form-control">
+                  <?php $popup_frequency_value = $settings['frontend_popup_frequency'] ?? 'session'; ?>
+                  <option value="every_page" <?= $popup_frequency_value === 'every_page' ? 'selected' : '' ?>>Every page view</option>
+                  <option value="session" <?= $popup_frequency_value === 'session' ? 'selected' : '' ?>>Once per browser session</option>
+                  <option value="daily" <?= $popup_frequency_value === 'daily' ? 'selected' : '' ?>>Once per day</option>
+                  <option value="once" <?= $popup_frequency_value === 'once' ? 'selected' : '' ?>>Once per browser</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="popupDelay">Delay (seconds)</label>
+                <input id="popupDelay" type="number" name="frontend_popup_delay" class="form-control" min="0" max="3600" step="1"
+                       value="<?= h($settings['frontend_popup_delay'] ?? '0') ?>">
+                <small>Choose 0 to show immediately.</small>
+              </div>
+              <div class="form-group" style="grid-column:1/-1">
+                <label style="display:flex;align-items:center;gap:8px">
+                  <input type="checkbox" name="frontend_popup_new_tab" value="1" <?= ($settings['frontend_popup_new_tab'] ?? '0') === '1' ? 'checked' : '' ?>>
+                  Open popup button link in a new tab
+                </label>
+              </div>
+              <div class="form-group">
+                <label for="popupScope">Show on</label>
+                <select id="popupScope" name="frontend_popup_scope" class="form-control">
+                  <?php $popup_scope_value = $settings['frontend_popup_scope'] ?? 'all'; ?>
+                  <option value="all" <?= $popup_scope_value === 'all' ? 'selected' : '' ?>>All frontend pages</option>
+                  <option value="selected" <?= $popup_scope_value === 'selected' ? 'selected' : '' ?>>Selected pages only</option>
+                </select>
+              </div>
+              <div class="form-group" style="grid-column:1/-1">
+                <label for="popupPages">Selected Page Paths</label>
+                <textarea id="popupPages" name="frontend_popup_pages" class="form-control" rows="3" placeholder="One path per line, e.g. / and /apply"><?= h($settings['frontend_popup_pages'] ?? '') ?></textarea>
+                <small>Used when “Selected pages only” is chosen. Enter exact frontend paths, one per line.</small>
+              </div>
+
+              <div class="form-group">
                 <label>Popup Title</label>
                 <input type="text" name="frontend_popup_title" class="form-control" maxlength="160"
                        value="<?= h($settings['frontend_popup_title'] ?? '') ?>" placeholder="A message for your visitors">

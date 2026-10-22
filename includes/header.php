@@ -262,14 +262,47 @@ $frontend_popup_message = $frontend_popup_enabled ? trim(get_setting($conn, 'fro
 $frontend_popup_image = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_image', '')) : '';
 $frontend_popup_button_text = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_button_text', '')) : '';
 $frontend_popup_button_url = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_button_url', '')) : '';
+$frontend_popup_start = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_start', '')) : '';
+$frontend_popup_stop = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_stop', '')) : '';
+$frontend_popup_priority = $frontend_popup_enabled ? max(0, (int)get_setting($conn, 'frontend_popup_priority', '0')) : 0;
+$frontend_popup_frequency = $frontend_popup_enabled ? get_setting($conn, 'frontend_popup_frequency', 'session') : 'session';
+$frontend_popup_delay = $frontend_popup_enabled ? max(0, min(3600, (int)get_setting($conn, 'frontend_popup_delay', '0'))) : 0;
+$frontend_popup_scope = $frontend_popup_enabled ? get_setting($conn, 'frontend_popup_scope', 'all') : 'all';
+$frontend_popup_pages = $frontend_popup_enabled ? get_setting($conn, 'frontend_popup_pages', '') : '';
+$frontend_popup_new_tab = $frontend_popup_enabled && get_setting($conn, 'frontend_popup_new_tab', '0') === '1';
 $popup_url_scheme = strtolower((string)parse_url($frontend_popup_button_url, PHP_URL_SCHEME));
 $popup_url_is_safe = $frontend_popup_button_url === ''
     || (str_starts_with($frontend_popup_button_url, '/') && !str_starts_with($frontend_popup_button_url, '//'))
     || (in_array($popup_url_scheme, ['http', 'https'], true) && filter_var($frontend_popup_button_url, FILTER_VALIDATE_URL));
 $popup_image_is_safe = preg_match('~^uploads/settings/[a-zA-Z0-9_.-]+\.(?:jpe?g|png|webp|gif)$~i', $frontend_popup_image) === 1;
+$popup_is_in_schedule = true;
+try {
+    $popup_now = new DateTimeImmutable('now');
+    if ($frontend_popup_start !== '' && $popup_now < new DateTimeImmutable($frontend_popup_start)) $popup_is_in_schedule = false;
+    if ($frontend_popup_stop !== '' && $popup_now > new DateTimeImmutable($frontend_popup_stop)) $popup_is_in_schedule = false;
+} catch (Throwable $exception) {
+    $popup_is_in_schedule = false;
+}
+$current_frontend_path = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
+$normalize_popup_path = static function (string $path): string {
+    $path = '/' . ltrim(trim($path), '/');
+    $path = preg_replace('~/+~', '/', $path) ?? '/';
+    return $path === '/' ? '/' : rtrim($path, '/');
+};
+$popup_matches_page = $frontend_popup_scope !== 'selected';
+if ($frontend_popup_scope === 'selected') {
+    foreach (preg_split('/\R/', $frontend_popup_pages) ?: [] as $popup_page) {
+        if (trim($popup_page) !== '' && $normalize_popup_path($popup_page) === $normalize_popup_path($current_frontend_path)) {
+            $popup_matches_page = true;
+            break;
+        }
+    }
+}
+$popup_frequency = in_array($frontend_popup_frequency, ['every_page', 'session', 'daily', 'once'], true) ? $frontend_popup_frequency : 'session';
+$popup_version = sha1(json_encode([$frontend_popup_title, $frontend_popup_message, $frontend_popup_image, $frontend_popup_button_url, $frontend_popup_start, $frontend_popup_stop], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: 'popup');
 ?>
-<?php if ($frontend_popup_enabled && ($frontend_popup_title !== '' || $frontend_popup_message !== '' || $popup_image_is_safe)): ?>
-<div class="site-popup-backdrop" id="sitePopup" role="dialog" aria-modal="true" aria-labelledby="sitePopupTitle" <?= $frontend_popup_message !== '' ? 'aria-describedby="sitePopupMessage"' : '' ?> hidden>
+<?php if ($frontend_popup_enabled && $popup_is_in_schedule && $popup_matches_page && ($frontend_popup_title !== '' || $frontend_popup_message !== '' || $popup_image_is_safe)): ?>
+<div class="site-popup-backdrop" id="sitePopup" role="dialog" aria-modal="true" aria-labelledby="sitePopupTitle" <?= $frontend_popup_message !== '' ? 'aria-describedby="sitePopupMessage"' : '' ?> data-frequency="<?= h($popup_frequency) ?>" data-delay="<?= (int)$frontend_popup_delay ?>" data-priority="<?= (int)$frontend_popup_priority ?>" data-version="<?= h($popup_version) ?>" hidden>
   <section class="site-popup-card">
     <button class="site-popup-close" type="button" aria-label="Close message" data-popup-close><i class="fas fa-times" aria-hidden="true"></i></button>
     <span class="site-popup-kicker">Hive Colab</span>
@@ -278,7 +311,7 @@ $popup_image_is_safe = preg_match('~^uploads/settings/[a-zA-Z0-9_.-]+\.(?:jpe?g|
     <?php if ($popup_image_is_safe): ?><img class="site-popup-image" src="<?= h($site_url . '/' . $frontend_popup_image) ?>" alt="<?= h($frontend_popup_title !== '' ? $frontend_popup_title : 'Popup announcement') ?>"><?php endif; ?>
     <div class="site-popup-actions">
       <?php if ($frontend_popup_button_text !== '' && $popup_url_is_safe && $frontend_popup_button_url !== ''): ?>
-        <a class="site-popup-cta" href="<?= h($frontend_popup_button_url) ?>"><?= h($frontend_popup_button_text) ?></a>
+        <a class="site-popup-cta" href="<?= h($frontend_popup_button_url) ?>" <?= $frontend_popup_new_tab ? 'target="_blank" rel="noopener noreferrer"' : '' ?>><?= h($frontend_popup_button_text) ?></a>
       <?php endif; ?>
       <button class="site-popup-dismiss" type="button" data-popup-close>Close</button>
     </div>
@@ -288,17 +321,37 @@ $popup_image_is_safe = preg_match('~^uploads/settings/[a-zA-Z0-9_.-]+\.(?:jpe?g|
 (() => {
   const popup = document.getElementById('sitePopup');
   if (!popup) return;
-  const storageKey = 'hiveFrontendPopupDismissed';
+  const frequency = popup.dataset.frequency || 'session';
+  const storageKey = 'hiveFrontendPopupDismissed:' + (popup.dataset.version || 'default');
+  const dateKey = new Date().toISOString().slice(0, 10);
+  const isDismissed = () => {
+    try {
+      if (frequency === 'session') return sessionStorage.getItem(storageKey) === '1';
+      if (frequency === 'daily') return localStorage.getItem(storageKey) === dateKey;
+      if (frequency === 'once') return localStorage.getItem(storageKey) === '1';
+    } catch (_) {}
+    return false;
+  };
   const close = () => {
     popup.hidden = true;
-    try { sessionStorage.setItem(storageKey, '1'); } catch (_) {}
+    try {
+      if (frequency === 'session') sessionStorage.setItem(storageKey, '1');
+      else if (frequency === 'daily') localStorage.setItem(storageKey, dateKey);
+      else if (frequency === 'once') localStorage.setItem(storageKey, '1');
+    } catch (_) {}
   };
   popup.querySelectorAll('[data-popup-close]').forEach(button => button.addEventListener('click', close));
   popup.addEventListener('click', event => { if (event.target === popup) close(); });
   document.addEventListener('keydown', event => { if (event.key === 'Escape' && !popup.hidden) close(); });
-  let dismissed = false;
-  try { dismissed = sessionStorage.getItem(storageKey) === '1'; } catch (_) {}
-  if (!dismissed) popup.hidden = false;
+  if (!isDismissed()) {
+    const delay = Math.max(0, Math.min(3600, Number(popup.dataset.delay || 0))) * 1000;
+    window.setTimeout(() => {
+      if (!isDismissed()) {
+        popup.hidden = false;
+        popup.querySelector('.site-popup-close')?.focus({ preventScroll: true });
+      }
+    }, delay);
+  }
 })();
 </script>
 <?php endif; ?>

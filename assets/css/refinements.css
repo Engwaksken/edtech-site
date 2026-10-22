@@ -1,8 +1,8 @@
 @import url('../vendor/fontawesome/css/all.min.css');
 
 .site-popup-backdrop[hidden] { display: none; }
-.site-popup-backdrop { position: fixed; inset: 0; z-index: 100000; display: grid; place-items: center; padding: 20px; background: rgba(15, 23, 42, .62); backdrop-filter: blur(4px); }
-.site-popup-card { position: relative; width: min(520px, 100%); max-height: min(80vh, 680px); overflow: auto; padding: 36px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; color: #172033; box-shadow: 0 24px 80px rgba(15, 23, 42, .28); }
+.site-popup-backdrop { position: fixed; inset: 0; z-index: 100000; display: grid; place-items: center; padding: 24px; background: rgba(15, 23, 42, .62); backdrop-filter: blur(4px); }
+.site-popup-card { position: relative; width: min(520px, 100%); max-height: calc(100vh - 48px); overflow: auto; margin: auto; padding: 36px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; color: #172033; box-shadow: 0 24px 80px rgba(15, 23, 42, .28); }
 .site-popup-kicker { display: block; margin-bottom: 10px; color: #e87515; font-size: .75rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .site-popup-card h2 { margin: 0 42px 12px 0; color: #172033; font-size: clamp(1.4rem, 4vw, 1.9rem); line-height: 1.25; }
 .site-popup-card p { margin: 0; color: #475569; font-size: 1rem; line-height: 1.7; white-space: normal; }
