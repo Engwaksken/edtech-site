@@ -11,7 +11,9 @@ ms_auth_gate();
 if (!ms_has_page_permission($conn, 'interviews')) {
     http_response_code(403);
     include 'includes/sidebar.php'; ?>
-    <div class="admin-main"><div class="admin-content legacy-style-5534667570">
+    <div class="admin-main">
+    <?php $global_topbar_title = 'Access Denied'; require __DIR__ . '/includes/topbar.php'; ?>
+    <div class="admin-content legacy-style-5534667570">
     <h2>Access denied</h2>
     <p>Your role is not allowed to access Field Interviews.</p>
     </div></div><?php exit;
@@ -164,6 +166,7 @@ if ($CAN_MANAGE_INTERVIEWS) {
 <?php include 'includes/sidebar.php'; ?>
 
 <div class="admin-main" id="adminMain">
+<?php $global_topbar_title = 'Field Interviews'; require __DIR__ . '/includes/topbar.php'; ?>
 
 <!-- -- Topbar ---------------------------------- -->
 <div class="iv-top">

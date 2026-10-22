@@ -231,6 +231,7 @@ $external_link = rtrim(SITE_URL, '/') . '/survey.php?t=' . urlencode($survey['ex
 <?php include 'includes/sidebar.php'; ?>
 
 <div class="admin-main" id="adminMain">
+<?php $global_topbar_title = 'Survey Responses'; require __DIR__ . '/includes/topbar.php'; ?>
 
   <!-- --- Hero header ------------------------------- -->
   <div class="rp-main">

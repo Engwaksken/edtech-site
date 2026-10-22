@@ -813,6 +813,7 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
 <?php include 'includes/sidebar.php'; ?>
 
 <div class="admin-main" id="adminMain">
+<?php $global_topbar_title = 'Newsletters'; require __DIR__ . '/includes/topbar.php'; ?>
   <div class="nl-topbar">
     <div class="nl-topbar-inner">
       <div>
