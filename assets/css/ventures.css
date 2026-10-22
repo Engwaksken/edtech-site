@@ -446,7 +446,8 @@ body.vp-sidebar-open {
 .vp-topbar {
   position: sticky;
   top: 0;
-  z-index: 90;
+  /* Keep the menu toggle above the mobile backdrop so it remains visible. */
+  z-index: 99;
   height: var(--topbar-h);
   background: rgba(255, 255, 255, .92);
   backdrop-filter: blur(12px);
@@ -455,6 +456,7 @@ body.vp-sidebar-open {
   width: 100%;
   box-sizing: border-box;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
@@ -5302,8 +5304,8 @@ body.meal-modal-open {
   .vp-user-chip { padding: 4px; }
   .vp-user-chip-name { display: none; }
   .vp-notif-btn, .vp-menu-btn { width: 36px; height: 36px; }
-  .vp-topbar-logout { width: 40px; min-width: 40px; min-height: 40px; padding: 0; }
-  .vp-topbar-logout span { display: none; }
+  .vp-topbar-logout { min-height: 36px; padding: 0 10px; font-size: 12px; }
+  .vp-topbar-logout span { display: inline; }
   .vp-page-title { max-width: calc(44vw / var(--screen-zoom, 1)); font-size: 15px; }
   .vp-page-subtitle { max-width: calc(44vw / var(--screen-zoom, 1)); font-size: 11.5px; }
   .vp-content { padding: 14px 12px 24px; }
