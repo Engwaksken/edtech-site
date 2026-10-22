@@ -5617,8 +5617,8 @@ body:has(.login-box) label:not(.remember-label) {
 
 body:has(.login-box) .form-control {
   width: 100%;
-  min-height: 50px;
-  padding: 11px 14px;
+  min-height: 56px;
+  padding: 14px 16px;
   border: 1px solid #cbd5e1;
   border-radius: 10px;
   background: #fff;
@@ -5657,8 +5657,8 @@ body:has(.login-box) .pw-toggle {
   position: absolute;
   right: 7px;
   top: 50%;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   transform: translateY(-50%);
   display: grid;
   place-items: center;
@@ -5716,8 +5716,8 @@ body:has(.login-box) .forgot-link:hover {
 
 body:has(.login-box) .btn-login {
   width: 100%;
-  min-height: 50px;
-  padding: 11px 16px;
+  min-height: 56px;
+  padding: 14px 18px;
   border: 1px solid #0f172a;
   border-radius: 10px;
   background: #0f172a;
@@ -5992,4 +5992,3 @@ body > #mealMessageModal.open {
   pointer-events: auto !important;
   z-index: 2147483640 !important;
 }
-

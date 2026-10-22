@@ -261,7 +261,7 @@ $otpSecondsLeft = max(
 
 .otp-input {
     width: 100%;
-    height: 58px;
+    height: 64px;
     border: 1px solid #d9dce3;
     border-radius: 12px;
     padding: 0 16px;
@@ -285,6 +285,25 @@ $otpSecondsLeft = max(
     background: #f3f4f6;
     color: #9ca3af;
     cursor: not-allowed;
+}
+
+#otpForm .btn-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 56px;
+    padding: 14px 18px;
+    border: 0;
+    border-radius: 10px;
+    background: #0f172a;
+    color: #fff;
+    font: 700 15px/1.4 'Outfit', sans-serif;
+    cursor: pointer;
+}
+
+#otpForm .btn-login:hover:not(:disabled) {
+    background: #ff6b2c;
 }
 
 .otp-meta {
