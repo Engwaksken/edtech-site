@@ -19,11 +19,15 @@ define('UPLOAD_DIR', BASE_PATH . '/uploads/');
 define('UPLOAD_URL', SITE_URL . '/uploads/');
 define('MAX_FILE_SIZE', 5 * 1024 * 1024);
 
-site_validate_request_origin(SITE_URL);
-if (site_is_unsafe_request()) {
-    site_require_csrf();
+if (!defined('SITE_RENDERING_DEFAULT_ERROR')) {
+    site_validate_request_origin(SITE_URL);
+    if (site_is_unsafe_request()) {
+        site_require_csrf();
+    }
 }
-site_enable_form_protection(SITE_URL);
+if (!defined('SITE_RENDERING_DEFAULT_ERROR')) {
+    site_enable_form_protection(SITE_URL);
+}
 
 try {
     if (DB_USER === '' || DB_NAME === '' || DB_PASS === '') {

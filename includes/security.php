@@ -29,9 +29,20 @@ function site_require_csrf(): void
     $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_POST['site_csrf_token'] ?? '';
     $expected = $_SESSION['site_csrf_token'] ?? '';
     if (!is_string($token) || $expected === '' || !hash_equals($expected, $token)) {
-        http_response_code(403);
-        exit('Your session could not be verified. Reload the form and try again.');
+        site_show_default_error(403);
     }
+}
+
+/** Show the shared error page instead of exposing raw security rejection text. */
+function site_show_default_error(int $status): void
+{
+    http_response_code($status);
+    if (PHP_SAPI !== 'cli' && !headers_sent()) {
+        define('SITE_RENDERING_DEFAULT_ERROR', true);
+        require dirname(__DIR__) . '/error.php';
+        exit;
+    }
+    exit;
 }
 
 function site_is_unsafe_request(): bool
@@ -146,7 +157,6 @@ function site_validate_request_origin(string $siteUrl): void
     $source = $origin !== '' ? $origin : $referer;
     if (($_SERVER['HTTP_SEC_FETCH_SITE'] ?? '') === 'cross-site'
         || ($source !== '' && site_origin($source) !== site_origin($siteUrl))) {
-        http_response_code(403);
-        exit('This request could not be verified. Open the form on this website and try again.');
+        site_show_default_error(403);
     }
 }
