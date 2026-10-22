@@ -306,8 +306,8 @@ $popup_frequency = in_array($frontend_popup_frequency, ['every_page', 'session',
 $popup_version = sha1(json_encode([$frontend_popup_title, $frontend_popup_message, $frontend_popup_image, $frontend_popup_button_url, $frontend_popup_start, $frontend_popup_stop], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: 'popup');
 ?>
 <?php if ($frontend_popup_enabled && $popup_is_in_schedule && $popup_matches_page && ($frontend_popup_title !== '' || $frontend_popup_message !== '' || $popup_image_is_safe)): ?>
-<div class="site-popup-backdrop" id="sitePopup" role="dialog" aria-modal="true" aria-labelledby="sitePopupTitle" <?= $frontend_popup_message !== '' ? 'aria-describedby="sitePopupMessage"' : '' ?> data-frequency="<?= h($popup_frequency) ?>" data-delay="<?= (int)$frontend_popup_delay ?>" data-priority="<?= (int)$frontend_popup_priority ?>" data-version="<?= h($popup_version) ?>" hidden>
-  <section class="site-popup-card<?= $popup_image_only ? ' site-popup-card-image-only' : '' ?>">
+<div class="site-popup-backdrop" id="sitePopup" data-frequency="<?= h($popup_frequency) ?>" data-delay="<?= (int)$frontend_popup_delay ?>" data-priority="<?= (int)$frontend_popup_priority ?>" data-version="<?= h($popup_version) ?>" hidden>
+  <section class="site-popup-card<?= $popup_image_only ? ' site-popup-card-image-only' : '' ?>" role="dialog" aria-modal="true" aria-labelledby="sitePopupTitle" <?= $frontend_popup_message !== '' ? 'aria-describedby="sitePopupMessage"' : '' ?>>
     <button class="site-popup-close" type="button" aria-label="Close message" data-popup-close><i class="fas fa-times" aria-hidden="true"></i></button>
     <span class="site-popup-kicker">Hive Colab</span>
     <h2 id="sitePopupTitle"><?= $frontend_popup_title !== '' ? h($frontend_popup_title) : 'A message for you' ?></h2>
