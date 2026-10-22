@@ -1038,6 +1038,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var mobileBtn = document.getElementById('topbarMobileToggle');
     var body      = document.body;
 
+    // Place the mobile menu control in the page's actual topbar instead of
+    // leaving it stranded between the sidebar and page content.
+    var topbarLeft = document.querySelector('.admin-topbar .topbar-left');
+    if (topbarLeft && mobileBtn && mobileBtn.parentNode !== topbarLeft) {
+        topbarLeft.insertBefore(mobileBtn, topbarLeft.firstChild);
+    }
+
     if (!sidebar || !overlay || !mobileBtn) {
         return;
     }

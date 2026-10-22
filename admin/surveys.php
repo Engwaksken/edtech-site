@@ -132,9 +132,14 @@ $site_name = function_exists('get_setting')
       </div>
     </div>
     <div class="topbar-right">
-      <a href="<?= survey_h(survey_base_url()) ?>" target="_blank" class="btn btn-secondary btn-sm">
-        <i class="fa fa-eye"></i> View Site
+      <a href="<?= survey_h(survey_base_url()) ?>" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" title="View Site" aria-label="View Site">
+        <i class="fa fa-eye" aria-hidden="true"></i>
       </a>
+      <form method="POST" action="logout.php" class="inline-action-form">
+        <button type="submit" class="btn btn-secondary btn-sm" title="Logout" aria-label="Logout">
+          <i class="fa fa-sign-out-alt" aria-hidden="true"></i>
+        </button>
+      </form>
     </div>
   </header>
 
@@ -233,8 +238,8 @@ $site_name = function_exists('get_setting')
               <!-- Public survey page -->
               <td class="survey-link-cell">
                 <div class="survey-link-actions">
-                  <a href="<?= survey_h($link) ?>" target="_blank" rel="noopener" class="btn btn-sm btn-secondary">
-                    <i class="fa fa-eye"></i> View
+                  <a href="<?= survey_h($link) ?>" target="_blank" rel="noopener" class="btn btn-sm btn-secondary" title="Open public survey page" aria-label="Open public survey page">
+                    <i class="fa fa-external-link-alt" aria-hidden="true"></i>
                   </a>
                 </div>
               </td>
@@ -243,26 +248,26 @@ $site_name = function_exists('get_setting')
               <td>
                 <div class="tbl-actions">
                   <a href="survey-builder.php?id=<?= (int)$s['id'] ?>"
-                     class="btn btn-sm btn-primary" title="Open Builder">
-                    <i class="fa fa-tools"></i> Builder
+                     class="btn btn-sm btn-primary" title="Open Builder" aria-label="Open Builder">
+                    <i class="fa fa-tools" aria-hidden="true"></i>
                   </a>
 
                   <a href="survey-responses.php?id=<?= (int)$s['id'] ?>"
-                     class="btn btn-sm btn-teal" title="View Responses">
-                    <i class="fa fa-chart-bar"></i>
+                     class="btn btn-sm btn-teal" title="View Responses" aria-label="View Responses">
+                    <i class="fa fa-chart-bar" aria-hidden="true"></i>
                   </a>
 
                   <button class="btn btn-sm btn-secondary" type="button" title="Edit Settings"
-                          onclick='editSurvey(<?= json_encode($s, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT) ?>)'>
-                    <i class="fa fa-cog"></i>
+                           aria-label="Edit Settings" onclick='editSurvey(<?= json_encode($s, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT) ?>)'>
+                    <i class="fa fa-cog" aria-hidden="true"></i>
                   </button>
 
                   <form method="POST" action="includes/process-surveys.php" class="inline-action-form"
                         onsubmit="return confirm('Delete this survey and ALL its responses? This cannot be undone.')">
                     <input type="hidden" name="action" value="delete_survey">
                     <input type="hidden" name="id" value="<?= (int)$s['id'] ?>">
-                    <button class="btn btn-sm btn-danger" title="Delete Survey">
-                      <i class="fa fa-trash"></i>
+                    <button class="btn btn-sm btn-danger" title="Delete Survey" aria-label="Delete Survey">
+                      <i class="fa fa-trash" aria-hidden="true"></i>
                     </button>
                   </form>
                 </div>
