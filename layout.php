@@ -579,6 +579,13 @@ $logout_url = vp_url('logout');
                 </span>
             </div>
 
+            <form method="POST" action="<?= h($logout_url) ?>" class="vp-topbar-logout-form">
+                <button type="submit" class="vp-topbar-logout" aria-label="Sign out">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    <span>Sign Out</span>
+                </button>
+            </form>
+
         </div>
 
     </header>
