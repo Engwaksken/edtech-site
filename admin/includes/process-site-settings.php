@@ -126,12 +126,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
             }
         }
 
+        if (!empty($_FILES['frontend_popup_image']['name'])) {
+            $image_tmp = (string)($_FILES['frontend_popup_image']['tmp_name'] ?? '');
+            $image_size = (int)($_FILES['frontend_popup_image']['size'] ?? 0);
+            if (($_FILES['frontend_popup_image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK
+                || $image_tmp === ''
+                || $image_size > 5 * 1024 * 1024
+                || @getimagesize($image_tmp) === false) {
+                throw new RuntimeException('Upload a valid popup image no larger than 5 MB.');
+            }
+        }
+
+        $popup_image = upload_setting_file('frontend_popup_image', ['jpg', 'jpeg', 'png', 'webp', 'gif']);
+
         foreach ($text_settings as $key) {
             save_setting($conn, $key, trim($_POST[$key] ?? ''));
         }
 
         save_setting($conn, 'frontend_popup_button_url', $popup_url);
         save_setting($conn, 'frontend_popup_enabled', isset($_POST['frontend_popup_enabled']) ? '1' : '0');
+        if ($popup_image !== null) {
+            save_setting($conn, 'frontend_popup_image', $popup_image);
+        } elseif (isset($_POST['frontend_popup_remove_image'])) {
+            save_setting($conn, 'frontend_popup_image', '');
+        }
 
         $logo = upload_setting_file('site_logo', ['jpg', 'jpeg', 'png', 'webp', 'gif']);
         if ($logo !== null) {

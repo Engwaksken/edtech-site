@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/process-site-settings.php';
+$active_settings_tab = ($_POST['settings_active_tab'] ?? 'general') === 'popup' ? 'popup' : 'general';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +39,14 @@ require_once __DIR__ . '/includes/process-site-settings.php';
 
       <div class="card-body">
         <form method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="settings_active_tab" id="settingsActiveTab" value="<?= h($active_settings_tab) ?>">
 
+          <div class="settings-tabs" role="tablist" aria-label="Site settings sections">
+            <button type="button" class="settings-tab <?= $active_settings_tab === 'general' ? 'active' : '' ?>" role="tab" id="generalTab" aria-selected="<?= $active_settings_tab === 'general' ? 'true' : 'false' ?>" aria-controls="generalPanel" data-settings-tab="generalPanel"><i class="fa fa-cog"></i> General</button>
+            <button type="button" class="settings-tab <?= $active_settings_tab === 'popup' ? 'active' : '' ?>" role="tab" id="popupTab" aria-selected="<?= $active_settings_tab === 'popup' ? 'true' : 'false' ?>" aria-controls="popupPanel" data-settings-tab="popupPanel"><i class="fa fa-window-restore"></i> Frontend Popup</button>
+          </div>
+
+          <section class="settings-tab-panel <?= $active_settings_tab === 'general' ? 'active' : '' ?>" role="tabpanel" id="generalPanel" aria-labelledby="generalTab" <?= $active_settings_tab !== 'general' ? 'hidden' : '' ?>>
           <div class="form-grid">
 
             <div class="form-group">
@@ -63,41 +71,6 @@ require_once __DIR__ . '/includes/process-site-settings.php';
               <label>Site Address</label>
               <input type="text" name="site_address" class="form-control"
                      value="<?= h($settings['site_address'] ?? '') ?>">
-            </div>
-
-            <div class="settings-section-heading" style="grid-column:1/-1;border-top:1px solid #e2e8f0;padding-top:20px;margin-top:8px">
-              <h3><i class="fa fa-window-restore"></i> Frontend Popup</h3>
-              <p>Configure a site-wide popup for public-facing pages.</p>
-            </div>
-
-            <div class="form-group" style="grid-column:1/-1">
-              <label style="display:flex;align-items:center;gap:10px">
-                <input type="checkbox" name="frontend_popup_enabled" value="1" <?= ($settings['frontend_popup_enabled'] ?? '0') === '1' ? 'checked' : '' ?>>
-                Show popup on the frontend
-              </label>
-            </div>
-
-            <div class="form-group">
-              <label>Popup Title</label>
-              <input type="text" name="frontend_popup_title" class="form-control" maxlength="160"
-                     value="<?= h($settings['frontend_popup_title'] ?? '') ?>" placeholder="A message for your visitors">
-            </div>
-
-            <div class="form-group">
-              <label>Button Text (optional)</label>
-              <input type="text" name="frontend_popup_button_text" class="form-control" maxlength="60"
-                     value="<?= h($settings['frontend_popup_button_text'] ?? '') ?>" placeholder="Learn more">
-            </div>
-
-            <div class="form-group" style="grid-column:1/-1">
-              <label>Popup Message</label>
-              <textarea name="frontend_popup_message" class="form-control" rows="4" maxlength="2000" placeholder="Write the message visitors should see."><?= h($settings['frontend_popup_message'] ?? '') ?></textarea>
-            </div>
-
-            <div class="form-group" style="grid-column:1/-1">
-              <label>Button Link (optional)</label>
-              <input type="text" name="frontend_popup_button_url" class="form-control"
-                     value="<?= h($settings['frontend_popup_button_url'] ?? '') ?>" placeholder="https://example.com or /apply">
             </div>
 
 <div class="settings-upload-grid">
@@ -139,8 +112,59 @@ require_once __DIR__ . '/includes/process-site-settings.php';
   </div>
 
 </div>
-
           </div>
+          </section>
+
+          <section class="settings-tab-panel <?= $active_settings_tab === 'popup' ? 'active' : '' ?>" role="tabpanel" id="popupPanel" aria-labelledby="popupTab" <?= $active_settings_tab !== 'popup' ? 'hidden' : '' ?>>
+            <p class="settings-tab-help">Upload a designed popup graphic, or build a popup using text and an optional action button. The popup appears on public pages while enabled.</p>
+            <div class="form-grid">
+              <div class="form-group" style="grid-column:1/-1">
+                <label style="display:flex;align-items:center;gap:10px">
+                  <input type="checkbox" name="frontend_popup_enabled" value="1" <?= ($settings['frontend_popup_enabled'] ?? '0') === '1' ? 'checked' : '' ?>>
+                  Show popup on the frontend
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label>Popup Title</label>
+                <input type="text" name="frontend_popup_title" class="form-control" maxlength="160"
+                       value="<?= h($settings['frontend_popup_title'] ?? '') ?>" placeholder="A message for your visitors">
+              </div>
+
+              <div class="form-group">
+                <label>Button Text (optional)</label>
+                <input type="text" name="frontend_popup_button_text" class="form-control" maxlength="60"
+                       value="<?= h($settings['frontend_popup_button_text'] ?? '') ?>" placeholder="Learn more">
+              </div>
+
+              <div class="form-group" style="grid-column:1/-1">
+                <label>Popup Message</label>
+                <textarea name="frontend_popup_message" class="form-control" rows="4" maxlength="2000" placeholder="Write the message visitors should see."><?= h($settings['frontend_popup_message'] ?? '') ?></textarea>
+              </div>
+
+              <div class="form-group" style="grid-column:1/-1">
+                <label>Button Link (optional)</label>
+                <input type="text" name="frontend_popup_button_url" class="form-control"
+                       value="<?= h($settings['frontend_popup_button_url'] ?? '') ?>" placeholder="https://example.com or /apply">
+              </div>
+
+              <div class="settings-upload-card" style="grid-column:1/-1">
+                <label for="frontendPopupImage">Designed Popup Image (optional)</label>
+                <div class="settings-preview" style="max-width:520px;min-height:120px">
+                  <?php if (!empty($settings['frontend_popup_image'])): ?>
+                    <img src="../<?= h($settings['frontend_popup_image']) ?>" alt="Current popup design" style="max-width:100%;max-height:280px;object-fit:contain">
+                  <?php else: ?>
+                    <div class="preview-placeholder"><i class="fa fa-image"></i><span>No popup design uploaded</span></div>
+                  <?php endif; ?>
+                </div>
+                <input id="frontendPopupImage" type="file" name="frontend_popup_image" class="form-control" accept="image/jpeg,image/png,image/webp,image/gif">
+                <small>JPG, PNG, WEBP, or GIF. Maximum file size: 5 MB.</small>
+                <?php if (!empty($settings['frontend_popup_image'])): ?>
+                  <label style="display:flex;align-items:center;gap:8px;margin-top:10px"><input type="checkbox" name="frontend_popup_remove_image" value="1"> Remove current popup image</label>
+                <?php endif; ?>
+              </div>
+            </div>
+          </section>
 
           <div class="legacy-style-9eb125f52f">
             <button type="submit" name="save_settings" class="btn btn-primary">
@@ -154,6 +178,30 @@ require_once __DIR__ . '/includes/process-site-settings.php';
 
   </div>
 </div>
+
+<style>
+.settings-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px;border-bottom:1px solid #e2e8f0}
+.settings-tab{padding:12px 16px;border:0;border-bottom:3px solid transparent;background:transparent;color:#475569;font:inherit;font-weight:700;cursor:pointer}
+.settings-tab.active{border-bottom-color:#fc7f10;color:#172033}
+.settings-tab-panel[hidden]{display:none}
+.settings-tab-help{margin:0 0 20px;color:#64748b;line-height:1.6}
+</style>
+<script>
+document.querySelectorAll('[data-settings-tab]').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.getElementById('settingsActiveTab').value = tab.dataset.settingsTab === 'popupPanel' ? 'popup' : 'general';
+    document.querySelectorAll('[data-settings-tab]').forEach(item => {
+      const active = item === tab;
+      item.classList.toggle('active', active);
+      item.setAttribute('aria-selected', String(active));
+    });
+    document.querySelectorAll('.settings-tab-panel').forEach(panel => {
+      panel.hidden = panel.id !== tab.dataset.settingsTab;
+      panel.classList.toggle('active', !panel.hidden);
+    });
+  });
+});
+</script>
 
 </body>
 </html>

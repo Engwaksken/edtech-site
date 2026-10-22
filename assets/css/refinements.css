@@ -6,6 +6,7 @@
 .site-popup-kicker { display: block; margin-bottom: 10px; color: #e87515; font-size: .75rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .site-popup-card h2 { margin: 0 42px 12px 0; color: #172033; font-size: clamp(1.4rem, 4vw, 1.9rem); line-height: 1.25; }
 .site-popup-card p { margin: 0; color: #475569; font-size: 1rem; line-height: 1.7; white-space: normal; }
+.site-popup-image { display: block; width: 100%; max-height: 50vh; margin: 20px auto 0; border-radius: 12px; object-fit: contain; }
 .site-popup-close { position: absolute; top: 16px; right: 16px; display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid #e2e8f0; border-radius: 50%; background: #f8fafc; color: #334155; cursor: pointer; }
 .site-popup-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
 .site-popup-cta, .site-popup-dismiss { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; padding: 10px 18px; border: 1px solid #fc7f10; border-radius: 10px; background: #fc7f10; color: #fff; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }

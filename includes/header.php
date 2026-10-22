@@ -259,20 +259,23 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
 $frontend_popup_enabled = function_exists('get_setting') && get_setting($conn, 'frontend_popup_enabled', '0') === '1';
 $frontend_popup_title = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_title', '')) : '';
 $frontend_popup_message = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_message', '')) : '';
+$frontend_popup_image = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_image', '')) : '';
 $frontend_popup_button_text = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_button_text', '')) : '';
 $frontend_popup_button_url = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_button_url', '')) : '';
 $popup_url_scheme = strtolower((string)parse_url($frontend_popup_button_url, PHP_URL_SCHEME));
 $popup_url_is_safe = $frontend_popup_button_url === ''
     || (str_starts_with($frontend_popup_button_url, '/') && !str_starts_with($frontend_popup_button_url, '//'))
     || (in_array($popup_url_scheme, ['http', 'https'], true) && filter_var($frontend_popup_button_url, FILTER_VALIDATE_URL));
+$popup_image_is_safe = preg_match('~^uploads/settings/[a-zA-Z0-9_.-]+\.(?:jpe?g|png|webp|gif)$~i', $frontend_popup_image) === 1;
 ?>
-<?php if ($frontend_popup_enabled && ($frontend_popup_title !== '' || $frontend_popup_message !== '')): ?>
+<?php if ($frontend_popup_enabled && ($frontend_popup_title !== '' || $frontend_popup_message !== '' || $popup_image_is_safe)): ?>
 <div class="site-popup-backdrop" id="sitePopup" role="dialog" aria-modal="true" aria-labelledby="sitePopupTitle" <?= $frontend_popup_message !== '' ? 'aria-describedby="sitePopupMessage"' : '' ?> hidden>
   <section class="site-popup-card">
     <button class="site-popup-close" type="button" aria-label="Close message" data-popup-close><i class="fas fa-times" aria-hidden="true"></i></button>
     <span class="site-popup-kicker">Hive Colab</span>
     <h2 id="sitePopupTitle"><?= $frontend_popup_title !== '' ? h($frontend_popup_title) : 'A message for you' ?></h2>
     <?php if ($frontend_popup_message !== ''): ?><p id="sitePopupMessage"><?= nl2br(h($frontend_popup_message)) ?></p><?php endif; ?>
+    <?php if ($popup_image_is_safe): ?><img class="site-popup-image" src="<?= h($site_url . '/' . $frontend_popup_image) ?>" alt="<?= h($frontend_popup_title !== '' ? $frontend_popup_title : 'Popup announcement') ?>"><?php endif; ?>
     <div class="site-popup-actions">
       <?php if ($frontend_popup_button_text !== '' && $popup_url_is_safe && $frontend_popup_button_url !== ''): ?>
         <a class="site-popup-cta" href="<?= h($frontend_popup_button_url) ?>"><?= h($frontend_popup_button_text) ?></a>
