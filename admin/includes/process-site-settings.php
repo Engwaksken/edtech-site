@@ -112,11 +112,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
             'site_email',
             'site_phone',
             'site_address',
+            'frontend_popup_title',
+            'frontend_popup_message',
+            'frontend_popup_button_text',
         ];
+
+        $popup_url = trim((string)($_POST['frontend_popup_button_url'] ?? ''));
+        if ($popup_url !== '') {
+            $scheme = strtolower((string)parse_url($popup_url, PHP_URL_SCHEME));
+            $is_local_path = str_starts_with($popup_url, '/') && !str_starts_with($popup_url, '//');
+            if (!$is_local_path && (!filter_var($popup_url, FILTER_VALIDATE_URL) || !in_array($scheme, ['http', 'https'], true))) {
+                throw new RuntimeException('The popup button link must be a valid website URL or local path.');
+            }
+        }
 
         foreach ($text_settings as $key) {
             save_setting($conn, $key, trim($_POST[$key] ?? ''));
         }
+
+        save_setting($conn, 'frontend_popup_button_url', $popup_url);
+        save_setting($conn, 'frontend_popup_enabled', isset($_POST['frontend_popup_enabled']) ? '1' : '0');
 
         $logo = upload_setting_file('site_logo', ['jpg', 'jpeg', 'png', 'webp', 'gif']);
         if ($logo !== null) {

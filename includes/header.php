@@ -255,4 +255,48 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
     </div>
 
 </nav>
+<?php
+$frontend_popup_enabled = function_exists('get_setting') && get_setting($conn, 'frontend_popup_enabled', '0') === '1';
+$frontend_popup_title = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_title', '')) : '';
+$frontend_popup_message = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_message', '')) : '';
+$frontend_popup_button_text = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_button_text', '')) : '';
+$frontend_popup_button_url = $frontend_popup_enabled ? trim(get_setting($conn, 'frontend_popup_button_url', '')) : '';
+$popup_url_scheme = strtolower((string)parse_url($frontend_popup_button_url, PHP_URL_SCHEME));
+$popup_url_is_safe = $frontend_popup_button_url === ''
+    || (str_starts_with($frontend_popup_button_url, '/') && !str_starts_with($frontend_popup_button_url, '//'))
+    || (in_array($popup_url_scheme, ['http', 'https'], true) && filter_var($frontend_popup_button_url, FILTER_VALIDATE_URL));
+?>
+<?php if ($frontend_popup_enabled && ($frontend_popup_title !== '' || $frontend_popup_message !== '')): ?>
+<div class="site-popup-backdrop" id="sitePopup" role="dialog" aria-modal="true" aria-labelledby="sitePopupTitle" <?= $frontend_popup_message !== '' ? 'aria-describedby="sitePopupMessage"' : '' ?> hidden>
+  <section class="site-popup-card">
+    <button class="site-popup-close" type="button" aria-label="Close message" data-popup-close><i class="fas fa-times" aria-hidden="true"></i></button>
+    <span class="site-popup-kicker">Hive Colab</span>
+    <h2 id="sitePopupTitle"><?= $frontend_popup_title !== '' ? h($frontend_popup_title) : 'A message for you' ?></h2>
+    <?php if ($frontend_popup_message !== ''): ?><p id="sitePopupMessage"><?= nl2br(h($frontend_popup_message)) ?></p><?php endif; ?>
+    <div class="site-popup-actions">
+      <?php if ($frontend_popup_button_text !== '' && $popup_url_is_safe && $frontend_popup_button_url !== ''): ?>
+        <a class="site-popup-cta" href="<?= h($frontend_popup_button_url) ?>"><?= h($frontend_popup_button_text) ?></a>
+      <?php endif; ?>
+      <button class="site-popup-dismiss" type="button" data-popup-close>Close</button>
+    </div>
+  </section>
+</div>
+<script>
+(() => {
+  const popup = document.getElementById('sitePopup');
+  if (!popup) return;
+  const storageKey = 'hiveFrontendPopupDismissed';
+  const close = () => {
+    popup.hidden = true;
+    try { sessionStorage.setItem(storageKey, '1'); } catch (_) {}
+  };
+  popup.querySelectorAll('[data-popup-close]').forEach(button => button.addEventListener('click', close));
+  popup.addEventListener('click', event => { if (event.target === popup) close(); });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape' && !popup.hidden) close(); });
+  let dismissed = false;
+  try { dismissed = sessionStorage.getItem(storageKey) === '1'; } catch (_) {}
+  if (!dismissed) popup.hidden = false;
+})();
+</script>
+<?php endif; ?>
 <div id="main-content" tabindex="-1"></div>

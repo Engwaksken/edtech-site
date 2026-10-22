@@ -64,6 +64,42 @@ require_once __DIR__ . '/includes/process-site-settings.php';
               <input type="text" name="site_address" class="form-control"
                      value="<?= h($settings['site_address'] ?? '') ?>">
             </div>
+
+            <div class="settings-section-heading" style="grid-column:1/-1;border-top:1px solid #e2e8f0;padding-top:20px;margin-top:8px">
+              <h3><i class="fa fa-window-restore"></i> Frontend Popup</h3>
+              <p>Configure a site-wide popup for public-facing pages.</p>
+            </div>
+
+            <div class="form-group" style="grid-column:1/-1">
+              <label style="display:flex;align-items:center;gap:10px">
+                <input type="checkbox" name="frontend_popup_enabled" value="1" <?= ($settings['frontend_popup_enabled'] ?? '0') === '1' ? 'checked' : '' ?>>
+                Show popup on the frontend
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>Popup Title</label>
+              <input type="text" name="frontend_popup_title" class="form-control" maxlength="160"
+                     value="<?= h($settings['frontend_popup_title'] ?? '') ?>" placeholder="A message for your visitors">
+            </div>
+
+            <div class="form-group">
+              <label>Button Text (optional)</label>
+              <input type="text" name="frontend_popup_button_text" class="form-control" maxlength="60"
+                     value="<?= h($settings['frontend_popup_button_text'] ?? '') ?>" placeholder="Learn more">
+            </div>
+
+            <div class="form-group" style="grid-column:1/-1">
+              <label>Popup Message</label>
+              <textarea name="frontend_popup_message" class="form-control" rows="4" maxlength="2000" placeholder="Write the message visitors should see."><?= h($settings['frontend_popup_message'] ?? '') ?></textarea>
+            </div>
+
+            <div class="form-group" style="grid-column:1/-1">
+              <label>Button Link (optional)</label>
+              <input type="text" name="frontend_popup_button_url" class="form-control"
+                     value="<?= h($settings['frontend_popup_button_url'] ?? '') ?>" placeholder="https://example.com or /apply">
+            </div>
+
 <div class="settings-upload-grid">
 
   <div class="settings-upload-card">
