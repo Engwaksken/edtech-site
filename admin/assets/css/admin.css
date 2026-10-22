@@ -9992,6 +9992,91 @@ body.admin-login-page .btn-primary {
 @media(max-width:460px) {
   .admin-content :is(.stats-grid,.stats-row,.statistics-grid,.stat-grid) { grid-template-columns:1fr; }
 }
+
+/* Keep summary metrics and page filters aligned as one admin design system. */
+.admin-content :is(.stats-grid,.stats-row,.statistics-grid,.stat-grid,.stats-cards) {
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:16px;
+}
+.admin-content :is(.stat-card,.stat-mini,.stat-tile,.referral-stat-card) {
+  min-height:112px;
+  padding:18px;
+  border:1px solid var(--border,#e2e8f0);
+  border-radius:12px;
+  box-shadow:0 3px 12px rgba(15,23,42,.05);
+}
+.admin-content :is(.stat-card,.stat-mini,.stat-tile,.referral-stat-card) :is(.stat-value,.stat-val,.stat-num,.num) {
+  font-size:1.65rem;
+  font-weight:800;
+  line-height:1.15;
+}
+.admin-content :is(.stat-card,.stat-mini,.stat-tile,.referral-stat-card) :is(.stat-label,.label) {
+  margin-top:6px;
+  color:var(--text-muted,#64748b);
+  font-size:.78rem;
+  font-weight:700;
+  line-height:1.4;
+}
+.admin-content .filter-bar,
+.admin-content .users-filter-bar {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:nowrap;
+  min-width:0;
+  overflow-x:auto;
+  padding:12px;
+  border:1px solid var(--border,#e2e8f0);
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 3px 12px rgba(15,23,42,.04);
+}
+.admin-content .filter-bar > form,
+.admin-content form.filter-bar,
+.admin-content .users-filter-bar > form {
+  display:flex;
+  flex:1 0 auto;
+  align-items:center;
+  gap:10px;
+  flex-wrap:nowrap;
+  min-width:0;
+}
+.admin-content :is(.filter-bar,.users-filter-bar) :is(.search-bar,.filter-search,.search-input) {
+  flex:1 1 260px;
+  min-width:190px;
+  max-width:none;
+}
+.admin-content :is(.filter-bar,.users-filter-bar) :is(input:not([type="checkbox"]):not([type="radio"]),select) {
+  min-height:40px;
+  flex:0 0 auto;
+  border:1px solid var(--border,#dbe3ee);
+  border-radius:8px;
+  font:inherit;
+}
+.admin-content :is(.filter-bar,.users-filter-bar) :is(button,.btn) {
+  min-height:40px;
+  flex:0 0 auto;
+  justify-content:center;
+}
+@media(max-width:700px) {
+  .admin-content :is(.stats-grid,.stats-row,.statistics-grid,.stat-grid,.stats-cards) { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .admin-content :is(.stat-card,.stat-mini,.stat-tile,.referral-stat-card) { min-height:96px; padding:15px; }
+  .admin-content .filter-bar,
+  .admin-content .users-filter-bar,
+  .admin-content .filter-bar > form,
+  .admin-content form.filter-bar,
+  .admin-content .users-filter-bar > form {
+    flex-wrap:wrap;
+    overflow:visible;
+  }
+  .admin-content :is(.filter-bar,.users-filter-bar) :is(.search-bar,.filter-search,.search-input) {
+    flex:1 1 100%;
+    min-width:100%;
+  }
+}
+@media(max-width:460px) {
+  .admin-content :is(.stats-grid,.stats-row,.statistics-grid,.stat-grid,.stats-cards) { grid-template-columns:1fr; }
+}
 .referral-detail-list span,.referral-detail-text>span{display:block;margin-bottom:3px;color:var(--text-muted,#64748b);font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.045em}
 .referral-detail-list strong{display:block;font-size:.8rem;line-height:1.45;word-break:break-word}
 .referral-detail-text{margin-top:12px;padding:12px;border:1px solid var(--border,#e2e8f0);border-radius:9px}
