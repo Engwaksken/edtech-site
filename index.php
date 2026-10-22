@@ -613,18 +613,14 @@ if ($about_img === '') {
                 <?php endif; ?>
 
                 <?php if ($app_status === 'open' && $app_link !== ''): ?>
-                  <!--  <a href="<?= h($app_link) ?>" target="_blank" rel="noopener" class="bento-cta-btn">
-                        <?= h(home_setting($settings, 'about_cta_btn', 'WAITING LIST')) ?>
-                    </a> -->
+                    <a href="<?= h($app_link) ?>" target="_blank" rel="noopener" class="bento-cta-btn">
+                        <?= h(home_setting($settings, 'about_cta_btn', 'Apply Now')) ?>
+                    </a> 
                 <?php elseif ($app_status === 'coming_soon'): ?>
                     <span class="bento-cta-btn bento-cta-btn--soon">Opening Soon</span>
                 <?php else: ?>
                     <span class="bento-cta-btn bento-cta-btn--closed">Applications Closed</span>
                 <?php endif; ?>
-                
-                 <a href="https://www.edtech.hivecolab.com/referral" target="_blank" rel="noopener" class="bento-cta-btn">
-                        <?= h(home_setting($settings, 'about_cta_btn', 'Refer a Venture')) ?>
-                    </a>
             </div>
         </div>
 
