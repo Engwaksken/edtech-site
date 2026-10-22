@@ -351,7 +351,6 @@ $popup_image_alt = $frontend_popup_title !== '' ? $frontend_popup_title : ($fron
   const popup = document.getElementById('sitePopup');
   if (!popup) return;
   const dialog = popup.querySelector('.site-popup__dialog');
-  const root = document.documentElement;
   const frequency = popup.dataset.frequency || 'session';
   const storageKey = 'hiveFrontendPopupDismissed:' + (popup.dataset.version || 'default');
   const dateKey = new Date().toISOString().slice(0, 10);
@@ -385,9 +384,6 @@ $popup_image_alt = $frontend_popup_title !== '' ? $frontend_popup_title : ($fron
   };
   const open = () => {
     lastFocused = document.activeElement;
-    const scrollbar = window.innerWidth - root.clientWidth;
-    if (scrollbar > 0) root.style.setProperty('--site-popup-scrollbar', scrollbar + 'px');
-    root.classList.add('site-popup-lock');
     popup.hidden = false;
     requestAnimationFrame(() => requestAnimationFrame(() => popup.classList.add('is-open')));
     dialog.focus({ preventScroll: true });
@@ -400,8 +396,6 @@ $popup_image_alt = $frontend_popup_title !== '' ? $frontend_popup_title : ($fron
     document.removeEventListener('keydown', onKeydown);
     window.setTimeout(() => {
       popup.hidden = true;
-      root.classList.remove('site-popup-lock');
-      root.style.removeProperty('--site-popup-scrollbar');
       if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus({ preventScroll: true });
     }, reduceMotion ? 0 : 200);
   };
