@@ -1045,6 +1045,19 @@ document.addEventListener('DOMContentLoaded', function () {
         topbarLeft.insertBefore(mobileBtn, topbarLeft.firstChild);
     }
 
+    // Keep a consistent, discoverable sign-out action in every admin topbar.
+    var topbar = document.querySelector('.admin-topbar');
+    var topbarRight = topbar && topbar.querySelector('.topbar-right');
+    var hasTopbarLogout = topbar && topbar.querySelector('form[action*="logout.php"]');
+    if (topbarRight && !hasTopbarLogout) {
+        var logoutForm = document.createElement('form');
+        logoutForm.method = 'POST';
+        logoutForm.action = 'logout.php';
+        logoutForm.className = 'inline-action-form';
+        logoutForm.innerHTML = '<button type="submit" class="btn btn-secondary btn-sm topbar-logout" title="Logout" aria-label="Logout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i></button>';
+        topbarRight.appendChild(logoutForm);
+    }
+
     if (!sidebar || !overlay || !mobileBtn) {
         return;
     }

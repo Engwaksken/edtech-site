@@ -136,7 +136,7 @@ $site_name = function_exists('get_setting')
         <i class="fa fa-eye" aria-hidden="true"></i>
       </a>
       <form method="POST" action="logout.php" class="inline-action-form">
-        <button type="submit" class="btn btn-secondary btn-sm" title="Logout" aria-label="Logout">
+        <button type="submit" class="btn btn-secondary btn-sm topbar-logout" title="Logout" aria-label="Logout">
           <i class="fa fa-sign-out-alt" aria-hidden="true"></i>
         </button>
       </form>

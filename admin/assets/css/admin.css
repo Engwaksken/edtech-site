@@ -156,6 +156,42 @@ a { text-decoration:none; color:inherit; transition:var(--transition); }
 .topbar-breadcrumb strong { color:var(--text); font-weight:600; }
 .topbar-right { display:flex; align-items:center; gap:16px; }
 
+/* Shared, consistent controls for every hand-built admin page topbar. */
+.admin-topbar .topbar-left { min-width:0; flex:1 1 auto; }
+.admin-topbar .topbar-right { flex:0 0 auto; gap:8px; }
+.admin-topbar .topbar-breadcrumb {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-height:40px;
+  font-size:.875rem;
+  white-space:nowrap;
+}
+.admin-topbar .topbar-breadcrumb a { color:var(--text-muted); text-decoration:none; }
+.admin-topbar .topbar-breadcrumb a:hover { color:var(--primary); }
+.admin-topbar .topbar-right > a,
+.admin-topbar .topbar-right > button,
+.admin-topbar .topbar-right > form > button {
+  min-width:40px;
+  min-height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border-radius:9px;
+  white-space:nowrap;
+}
+.admin-topbar .topbar-right > form { margin:0; }
+.admin-topbar .topbar-right .topbar-logout {
+  color:var(--danger);
+  background:var(--white);
+  border:1px solid var(--border);
+}
+.admin-topbar .topbar-right .topbar-logout:hover {
+  background:#fff1f2;
+  border-color:#fecdd3;
+}
+
 .topbar-btn {
   background:none; border:none; cursor:pointer;
   color:var(--text-muted); font-size:16px;
