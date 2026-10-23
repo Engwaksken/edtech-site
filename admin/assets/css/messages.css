@@ -356,6 +356,18 @@
     border-bottom: 1px solid var(--mail-border);
 }
 
+.mail-reader-head-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.mail-reader-head-row h2 {
+    flex: 1;
+    min-width: 0;
+}
+
 .mail-reader-head h2 {
     margin: 0;
     color: var(--mail-text);

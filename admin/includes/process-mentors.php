@@ -46,6 +46,21 @@ function ensure_message_drafts_table(mysqli $conn): void
     ");
 }
 
+function ensure_message_thread_hidden_table(mysqli $conn): void
+{
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS mentor_message_thread_hidden (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            owner_type VARCHAR(20) NOT NULL DEFAULT 'admin',
+            owner_id INT UNSIGNED NOT NULL DEFAULT 0,
+            thread_id VARCHAR(64) NOT NULL,
+            hidden_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY uq_mmth_owner_thread (owner_type, owner_id, thread_id),
+            KEY idx_mmth_owner (owner_type, owner_id, hidden_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    ");
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redir_m();
 }
@@ -723,6 +738,82 @@ if ($action === 'delete_draft') {
 
     mentor_flash('mmsg', $ok ? 'Draft deleted.' : 'Failed: ' . $err, $ok ? 'success' : 'error');
     redir_m('messages', 'folder=drafts');
+}
+
+/* --------------------------------------------------------------
+   DELETE THREAD (owner-scoped — hides it only for the current user)
+-------------------------------------------------------------- */
+if ($action === 'delete_thread') {
+    ensure_message_thread_hidden_table($conn);
+
+    $thread_id = trim((string)($_POST['thread_id'] ?? ''));
+
+    $folder = strtolower(trim((string)($_POST['folder'] ?? 'inbox')));
+    if (!in_array($folder, ['inbox', 'outbox'], true)) {
+        $folder = 'inbox';
+    }
+
+    if ($thread_id === '') {
+        mentor_flash('mmsg', 'Invalid conversation.', 'error');
+        redir_m('messages', 'folder=' . $folder);
+    }
+
+    $reply_as = strtolower(trim((string)($_POST['reply_as'] ?? 'admin')));
+
+    if ($reply_as === 'mentor') {
+        $logged_mentor_id    = function_exists('ms_mentor_record_id') ? ms_mentor_record_id($conn) : 0;
+        $requested_mentor_id = (int)($_POST['reply_as_mentor_id'] ?? 0);
+
+        if ($requested_mentor_id <= 0 || $requested_mentor_id !== $logged_mentor_id) {
+            mentor_flash('mmsg', 'Invalid mentor sender account.', 'error');
+            redir_m('messages', 'folder=' . $folder);
+        }
+
+        $own_stmt = $conn->prepare("
+            SELECT 1 FROM mentor_messages
+            WHERE thread_id = ?
+              AND ((sender_type = 'mentor' AND sender_id = ?) OR (recipient_type = 'mentor' AND recipient_id = ?))
+            LIMIT 1
+        ");
+
+        if ($own_stmt) {
+            $own_stmt->bind_param('sii', $thread_id, $requested_mentor_id, $requested_mentor_id);
+            $own_stmt->execute();
+            $owns = $own_stmt->get_result()->num_rows > 0;
+            $own_stmt->close();
+        } else {
+            $owns = false;
+        }
+
+        if (!$owns) {
+            mentor_flash('mmsg', 'Conversation not found.', 'error');
+            redir_m('messages', 'folder=' . $folder);
+        }
+
+        $owner_type = 'mentor';
+        $owner_id   = $requested_mentor_id;
+    } else {
+        $owner_type = 'admin';
+        $owner_id   = (int)($ADMIN['id'] ?? ($_SESSION['admin_id'] ?? 0));
+    }
+
+    $stmt = $conn->prepare("
+        INSERT IGNORE INTO mentor_message_thread_hidden (owner_type, owner_id, thread_id)
+        VALUES (?, ?, ?)
+    ");
+
+    if (!$stmt) {
+        mentor_flash('mmsg', 'DB error: ' . $conn->error, 'error');
+        redir_m('messages', 'folder=' . $folder);
+    }
+
+    $stmt->bind_param('sis', $owner_type, $owner_id, $thread_id);
+    $ok  = $stmt->execute();
+    $err = $stmt->error;
+    $stmt->close();
+
+    mentor_flash('mmsg', $ok ? 'Conversation deleted.' : 'Failed: ' . $err, $ok ? 'success' : 'error');
+    redir_m('messages', 'folder=' . $folder);
 }
 
 /* --------------------------------------------------------------

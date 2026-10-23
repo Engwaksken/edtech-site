@@ -54,6 +54,18 @@ $conn->query("
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ");
 
+$conn->query("
+    CREATE TABLE IF NOT EXISTS mentor_message_thread_hidden (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        owner_type VARCHAR(20) NOT NULL DEFAULT 'admin',
+        owner_id INT UNSIGNED NOT NULL DEFAULT 0,
+        thread_id VARCHAR(64) NOT NULL,
+        hidden_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE KEY uq_mmth_owner_thread (owner_type, owner_id, thread_id),
+        KEY idx_mmth_owner (owner_type, owner_id, hidden_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+");
+
 /* --------------------------------------------------------------------------
    Request state
    -------------------------------------------------------------------------- */
@@ -226,10 +238,14 @@ $total_unread = 0;
 if ($CAN_MANAGE) {
     $res = $conn->query("
         SELECT
-            COUNT(DISTINCT CASE WHEN recipient_type = 'admin' THEN thread_id END) AS inbox,
-            COUNT(DISTINCT CASE WHEN sender_type = 'admin' THEN thread_id END) AS outbox,
-            SUM(is_read = 0 AND recipient_type = 'admin') AS unread
-        FROM mentor_messages
+            COUNT(DISTINCT CASE WHEN mm.recipient_type = 'admin' THEN mm.thread_id END) AS inbox,
+            COUNT(DISTINCT CASE WHEN mm.sender_type = 'admin' THEN mm.thread_id END) AS outbox,
+            SUM(mm.is_read = 0 AND mm.recipient_type = 'admin') AS unread
+        FROM mentor_messages mm
+        WHERE NOT EXISTS (
+            SELECT 1 FROM mentor_message_thread_hidden h
+            WHERE h.owner_type = 'admin' AND h.owner_id = {$me_id} AND h.thread_id = mm.thread_id
+        )
     ");
     if ($res) {
         $row = $res->fetch_assoc() ?: [];
@@ -240,15 +256,18 @@ if ($CAN_MANAGE) {
 } else {
     $stmt = $conn->prepare("
         SELECT
-            COUNT(DISTINCT CASE WHEN recipient_type = 'mentor' AND recipient_id = ? THEN thread_id END) AS inbox,
-            COUNT(DISTINCT CASE WHEN sender_type = 'mentor' AND sender_id = ? THEN thread_id END) AS outbox,
-            SUM(is_read = 0 AND recipient_type = 'mentor' AND recipient_id = ?) AS unread
-        FROM mentor_messages
-        WHERE (sender_type = 'mentor' AND sender_id = ?)
-           OR (recipient_type = 'mentor' AND recipient_id = ?)
+            COUNT(DISTINCT CASE WHEN mm.recipient_type = 'mentor' AND mm.recipient_id = ? THEN mm.thread_id END) AS inbox,
+            COUNT(DISTINCT CASE WHEN mm.sender_type = 'mentor' AND mm.sender_id = ? THEN mm.thread_id END) AS outbox,
+            SUM(mm.is_read = 0 AND mm.recipient_type = 'mentor' AND mm.recipient_id = ?) AS unread
+        FROM mentor_messages mm
+        WHERE ((mm.sender_type = 'mentor' AND mm.sender_id = ?) OR (mm.recipient_type = 'mentor' AND mm.recipient_id = ?))
+          AND NOT EXISTS (
+              SELECT 1 FROM mentor_message_thread_hidden h
+              WHERE h.owner_type = 'mentor' AND h.owner_id = ? AND h.thread_id = mm.thread_id
+          )
     ");
     if ($stmt) {
-        $stmt->bind_param('iiiii', $MENTOR_RECORD_ID, $MENTOR_RECORD_ID, $MENTOR_RECORD_ID, $MENTOR_RECORD_ID, $MENTOR_RECORD_ID);
+        $stmt->bind_param('iiiiii', $MENTOR_RECORD_ID, $MENTOR_RECORD_ID, $MENTOR_RECORD_ID, $MENTOR_RECORD_ID, $MENTOR_RECORD_ID, $MENTOR_RECORD_ID);
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc() ?: [];
         $stmt->close();
@@ -294,6 +313,11 @@ if ($folder !== 'drafts') {
     } elseif ($folder === 'outbox') {
         $folder_sql = " AND {$outbox_exists}";
     }
+
+    $hidden_sql = " AND NOT EXISTS (
+        SELECT 1 FROM mentor_message_thread_hidden h
+        WHERE h.owner_type = '{$me_type}' AND h.owner_id = {$me_id} AND h.thread_id = mm.thread_id
+    )";
 
     $search_sql    = '';
     $search_params  = [];
@@ -344,6 +368,7 @@ if ($folder !== 'drafts') {
         WHERE 1 = 1
         {$scope_sql}
         {$folder_sql}
+        {$hidden_sql}
         {$search_sql}
         GROUP BY mm.thread_id
         ORDER BY last_at DESC
@@ -744,7 +769,19 @@ $site_name = function_exists('get_setting')
 
     <div class="mail-reader">
       <div class="mail-reader-head">
-        <h2><?= h($thread_subject !== '' ? $thread_subject : 'Conversation') ?></h2>
+        <div class="mail-reader-head-row">
+          <h2><?= h($thread_subject !== '' ? $thread_subject : 'Conversation') ?></h2>
+          <form method="POST" action="includes/process-mentors.php" onsubmit="return confirm('Delete this conversation? It will be removed only for you.')">
+            <input type="hidden" name="action" value="delete_thread">
+            <input type="hidden" name="thread_id" value="<?= h($active_thread) ?>">
+            <input type="hidden" name="folder" value="<?= h($folder) ?>">
+            <?php if ($IS_MENTOR): ?>
+              <input type="hidden" name="reply_as" value="mentor">
+              <input type="hidden" name="reply_as_mentor_id" value="<?= (int)$MENTOR_RECORD_ID ?>">
+            <?php endif; ?>
+            <button type="submit" class="mail-btn danger" title="Delete conversation"><i class="fa fa-trash"></i></button>
+          </form>
+        </div>
         <div class="mail-reader-meta">
           <i class="fa fa-user-circle"></i>
           <?= h($thread_party !== '' ? $thread_party : 'Conversation') ?>
