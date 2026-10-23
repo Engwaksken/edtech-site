@@ -13,7 +13,7 @@ ALTER TABLE events
 
 CREATE TABLE IF NOT EXISTS event_reminder_logs (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    event_id INT NOT NULL,
+    event_id INT UNSIGNED NOT NULL,
     registration_id INT NULL,
     recipient VARCHAR(190) NOT NULL,
     delivery_method ENUM('email','notification','both') NOT NULL,
