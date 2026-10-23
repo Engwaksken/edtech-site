@@ -26,6 +26,26 @@ function mentor_flash(string $key, string $msg, string $type = 'success'): void
     }
 }
 
+function ensure_message_drafts_table(mysqli $conn): void
+{
+    $conn->query("
+        CREATE TABLE IF NOT EXISTS mentor_message_drafts (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            owner_type VARCHAR(20) NOT NULL DEFAULT 'admin',
+            owner_id INT UNSIGNED NOT NULL DEFAULT 0,
+            subject VARCHAR(255) NOT NULL DEFAULT '',
+            body TEXT NULL,
+            recipient_mentor_ids VARCHAR(1000) NOT NULL DEFAULT '',
+            recipient_venture_ids VARCHAR(1000) NOT NULL DEFAULT '',
+            send_to_admin TINYINT(1) NOT NULL DEFAULT 0,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                ON UPDATE CURRENT_TIMESTAMP,
+            KEY idx_mmd_owner (owner_type, owner_id, updated_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    ");
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redir_m();
 }
@@ -352,6 +372,7 @@ if ($action === 'assign') {
 if ($action === 'send_bulk_message' || $action === 'send_message') {
     $subject = trim((string)($_POST['subject'] ?? ''));
     $body    = trim((string)($_POST['body'] ?? ''));
+    $draft_id = (int)($_POST['draft_id'] ?? 0);
 
     if ($subject === '' || $body === '') {
         mentor_flash('mmsg', 'Subject and message are required.', 'error');
@@ -554,6 +575,17 @@ if ($action === 'send_bulk_message' || $action === 'send_message') {
     $insert->close();
 
     if ($sent_count > 0) {
+        if ($draft_id > 0) {
+            ensure_message_drafts_table($conn);
+
+            $dstmt = $conn->prepare("DELETE FROM mentor_message_drafts WHERE id = ? LIMIT 1");
+            if ($dstmt) {
+                $dstmt->bind_param('i', $draft_id);
+                $dstmt->execute();
+                $dstmt->close();
+            }
+        }
+
         mentor_flash(
             'mmsg',
             'Message sent successfully to ' . $sent_count . ' recipient' . ($sent_count === 1 ? '' : 's') . '.',
@@ -568,6 +600,129 @@ if ($action === 'send_bulk_message' || $action === 'send_message') {
 
     mentor_flash('mmsg', 'Message could not be sent: ' . $error_message, 'error');
     redir_m('messages');
+}
+
+/* --------------------------------------------------------------
+   SAVE DRAFT
+-------------------------------------------------------------- */
+if ($action === 'save_draft') {
+    ensure_message_drafts_table($conn);
+
+    $draft_id = (int)($_POST['draft_id'] ?? 0);
+    $subject  = trim((string)($_POST['subject'] ?? ''));
+    $body     = trim((string)($_POST['body'] ?? ''));
+
+    if (mb_strlen($subject) > 180) {
+        mentor_flash('mmsg', 'The subject must not exceed 180 characters.', 'error');
+        redir_m('messages', 'folder=drafts');
+    }
+
+    // The draft belongs to the acting sender (a mentor or the admin).
+    $reply_as = strtolower(trim((string)($_POST['reply_as'] ?? 'admin')));
+
+    if ($reply_as === 'mentor') {
+        $logged_mentor_id   = function_exists('ms_mentor_record_id') ? ms_mentor_record_id($conn) : 0;
+        $requested_mentor_id = (int)($_POST['reply_as_mentor_id'] ?? 0);
+
+        if ($requested_mentor_id <= 0 || $requested_mentor_id !== $logged_mentor_id) {
+            mentor_flash('mmsg', 'Invalid mentor sender account.', 'error');
+            redir_m('messages', 'folder=drafts');
+        }
+
+        $owner_type = 'mentor';
+        $owner_id   = $requested_mentor_id;
+    } else {
+        $owner_type = 'admin';
+        $owner_id   = (int)($ADMIN['id'] ?? ($_SESSION['admin_id'] ?? 0));
+    }
+
+    $mentor_ids = implode(',', array_values(array_unique(array_filter(
+        array_map('intval', (array)($_POST['recipient_mentor_ids'] ?? [])),
+        static fn(int $id): bool => $id > 0
+    ))));
+
+    $venture_ids = implode(',', array_values(array_unique(array_filter(
+        array_map('intval', (array)($_POST['recipient_venture_ids'] ?? [])),
+        static fn(int $id): bool => $id > 0
+    ))));
+
+    $send_to_admin = isset($_POST['send_to_admin']) && (string)$_POST['send_to_admin'] === '1' ? 1 : 0;
+
+    if ($draft_id > 0) {
+        $stmt = $conn->prepare("
+            UPDATE mentor_message_drafts
+            SET subject = ?, body = ?, recipient_mentor_ids = ?, recipient_venture_ids = ?, send_to_admin = ?
+            WHERE id = ? AND owner_type = ? AND owner_id = ?
+        ");
+
+        if (!$stmt) {
+            mentor_flash('mmsg', 'DB error: ' . $conn->error, 'error');
+            redir_m('messages', 'folder=drafts');
+        }
+
+        $stmt->bind_param('ssssiisi', $subject, $body, $mentor_ids, $venture_ids, $send_to_admin, $draft_id, $owner_type, $owner_id);
+        $ok = $stmt->execute();
+        $err = $stmt->error;
+        $stmt->close();
+    } else {
+        $stmt = $conn->prepare("
+            INSERT INTO mentor_message_drafts
+                (owner_type, owner_id, subject, body, recipient_mentor_ids, recipient_venture_ids, send_to_admin)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
+
+        if (!$stmt) {
+            mentor_flash('mmsg', 'DB error: ' . $conn->error, 'error');
+            redir_m('messages', 'folder=drafts');
+        }
+
+        $stmt->bind_param('sissssi', $owner_type, $owner_id, $subject, $body, $mentor_ids, $venture_ids, $send_to_admin);
+        $ok = $stmt->execute();
+        $err = $stmt->error;
+        $stmt->close();
+    }
+
+    mentor_flash('mmsg', $ok ? 'Draft saved.' : 'Failed: ' . $err, $ok ? 'success' : 'error');
+    redir_m('messages', 'folder=drafts');
+}
+
+/* --------------------------------------------------------------
+   DELETE DRAFT
+-------------------------------------------------------------- */
+if ($action === 'delete_draft') {
+    ensure_message_drafts_table($conn);
+
+    $draft_id = (int)($_POST['draft_id'] ?? 0);
+
+    if ($draft_id <= 0) {
+        mentor_flash('mmsg', 'Invalid draft.', 'error');
+        redir_m('messages', 'folder=drafts');
+    }
+
+    $reply_as = strtolower(trim((string)($_POST['reply_as'] ?? 'admin')));
+
+    if ($reply_as === 'mentor') {
+        $owner_type = 'mentor';
+        $owner_id   = function_exists('ms_mentor_record_id') ? ms_mentor_record_id($conn) : 0;
+    } else {
+        $owner_type = 'admin';
+        $owner_id   = (int)($ADMIN['id'] ?? ($_SESSION['admin_id'] ?? 0));
+    }
+
+    $stmt = $conn->prepare("DELETE FROM mentor_message_drafts WHERE id = ? AND owner_type = ? AND owner_id = ? LIMIT 1");
+
+    if (!$stmt) {
+        mentor_flash('mmsg', 'DB error: ' . $conn->error, 'error');
+        redir_m('messages', 'folder=drafts');
+    }
+
+    $stmt->bind_param('isi', $draft_id, $owner_type, $owner_id);
+    $ok = $stmt->execute();
+    $err = $stmt->error;
+    $stmt->close();
+
+    mentor_flash('mmsg', $ok ? 'Draft deleted.' : 'Failed: ' . $err, $ok ? 'success' : 'error');
+    redir_m('messages', 'folder=drafts');
 }
 
 /* --------------------------------------------------------------

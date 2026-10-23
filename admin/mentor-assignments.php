@@ -350,7 +350,7 @@ $clear_url = 'mentor-assignments.php';
   <div class="topbar-right">
    
     <a href="mentor-sessions.php" class="btn btn-secondary btn-sm"><i class="fa fa-calendar-alt"></i> Sessions</a>
-    <a href="mentor-messages.php" class="btn btn-secondary btn-sm"><i class="fa fa-envelope"></i> Messages</a>
+    <a href="messages.php" class="btn btn-secondary btn-sm"><i class="fa fa-envelope"></i> Messages</a>
     <div class="admin-avatar">
       <div class="avatar-circle"><?= h(strtoupper(substr($ADMIN['full_name'] ?? 'A', 0, 1))) ?></div>
     </div>

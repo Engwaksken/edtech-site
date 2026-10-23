@@ -949,7 +949,7 @@ function ms_mentor_label(array $session, array $mentors_by_session): string
   </div>
   <div class="modal-footer">
     <button class="btn btn-secondary" onclick="closeM('msgDetailModal')">Close</button>
-    <a href="mentor-messages.php" class="btn btn-secondary btn-sm"><i class="fa fa-external-link-alt"></i> Full thread</a>
+    <a href="messages.php" class="btn btn-secondary btn-sm"><i class="fa fa-external-link-alt"></i> Full thread</a>
   </div>
 </div>
 </div>
