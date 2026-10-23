@@ -99,24 +99,7 @@ $lastSentAt = (int)(
     ?? 0
 );
 
-if ($lastSentAt > 0) {
-    $otpExpiresAt = $lastSentAt + 300;
-} else {
-    /*
-     * Fallback for older OTP sessions that only contain expires_at.
-     */
-    $storedExpiresAt = (int)(
-        $pending['expires_at']
-        ?? 0
-    );
-
-    $otpExpiresAt = $storedExpiresAt > 0
-        ? min(
-            $storedExpiresAt,
-            time() + 300
-        )
-        : 0;
-}
+$otpExpiresAt = (int)($pending['expires_at'] ?? 0);
 
 if (
     $otpExpiresAt <= 0

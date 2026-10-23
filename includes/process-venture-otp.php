@@ -145,7 +145,7 @@ if ($action === 'resend') {
 
     $otp      = (string)random_int(100000, 999999);
     $otpHash  = password_hash($otp, PASSWORD_DEFAULT);
-    $expires  = time() + 600;
+    $expires  = time() + 300;
 
     $_SESSION['venture_otp_pending']['venture_id']            = (int)$user['venture_id'];
     $_SESSION['venture_otp_pending']['venture_name']          = (string)$user['venture_name'];
@@ -181,7 +181,7 @@ if ($action === 'resend') {
             <div class='password'>{$safeOtp}</div>
         </div>
 
-        <p>This code expires in <strong>10 minutes</strong>.</p>
+        <p>This code expires in <strong>5 minutes</strong>.</p>
 
         <div class='warning'>
             If you did not request this code, you can ignore this email.
@@ -194,7 +194,7 @@ if ($action === 'resend') {
     $body = function_exists('email_wrapper') ? email_wrapper($content) : $content;
     $altBody = "Hello {$user['venture_name']},\n\n"
         . "Your new venture portal verification code is: {$otp}\n\n"
-        . "This code expires in 10 minutes.\n\n"
+        . "This code expires in 5 minutes.\n\n"
         . $programme;
 
     $result = sendEmail((string)$user['login_email'], $subject, $body, $altBody);
@@ -213,7 +213,7 @@ if ($action !== 'verify') {
     vp_otp_redirect();
 }
 
-if ((int)($pending['expires_at'] ?? 0) < time()) {
+if ((int)($pending['expires_at'] ?? 0) <= time()) {
     unset($_SESSION['venture_otp_pending']);
     $_SESSION['login_error'] = 'Your verification code expired. Please sign in again.';
     vp_otp_login_redirect();

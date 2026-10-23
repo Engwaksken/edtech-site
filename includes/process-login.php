@@ -153,7 +153,7 @@ if ($stored_hash === '' || !password_verify($password, $stored_hash)) {
 
 $otp        = (string)random_int(100000, 999999);
 $otp_hash   = password_hash($otp, PASSWORD_DEFAULT);
-$expires_at = time() + 600;
+$expires_at = time() + 300;
 
 $_SESSION['venture_otp_pending'] = [
     'access_id'             => (int)$user['access_id'],
@@ -194,7 +194,7 @@ $content = "
         <div class='password'>{$safeOtp}</div>
     </div>
 
-    <p>This code expires in <strong>10 minutes</strong>.</p>
+    <p>This code expires in <strong>5 minutes</strong>.</p>
 
     <div class='warning'>
         If you did not attempt to sign in to your venture portal, you can ignore this email.
@@ -207,7 +207,7 @@ $subject = 'Your venture portal verification code';
 $body = function_exists('email_wrapper') ? email_wrapper($content) : $content;
 $altBody = "Hello {$user['venture_name']},\n\n"
     . "Your venture portal verification code is: {$otp}\n\n"
-    . "This code expires in 10 minutes.\n\n"
+    . "This code expires in 5 minutes.\n\n"
     . "If you did not attempt to sign in, ignore this email.\n\n"
     . $programme;
 
