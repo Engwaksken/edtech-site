@@ -8,6 +8,21 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 
 $conn->set_charset('utf8mb4');
 
+// TEMPORARY DIAGNOSTIC: surface fatal errors so we can see the exact cause.
+register_shutdown_function(function () {
+    $error = error_get_last();
+    if ($error === null) {
+        return;
+    }
+    $fatal = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR];
+    if (!in_array($error['type'], $fatal, true)) {
+        return;
+    }
+    $detail = $error['message'] . ' in ' . $error['file'] . ' on line ' . $error['line'];
+    @file_put_contents(__DIR__ . '/messages-error.log', date('c') . ' ' . $detail . PHP_EOL, FILE_APPEND);
+    echo "\n[MESSAGES ERROR] " . htmlspecialchars($detail, ENT_QUOTES, 'UTF-8') . "\n";
+});
+
 ms_auth_gate();
 
 $IS_MENTOR     = ms_is_mentor();
