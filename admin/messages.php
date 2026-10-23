@@ -8,21 +8,6 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 
 $conn->set_charset('utf8mb4');
 
-// TEMPORARY DIAGNOSTIC: surface fatal errors so we can see the exact cause.
-register_shutdown_function(function () {
-    $error = error_get_last();
-    if ($error === null) {
-        return;
-    }
-    $fatal = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR];
-    if (!in_array($error['type'], $fatal, true)) {
-        return;
-    }
-    $detail = $error['message'] . ' in ' . $error['file'] . ' on line ' . $error['line'];
-    @file_put_contents(__DIR__ . '/messages-error.log', date('c') . ' ' . $detail . PHP_EOL, FILE_APPEND);
-    echo "\n[MESSAGES ERROR] " . htmlspecialchars($detail, ENT_QUOTES, 'UTF-8') . "\n";
-});
-
 ms_auth_gate();
 
 $IS_MENTOR     = ms_is_mentor();
@@ -74,11 +59,11 @@ $conn->query("
         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_type VARCHAR(20) NOT NULL DEFAULT 'admin',
         owner_id INT UNSIGNED NOT NULL DEFAULT 0,
-        thread_id VARCHAR(64) NOT NULL,
+        thread_id VARCHAR(64) COLLATE utf8mb4_unicode_ci NOT NULL,
         hidden_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         UNIQUE KEY uq_mmth_owner_thread (owner_type, owner_id, thread_id),
         KEY idx_mmth_owner (owner_type, owner_id, hidden_at)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 ");
 
 // Verify the hidden-threads table is usable; if not, the page still renders
@@ -260,7 +245,7 @@ $total_unread = 0;
 
 if ($CAN_MANAGE) {
     $hidden_where = $hidden_table_exists
-        ? " WHERE NOT EXISTS (SELECT 1 FROM mentor_message_thread_hidden h WHERE h.owner_type = 'admin' AND h.owner_id = {$me_id} AND h.thread_id = mm.thread_id)"
+        ? " WHERE NOT EXISTS (SELECT 1 FROM mentor_message_thread_hidden h WHERE h.owner_type = 'admin' AND h.owner_id = {$me_id} AND h.thread_id COLLATE utf8mb4_unicode_ci = mm.thread_id)"
         : '';
     $res = $conn->query("
         SELECT
@@ -278,7 +263,7 @@ if ($CAN_MANAGE) {
     }
 } else {
     $hidden_where = $hidden_table_exists
-        ? " AND NOT EXISTS (SELECT 1 FROM mentor_message_thread_hidden h WHERE h.owner_type = 'mentor' AND h.owner_id = {$me_id} AND h.thread_id = mm.thread_id)"
+        ? " AND NOT EXISTS (SELECT 1 FROM mentor_message_thread_hidden h WHERE h.owner_type = 'mentor' AND h.owner_id = {$me_id} AND h.thread_id COLLATE utf8mb4_unicode_ci = mm.thread_id)"
         : '';
     $res = $conn->query("
         SELECT
@@ -337,7 +322,7 @@ if ($folder !== 'drafts') {
     $hidden_sql = $hidden_table_exists
         ? " AND NOT EXISTS (
             SELECT 1 FROM mentor_message_thread_hidden h
-            WHERE h.owner_type = '{$me_type}' AND h.owner_id = {$me_id} AND h.thread_id = mm.thread_id
+            WHERE h.owner_type = '{$me_type}' AND h.owner_id = {$me_id} AND h.thread_id COLLATE utf8mb4_unicode_ci = mm.thread_id
         )"
         : '';
 

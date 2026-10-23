@@ -53,11 +53,11 @@ function ensure_message_thread_hidden_table(mysqli $conn): void
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
             owner_type VARCHAR(20) NOT NULL DEFAULT 'admin',
             owner_id INT UNSIGNED NOT NULL DEFAULT 0,
-            thread_id VARCHAR(64) NOT NULL,
+            thread_id VARCHAR(64) COLLATE utf8mb4_unicode_ci NOT NULL,
             hidden_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             UNIQUE KEY uq_mmth_owner_thread (owner_type, owner_id, thread_id),
             KEY idx_mmth_owner (owner_type, owner_id, hidden_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     ");
 }
 
