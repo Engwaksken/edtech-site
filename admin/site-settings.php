@@ -176,7 +176,7 @@ $active_settings_tab = ($_POST['settings_active_tab'] ?? 'general') === 'popup' 
               <div class="form-group" style="grid-column:1/-1">
                 <label for="popupPages">Selected Page Paths</label>
                 <textarea id="popupPages" name="frontend_popup_pages" class="form-control" rows="3" placeholder="One path per line, e.g. / and /apply"><?= h($settings['frontend_popup_pages'] ?? '') ?></textarea>
-                <small>Used when “Selected pages only” is chosen. Enter exact frontend paths, one per line.</small>
+                <small>Used when “Selected pages only” is chosen. Enter one frontend path per line (e.g. /, /apply, /register). A trailing “.php” is optional and full URLs are accepted.</small>
               </div>
 
               <div class="form-group">

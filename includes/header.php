@@ -292,15 +292,49 @@ try {
     $popup_is_in_schedule = false;
 }
 $current_frontend_path = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
+
+// Normalize a path so admin-entered values and the live request path are
+// compared against the same canonical form. This tolerates absolute URLs,
+// query strings/fragments, a trailing ".php", repeated/trailing slashes and
+// case differences, so the "Selected pages only" scope matches reliably.
 $normalize_popup_path = static function (string $path): string {
-    $path = '/' . ltrim(trim($path), '/');
+    $path = trim((string)$path);
+    if ($path === '') {
+        return '/';
+    }
+    // Accept a full URL (or a path that carries a query string / fragment).
+    $path = (string)(parse_url($path, PHP_URL_PATH) ?: $path);
+    // "/apply.php" and the clean "/apply" refer to the same page.
+    $path = preg_replace('/\.php$/i', '', $path) ?? $path;
+    // Force a single leading slash, collapse repeats and drop a trailing slash.
+    $path = '/' . ltrim(str_replace('\\', '/', $path), '/');
     $path = preg_replace('~/+~', '/', $path) ?? '/';
-    return $path === '/' ? '/' : rtrim($path, '/');
+    $path = $path === '/' ? '/' : rtrim($path, '/');
+    return strtolower($path);
 };
+
+// Strip the site's base path when the app is served from a sub-directory,
+// so paths entered relative to the site root also match during local
+// development (e.g. /edtech-site/apply vs /apply).
+$popup_base_path = '/' . trim((string)(parse_url((string)$site_url, PHP_URL_PATH) ?: ''), '/');
+$popup_relative_path = static function (string $path) use ($popup_base_path): string {
+    if ($popup_base_path === '/') {
+        return $path;
+    }
+    if ($path === $popup_base_path) {
+        return '/';
+    }
+    return str_starts_with($path, $popup_base_path . '/') ? substr($path, strlen($popup_base_path)) : $path;
+};
+
 $popup_matches_page = $frontend_popup_scope !== 'selected';
 if ($frontend_popup_scope === 'selected') {
+    $current_relative = $popup_relative_path($normalize_popup_path($current_frontend_path));
     foreach (preg_split('/\R/', $frontend_popup_pages) ?: [] as $popup_page) {
-        if (trim($popup_page) !== '' && $normalize_popup_path($popup_page) === $normalize_popup_path($current_frontend_path)) {
+        if (trim($popup_page) === '') {
+            continue;
+        }
+        if ($popup_relative_path($normalize_popup_path($popup_page)) === $current_relative) {
             $popup_matches_page = true;
             break;
         }
