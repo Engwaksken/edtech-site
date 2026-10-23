@@ -118,6 +118,26 @@ $site_name = function_exists('get_setting')
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="assets/css/admin.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  /* Question/response count chips in the surveys table — normal cell size,
+     not the oversized stat-card figure. */
+  .survey-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #334155;
+    font-size: .8rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+</style>
 </head>
 <body class="surveys-page">
 
@@ -227,12 +247,12 @@ $site_name = function_exists('get_setting')
 
               <!-- Questions count -->
               <td class="text-center">
-                <span class="stat-num"><?= (int)$s['questions_count'] ?></span>
+                <span class="survey-count"><?= (int)$s['questions_count'] ?></span>
               </td>
 
               <!-- Responses count -->
               <td class="text-center">
-                <span class="stat-num"><?= (int)$s['responses_count'] ?></span>
+                <span class="survey-count"><?= (int)$s['responses_count'] ?></span>
               </td>
 
               <!-- Public survey page -->
