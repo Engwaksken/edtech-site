@@ -66,6 +66,14 @@ $conn->query("
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ");
 
+// Verify the hidden-threads table is usable; if not, the page still renders
+// and simply shows all threads (deletion filtering is skipped).
+$hidden_table_exists = false;
+$ht = $conn->query("SHOW TABLES LIKE 'mentor_message_thread_hidden'");
+if ($ht && $ht->num_rows > 0) {
+    $hidden_table_exists = true;
+}
+
 /* --------------------------------------------------------------------------
    Request state
    -------------------------------------------------------------------------- */
@@ -236,16 +244,16 @@ $count_drafts = 0;
 $total_unread = 0;
 
 if ($CAN_MANAGE) {
+    $hidden_where = $hidden_table_exists
+        ? " WHERE NOT EXISTS (SELECT 1 FROM mentor_message_thread_hidden h WHERE h.owner_type = 'admin' AND h.owner_id = {$me_id} AND h.thread_id = mm.thread_id)"
+        : '';
     $res = $conn->query("
         SELECT
             COUNT(DISTINCT CASE WHEN mm.recipient_type = 'admin' THEN mm.thread_id END) AS inbox,
             COUNT(DISTINCT CASE WHEN mm.sender_type = 'admin' THEN mm.thread_id END) AS outbox,
             SUM(mm.is_read = 0 AND mm.recipient_type = 'admin') AS unread
         FROM mentor_messages mm
-        WHERE NOT EXISTS (
-            SELECT 1 FROM mentor_message_thread_hidden h
-            WHERE h.owner_type = 'admin' AND h.owner_id = {$me_id} AND h.thread_id = mm.thread_id
-        )
+        {$hidden_where}
     ");
     if ($res) {
         $row = $res->fetch_assoc() ?: [];
@@ -254,23 +262,20 @@ if ($CAN_MANAGE) {
         $total_unread = (int)($row['unread'] ?? 0);
     }
 } else {
-    $stmt = $conn->prepare("
+    $hidden_where = $hidden_table_exists
+        ? " AND NOT EXISTS (SELECT 1 FROM mentor_message_thread_hidden h WHERE h.owner_type = 'mentor' AND h.owner_id = {$me_id} AND h.thread_id = mm.thread_id)"
+        : '';
+    $res = $conn->query("
         SELECT
-            COUNT(DISTINCT CASE WHEN mm.recipient_type = 'mentor' AND mm.recipient_id = ? THEN mm.thread_id END) AS inbox,
-            COUNT(DISTINCT CASE WHEN mm.sender_type = 'mentor' AND mm.sender_id = ? THEN mm.thread_id END) AS outbox,
-            SUM(mm.is_read = 0 AND mm.recipient_type = 'mentor' AND mm.recipient_id = ?) AS unread
+            COUNT(DISTINCT CASE WHEN mm.recipient_type = 'mentor' AND mm.recipient_id = {$me_id} THEN mm.thread_id END) AS inbox,
+            COUNT(DISTINCT CASE WHEN mm.sender_type = 'mentor' AND mm.sender_id = {$me_id} THEN mm.thread_id END) AS outbox,
+            SUM(mm.is_read = 0 AND mm.recipient_type = 'mentor' AND mm.recipient_id = {$me_id}) AS unread
         FROM mentor_messages mm
-        WHERE ((mm.sender_type = 'mentor' AND mm.sender_id = ?) OR (mm.recipient_type = 'mentor' AND mm.recipient_id = ?))
-          AND NOT EXISTS (
-              SELECT 1 FROM mentor_message_thread_hidden h
-              WHERE h.owner_type = 'mentor' AND h.owner_id = ? AND h.thread_id = mm.thread_id
-          )
+        WHERE ((mm.sender_type = 'mentor' AND mm.sender_id = {$me_id}) OR (mm.recipient_type = 'mentor' AND mm.recipient_id = {$me_id}))
+        {$hidden_where}
     ");
-    if ($stmt) {
-        $stmt->bind_param('iiiiii', $MENTOR_RECORD_ID, $MENTOR_RECORD_ID, $MENTOR_RECORD_ID, $MENTOR_RECORD_ID, $MENTOR_RECORD_ID, $MENTOR_RECORD_ID);
-        $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc() ?: [];
-        $stmt->close();
+    if ($res) {
+        $row = $res->fetch_assoc() ?: [];
         $count_inbox  = (int)($row['inbox'] ?? 0);
         $count_outbox = (int)($row['outbox'] ?? 0);
         $total_unread = (int)($row['unread'] ?? 0);
@@ -314,10 +319,12 @@ if ($folder !== 'drafts') {
         $folder_sql = " AND {$outbox_exists}";
     }
 
-    $hidden_sql = " AND NOT EXISTS (
-        SELECT 1 FROM mentor_message_thread_hidden h
-        WHERE h.owner_type = '{$me_type}' AND h.owner_id = {$me_id} AND h.thread_id = mm.thread_id
-    )";
+    $hidden_sql = $hidden_table_exists
+        ? " AND NOT EXISTS (
+            SELECT 1 FROM mentor_message_thread_hidden h
+            WHERE h.owner_type = '{$me_type}' AND h.owner_id = {$me_id} AND h.thread_id = mm.thread_id
+        )"
+        : '';
 
     $search_sql    = '';
     $search_params  = [];
@@ -376,37 +383,35 @@ if ($folder !== 'drafts') {
     ";
 
     $stmt = $conn->prepare($thread_sql);
-    if (!$stmt) {
-        die('Thread query failed: ' . h($conn->error));
-    }
-    if ($search_params) {
-        $stmt->bind_param($search_types, ...$search_params);
-    }
-    $stmt->execute();
-    $res = $stmt->get_result();
-
-    while ($t = $res->fetch_assoc()) {
-        $last_sender_type = (string)($t['last_sender_type'] ?? '');
-        $last_sender_id   = (int)($t['last_sender_id'] ?? 0);
-        $last_recipient_type = (string)($t['last_recipient_type'] ?? '');
-        $last_recipient_id   = (int)($t['last_recipient_id'] ?? 0);
-
-        if ($msg_is_me($last_sender_type, $last_sender_id)) {
-            $party_type = $last_recipient_type;
-            $party_id   = $last_recipient_id;
-            $direction  = 'sent';
-        } else {
-            $party_type = $last_sender_type;
-            $party_id   = $last_sender_id;
-            $direction  = 'received';
+    if ($stmt) {
+        if ($search_params) {
+            $stmt->bind_param($search_types, ...$search_params);
         }
+        if ($stmt->execute()) {
+            $res = $stmt->get_result();
+            while ($res && ($t = $res->fetch_assoc())) {
+                $last_sender_type = (string)($t['last_sender_type'] ?? '');
+                $last_sender_id   = (int)($t['last_sender_id'] ?? 0);
+                $last_recipient_type = (string)($t['last_recipient_type'] ?? '');
+                $last_recipient_id   = (int)($t['last_recipient_id'] ?? 0);
 
-        $t['party_name'] = msg_party_name($conn, $party_type, $party_id);
-        $t['direction']  = $direction;
-        $thread_rows[]   = $t;
+                if ($msg_is_me($last_sender_type, $last_sender_id)) {
+                    $party_type = $last_recipient_type;
+                    $party_id   = $last_recipient_id;
+                    $direction  = 'sent';
+                } else {
+                    $party_type = $last_sender_type;
+                    $party_id   = $last_sender_id;
+                    $direction  = 'received';
+                }
+
+                $t['party_name'] = msg_party_name($conn, $party_type, $party_id);
+                $t['direction']  = $direction;
+                $thread_rows[]   = $t;
+            }
+        }
+        $stmt->close();
     }
-
-    $stmt->close();
 }
 
 /* --------------------------------------------------------------------------
