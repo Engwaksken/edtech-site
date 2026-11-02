@@ -57,6 +57,14 @@ try {
 mysqli_set_charset($conn, DB_CHARSET);
 date_default_timezone_set('Africa/Kampala');
 
+// S3 document storage is switched on from Site Settings > AWS Go-Live.
+try {
+    require_once __DIR__ . '/site-settings-service.php';
+    ss_define_aws_constants($conn);
+} catch (Throwable $exception) {
+    error_log('AWS settings not loaded: ' . $exception->getMessage());
+}
+
 if (!function_exists('h')) {
     function h($str): string {
         return htmlspecialchars((string)$str, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');

@@ -89,6 +89,7 @@ ms_bootstrap_schema($conn);
    before any HTML is rendered)
 ========================================================= */
 $status_map   = ['requested'=>['Requested','badge-warning'],'scheduled'=>['Scheduled','badge-info'],'confirmed'=>['Confirmed','badge-primary'],'completed'=>['Completed','badge-success'],'cancelled'=>['Cancelled','badge-danger'],'no_show'=>['No Show','badge-gray']];
+$status_icon_map = ['requested'=>'fa-hourglass-half','scheduled'=>'fa-calendar-alt','confirmed'=>'fa-calendar-check','completed'=>'fa-check-circle','cancelled'=>'fa-times-circle','no_show'=>'fa-user-slash'];
 $type_map     = ['one_on_one'=>'1-on-1','group'=>'Group','workshop'=>'Workshop','review'=>'Review','ad_hoc'=>'Ad Hoc'];
 $platform_map = ['google_meet'=>'Google Meet', 'zoom'=>'Zoom','teams'=>'MS Teams','phone'=>'Phone','in_person'=>'In Person','other'=>'Other'];
 $site_name    = function_exists('get_setting') ? get_setting($conn,'site_name','EdTech Fellowship') : 'EdTech Fellowship';
@@ -1249,7 +1250,11 @@ $showing_to   = $total_records > 0 ? min($offset + $per_page, $total_records) : 
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="assets/css/admin.css">
-  
+  <style>
+    .status-icon-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .status-icon{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;font-size:14px;cursor:help;padding:0}
+    .status-action{width:30px;height:30px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%}
+  </style>
 </head>
 <body>
 <?php include 'includes/sidebar.php'; ?>
@@ -1472,27 +1477,30 @@ if ($view === 'calendar'):
   </td>
   <td><span class="badge badge-info"><?= h($type_map[$s['session_type']]??$s['session_type']) ?></span></td>
   <td>
-    <span class="badge <?= $sb ?>"><?= h($sl) ?></span>
-    <?php if(($s['status'] ?? '') === 'cancelled' && !empty($s['cancel_reason'])): ?>
-      <br><small style="display:inline-block;margin-top:5px;color:var(--muted,#6b7280);max-width:220px">
-        <strong><?= (($s['cancelled_by'] ?? '') === 'mentor') ? 'Rejection reason:' : 'Reason:' ?></strong> <?= h($s['cancel_reason']) ?>
-      </small>
-    <?php endif; ?>
+    <?php
+      $stIcon = $status_icon_map[$s['status']] ?? 'fa-circle';
+      if ($sl === 'Rejected') { $stIcon = 'fa-ban'; }
+      $stTitle = $sl;
+      if (($s['status'] ?? '') === 'cancelled' && !empty($s['cancel_reason'])) {
+          $stTitle .= ' - ' . ((($s['cancelled_by'] ?? '') === 'mentor') ? 'Rejection reason: ' : 'Reason: ') . $s['cancel_reason'];
+      }
+    ?>
+    <div class="status-icon-row">
+      <span class="status-icon <?= h($sb) ?>" title="<?= h($stTitle) ?>" aria-label="<?= h($stTitle) ?>" role="img"><i class="fa <?= h($stIcon) ?>"></i></span>
     <?php if($s['status']==='requested' && ($CAN_MANAGE || $IS_MENTOR)): ?>
-      <div class="legacy-style-18c18b3af0" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:7px">
         <form method="POST" action="includes/process-mentor-sessions.php" class="legacy-style-cccfa4560d">
           <input type="hidden" name="action" value="update_status">
           <input type="hidden" name="id" value="<?= (int)$s['id'] ?>">
           <input type="hidden" name="status" value="confirmed">
-          <button class="btn btn-sm btn-success legacy-style-e053a92b18" type="submit">
-            <i class="fa fa-check"></i> Confirm
+          <button class="btn btn-sm btn-success status-action" type="submit" title="Confirm session" aria-label="Confirm session">
+            <i class="fa fa-check"></i>
           </button>
         </form>
 
         <?php if($IS_MENTOR && !$CAN_MANAGE): ?>
-          <button type="button" class="btn btn-sm btn-danger legacy-style-e053a92b18"
+          <button type="button" class="btn btn-sm btn-danger status-action" title="Reject session" aria-label="Reject session"
                   onclick="openRejectSessionModal(<?= (int)$s['id'] ?>, '<?= h(addslashes((string)$s['title'])) ?>')">
-            <i class="fa fa-times"></i> Reject
+            <i class="fa fa-times"></i>
           </button>
         <?php else: ?>
           <form method="POST" action="includes/process-mentor-sessions.php" class="legacy-style-cccfa4560d">
@@ -1500,22 +1508,20 @@ if ($view === 'calendar'):
             <input type="hidden" name="id" value="<?= (int)$s['id'] ?>">
             <input type="hidden" name="status" value="cancelled">
             <input type="hidden" name="rejection_reason" value="Cancelled by programme team">
-            <button class="btn btn-sm btn-danger legacy-style-e053a92b18" type="submit" title="Cancel session">
-              <i class="fa fa-times"></i> Cancel
+            <button class="btn btn-sm btn-danger status-action" type="submit" title="Cancel session" aria-label="Cancel session">
+              <i class="fa fa-times"></i>
             </button>
           </form>
         <?php endif; ?>
-      </div>
     <?php elseif($CAN_MANAGE && in_array($s['status'],['confirmed','scheduled'])): ?>
-      <div class="legacy-style-96ad6099e2">
         <form method="POST" action="includes/process-mentor-sessions.php" class="legacy-style-cccfa4560d">
           <input type="hidden" name="action" value="update_status">
           <input type="hidden" name="id" value="<?= (int)$s['id'] ?>">
           <input type="hidden" name="status" value="completed">
-          <button class="btn btn-sm btn-success legacy-style-e053a92b18" type="submit"><i class="fa fa-check-double"></i> Mark Done</button>
+          <button class="btn btn-sm btn-success status-action" type="submit" title="Mark as completed" aria-label="Mark as completed"><i class="fa fa-check-double"></i></button>
         </form>
-      </div>
     <?php endif; ?>
+    </div>
   </td>
   <td>
     <?php if($s['venture_rating']): ?>

@@ -76,6 +76,27 @@ if (!function_exists('admin_is_super')) {
 
 require_admin_login();
 
+/* Idle timeout (Site Settings > UAT & Security). 0 or unset disables it. */
+(static function (mysqli $conn): void {
+    $minutes = 0;
+    $res = @$conn->query("SELECT setting_value FROM site_settings WHERE setting_key = 'security_admin_idle_minutes' LIMIT 1");
+    if ($res && ($row = $res->fetch_assoc())) {
+        $minutes = (int)$row['setting_value'];
+    }
+    $now = time();
+    $last = (int)($_SESSION['admin_last_activity'] ?? 0);
+    if ($minutes > 0 && $last > 0 && ($now - $last) > $minutes * 60) {
+        $_SESSION = ['login_error' => 'Your session expired after ' . $minutes . ' minutes of inactivity. Please sign in again.'];
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_regenerate_id(true);
+        }
+        $login = str_contains(str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? '')), '/admin/includes/') ? '../login.php' : 'login.php';
+        header('Location: ' . $login);
+        exit;
+    }
+    $_SESSION['admin_last_activity'] = $now;
+})($conn);
+
 /* --------------------------------------------------------------------------
    Load logged-in admin user
    -------------------------------------------------------------------------- */

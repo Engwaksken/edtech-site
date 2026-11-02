@@ -18,3 +18,4 @@ $a11yw_ls_href = htmlspecialchars($a11yw_base . '/assets/css/large-screens.css?v
 <link rel="stylesheet" href="<?= $a11yw_ls_href ?>">
 <link rel="stylesheet" href="<?= $a11yw_css_href ?>">
 <script src="<?= $a11yw_js_src ?>"></script>
+<?php require_once __DIR__ . '/theme-head.php'; ?>

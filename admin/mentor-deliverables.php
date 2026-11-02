@@ -1164,6 +1164,15 @@ $messageType = trim(
     margin:16px 0 18px;
 }
 
+.md-progress-cell{display:flex;align-items:center;gap:8px;min-width:150px}
+.md-progress{flex:1;height:8px;border-radius:99px;background:#e2e8f0;overflow:hidden;min-width:60px}
+.md-progress span{display:block;height:100%;background:var(--primary,#fc7f10);border-radius:99px}
+.md-progress-btn{width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+.md-progress-note{display:inline-block;margin-top:4px;color:#64748b;cursor:help}
+.md-range-row{display:flex;align-items:center;gap:12px}
+.md-range-row input[type=range]{flex:1}
+.md-range-row input[type=number]{width:90px}
+.md-field textarea{width:100%;font:inherit}
 .md-modal-overlay{
     position:fixed;
     inset:0;
@@ -1898,7 +1907,7 @@ body.md-modal-open{
 <th>Due</th>
 <th>Status</th>
 <th>Submitted File</th>
-<th>Progress Update</th>
+<th>Progress</th>
 </tr>
 </thead>
 <tbody>
@@ -1984,27 +1993,28 @@ $canViewSubmission = $canViewAll
 </td>
 
 <td>
+<?php $rowProgress = max(0, min(100, (int)($r['progress_percent'] ?? 0))); ?>
+<div class="md-progress-cell">
+<div class="md-progress" title="<?= $rowProgress ?>% complete" aria-label="<?= $rowProgress ?>% complete"><span style="width:<?= $rowProgress ?>%"></span></div>
+<small><?= $rowProgress ?>%</small>
 <?php if ($canViewAll || (int)$r['mentor_id'] === $mentorId): ?>
-<form class="update" method="post" action="../includes/process-deliverables.php">
-<input type="hidden" name="action" value="mentor_update">
-<input type="hidden" name="assignment_id" value="<?= (int)$r['id'] ?>">
-
-<select name="status">
-<?php foreach (['not_started','in_progress','returned_for_revision','completed'] as $updateStatus): ?>
-<option value="<?= h($updateStatus) ?>" <?= $r['status'] === $updateStatus ? 'selected' : '' ?>>
-<?= h(deliverable_status_label($updateStatus)) ?>
-</option>
-<?php endforeach; ?>
-</select>
-
-<input type="number" name="progress_percent" min="0" max="100" value="<?= (int)($r['progress_percent'] ?? 0) ?>">
-
-<input name="notes" value="<?= h((string)($r['submission_notes'] ?? '')) ?>" placeholder="Notes">
-
-<button class="btn btn-primary btn-sm">Save</button>
-</form>
+<button type="button" class="btn btn-primary btn-sm md-progress-btn"
+    title="Update progress" aria-label="Update progress for <?= h((string)$r['deliverable_name']) ?>"
+    data-progress-update
+    data-id="<?= (int)$r['id'] ?>"
+    data-name="<?= h((string)$r['deliverable_name']) ?>"
+    data-venture="<?= h((string)$r['venture_name']) ?>"
+    data-status="<?= h((string)$r['status']) ?>"
+    data-progress="<?= $rowProgress ?>"
+    data-notes="<?= h((string)($r['submission_notes'] ?? '')) ?>">
+<i class="fa-solid fa-pen-to-square"></i>
+</button>
 <?php else: ?>
-<small>View only</small>
+<small class="md-no-file">View only</small>
+<?php endif; ?>
+</div>
+<?php if (trim((string)($r['submission_notes'] ?? '')) !== ''): ?>
+<small class="md-progress-note" title="<?= h((string)$r['submission_notes']) ?>"><i class="fa-regular fa-note-sticky"></i> Has notes</small>
 <?php endif; ?>
 </td>
 </tr>
@@ -2013,7 +2023,84 @@ $canViewSubmission = $canViewAll
 </table>
 </div>
 </main></div>
+
+<div class="md-modal-overlay" id="progressModal" aria-hidden="true">
+    <div class="md-modal" role="dialog" aria-modal="true" aria-labelledby="progressModalTitle">
+        <div class="md-modal-header">
+            <div>
+                <h2 id="progressModalTitle">Update Progress</h2>
+                <p class="md-help" id="progressModalSubtitle"></p>
+            </div>
+            <button type="button" class="md-modal-close" onclick="closeMdModal('progressModal')" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form method="post" action="../includes/process-deliverables.php">
+            <input type="hidden" name="action" value="mentor_update">
+            <input type="hidden" name="assignment_id" id="progressAssignmentId" value="">
+            <div class="md-modal-body">
+                <div class="md-grid">
+                    <div class="md-field span2">
+                        <label for="progressStatus">Status</label>
+                        <select name="status" id="progressStatus">
+                            <?php foreach (['not_started','in_progress','returned_for_revision','completed'] as $updateStatus): ?>
+                                <option value="<?= h($updateStatus) ?>"><?= h(deliverable_status_label($updateStatus)) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="md-field span2">
+                        <label for="progressPercent">Progress (<span id="progressPercentLabel">0</span>%)</label>
+                        <div class="md-range-row">
+                            <input type="range" id="progressRange" min="0" max="100" step="5" value="0" aria-label="Progress percentage slider">
+                            <input type="number" name="progress_percent" id="progressPercent" min="0" max="100" value="0">
+                        </div>
+                    </div>
+                    <div class="md-field span2">
+                        <label for="progressNotes">Notes</label>
+                        <textarea name="notes" id="progressNotes" rows="4" placeholder="What has been done, blockers, next steps..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="md-modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeMdModal('progressModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Progress</button>
+            </div>
+        </form>
+    </div>
+</div>
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const progressRange = document.getElementById('progressRange');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressLabel = document.getElementById('progressPercentLabel');
+    const syncProgress = function (value) {
+        const v = Math.max(0, Math.min(100, parseInt(value, 10) || 0));
+        if (progressRange) progressRange.value = v;
+        if (progressPercent) progressPercent.value = v;
+        if (progressLabel) progressLabel.textContent = v;
+    };
+    if (progressRange) progressRange.addEventListener('input', function () { syncProgress(progressRange.value); });
+    if (progressPercent) progressPercent.addEventListener('input', function () { syncProgress(progressPercent.value); });
+
+    document.querySelectorAll('[data-progress-update]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            document.getElementById('progressAssignmentId').value = button.dataset.id || '';
+            document.getElementById('progressModalSubtitle').textContent =
+                (button.dataset.name || '') + (button.dataset.venture ? ' - ' + button.dataset.venture : '');
+            const statusSelect = document.getElementById('progressStatus');
+            const current = button.dataset.status || 'not_started';
+            if (statusSelect.querySelector('option[value="' + current + '"]')) {
+                statusSelect.value = current;
+            } else {
+                statusSelect.value = 'in_progress';
+            }
+            document.getElementById('progressNotes').value = button.dataset.notes || '';
+            syncProgress(button.dataset.progress || 0);
+            openMdModal('progressModal');
+        });
+    });
+});
+
 function openMdModal(id) {
     const modal = document.getElementById(id);
 
