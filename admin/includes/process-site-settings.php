@@ -413,6 +413,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ss_save($conn, 'integration_ims_url', $ims);
                 ss_save($conn, 'integration_ims_contact', ss_post('integration_ims_contact', 255));
 
+                $calendarId = ss_post('google_calendar_client_id', 255);
+                if ($calendarId !== '' && !preg_match('/^[0-9]+-[A-Za-z0-9_-]+\.apps\.googleusercontent\.com$/', $calendarId)) {
+                    throw new RuntimeException('Enter a valid Google OAuth client ID.');
+                }
+                ss_save($conn, 'google_calendar_client_id', $calendarId);
+                ss_save_secret($conn, 'google_calendar_client_secret', (string)($_POST['google_calendar_client_secret'] ?? ''));
+
                 $cols = ss_email_settings_columns($conn);
                 if ($cols && isset($_POST['smtp_host'])) {
                     $from = ss_post('from_email', 190);

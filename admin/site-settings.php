@@ -492,12 +492,12 @@ $checklist_progress = static function (array $items, array $state): array {
         <?php ss_tab_open('integrations', $active_tab); ?>
           <?php
             $smtp_ok = !empty($email_row['smtp_host']);
-            $gcal_ok = (getenv('GOOGLE_CALENDAR_CLIENT_ID') ?: '') !== '' && (getenv('GOOGLE_CALENDAR_CLIENT_SECRET') ?: '') !== '';
+            $gcal_ok = (getenv('GOOGLE_CALENDAR_CLIENT_ID') ?: ($settings['google_calendar_client_id'] ?? '')) !== '' && (getenv('GOOGLE_CALENDAR_CLIENT_SECRET') ?: ss_secret($settings, 'google_calendar_client_secret')) !== '';
             $s3_ok = $aws_cfg['bucket'] !== '' && $aws_cfg['access_key'] !== '' && $aws_cfg['secret_key'] !== '';
             $ga_value = array_key_exists('analytics_ga_id', $settings) ? $settings['analytics_ga_id'] : 'G-QY3FG79QBV';
             $integrations = [
                 ['Email (SMTP)', 'fa-envelope', $smtp_ok, $smtp_ok ? h($email_row['smtp_host']) : 'Not configured'],
-                ['Google Calendar', 'fa-calendar-alt', $gcal_ok, $gcal_ok ? 'OAuth client configured' : 'Set GOOGLE_CALENDAR_CLIENT_ID / SECRET'],
+                ['Google Calendar', 'fa-calendar-alt', $gcal_ok, $gcal_ok ? 'OAuth client configured' : 'Configure OAuth credentials below'],
                 ['Amazon S3', 'fa-aws', $s3_ok, $s3_ok ? h($aws_cfg['bucket']) : 'Configure in AWS Go-Live'],
                 ['Google Analytics', 'fa-chart-line', $ga_value !== '', $ga_value !== '' ? h($ga_value) : 'Off'],
                 ['Application portal (IMS)', 'fa-file-signature', true, 'External embed on /apply'],
@@ -514,7 +514,11 @@ $checklist_progress = static function (array $items, array $state): array {
           </div>
 
           <?php ss_form_open('save_integrations', 'integrations'); ?>
-            <div class="ss-two-col">
+            <nav class="ss-subtabs" role="tablist" aria-label="Integration settings">
+              <button type="button" class="ss-subtab active" role="tab" aria-selected="true" aria-controls="integration-panel-email" data-subtab="integration-panel-email"><i class="fa fa-envelope"></i> Outgoing email</button>
+              <button type="button" class="ss-subtab" role="tab" aria-selected="false" aria-controls="integration-panel-services" data-subtab="integration-panel-services"><i class="fa fa-plug"></i> Other services</button>
+            </nav>
+            <div class="ss-subtab-panel" id="integration-panel-email" role="tabpanel">
               <div class="ss-panel">
                 <h4><i class="fa fa-envelope"></i> Outgoing email (SMTP)</h4>
                 <?php if (!$email_cols): ?>
@@ -545,7 +549,9 @@ $checklist_progress = static function (array $items, array $state): array {
                   <?php if (!empty($settings['smtp_last_test'])): ?><small class="ss-muted">Last successful test: <?= h(substr($settings['smtp_last_test'], 3)) ?></small><?php endif; ?>
                 <?php endif; ?>
               </div>
+            </div>
 
+            <div class="ss-subtab-panel" id="integration-panel-services" role="tabpanel" hidden>
               <div class="ss-panel">
                 <h4><i class="fa fa-link"></i> Other integrations</h4>
                 <div class="form-grid">
@@ -557,9 +563,12 @@ $checklist_progress = static function (array $items, array $state): array {
                     <small>Reference for the external application system embedded on /apply.</small></div>
                   <div class="form-group"><label for="imsContact">IMS owner / support contact</label>
                     <input id="imsContact" type="text" name="integration_ims_contact" class="form-control" value="<?= h($settings['integration_ims_contact'] ?? '') ?>" placeholder="Name, email or phone"></div>
-                  <div class="form-group"><label>Google Calendar</label>
-                    <div><a class="btn btn-secondary btn-sm" href="google-calendar-connect.php"><i class="fa fa-calendar-plus"></i> Manage calendar connection</a></div>
-                    <small>Client ID and secret come from the server environment.</small></div>
+                  <div class="form-group full"><label for="gcalClientId">Google Calendar OAuth client ID</label>
+                    <input id="gcalClientId" type="text" name="google_calendar_client_id" class="form-control" value="<?= h($settings['google_calendar_client_id'] ?? '') ?>" autocomplete="off" placeholder="000000000000-….apps.googleusercontent.com">
+                    <small>Used globally by calendar connections. A value in the server environment takes precedence.</small></div>
+                  <div class="form-group full"><label for="gcalClientSecret">Google Calendar OAuth client secret</label>
+                    <input id="gcalClientSecret" type="password" name="google_calendar_client_secret" class="form-control" autocomplete="new-password" placeholder="<?= ss_secret($settings, 'google_calendar_client_secret') !== '' ? 'Saved - leave blank to keep' : '' ?>">
+                    <small>Stored encrypted. Leave blank to keep the saved secret. <a href="google-calendar-connect.php">Manage calendar connection</a>.</small></div>
                 </div>
               </div>
             </div>
@@ -785,6 +794,11 @@ $checklist_progress = static function (array $items, array $state): array {
 .settings-tab:hover{color:#172033}
 .settings-tab.active{border-bottom-color:var(--primary,#fc7f10);color:#172033}
 .settings-tab-panel[hidden]{display:none}
+.ss-subtabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid #e2e8f0;margin:4px 0 18px}
+.ss-subtab{border:0;border-bottom:3px solid transparent;background:transparent;padding:10px 14px;color:#475569;font:inherit;font-weight:650;cursor:pointer}
+.ss-subtab:hover,.ss-subtab.active{color:#172033}
+.ss-subtab.active{border-bottom-color:var(--primary,#fc7f10)}
+.ss-subtab-panel[hidden]{display:none}
 .settings-tab-help{margin:0 0 20px;color:#64748b;line-height:1.6}
 .ss-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
 .ss-inline-form{display:inline-block;margin:0}
@@ -874,6 +888,21 @@ form + .ss-inline-form{margin-top:10px}
         p.classList.toggle('active', !p.hidden);
       });
       history.replaceState(null, '', 'site-settings.php?tab=' + encodeURIComponent(key));
+    });
+  });
+
+  document.querySelectorAll('[data-subtab]').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var container = tab.closest('section');
+      var target = tab.dataset.subtab;
+      container.querySelectorAll('[data-subtab]').forEach(function (t) {
+        var on = t === tab;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', String(on));
+      });
+      container.querySelectorAll('.ss-subtab-panel').forEach(function (panel) {
+        panel.hidden = panel.id !== target;
+      });
     });
   });
 
