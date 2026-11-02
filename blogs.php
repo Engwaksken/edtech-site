@@ -46,7 +46,7 @@ function blog_card_excerpt(array $blog, int $limit = 125): string {
         return '';
     }
 
-    return mb_strimwidth($text, 0, $limit, '…', 'UTF-8');
+    return mb_strimwidth($text, 0, $limit, '...', 'UTF-8');
 }
 
 
@@ -357,7 +357,7 @@ if ($blog) {
         $plain = preg_replace('/\s+/', ' ', $plain);
 
         if ($plain !== '') {
-            $share_description = mb_strimwidth($plain, 0, 220, '…');
+            $share_description = mb_strimwidth($plain, 0, 220, '...');
         }
     }
 
