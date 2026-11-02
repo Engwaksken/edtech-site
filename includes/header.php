@@ -124,15 +124,21 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
     >
     <link rel="apple-touch-icon" href="<?= h($favicon_path) ?>">
     <meta name="theme-color" content="#fc7f10">
+    <?php
+    // Site Settings > Integrations. A saved empty value turns analytics off.
+    $ga_id = function_exists('get_setting') ? (string)get_setting($conn, 'analytics_ga_id', 'G-QY3FG79QBV') : 'G-QY3FG79QBV';
+    if (preg_match('/^G-[A-Z0-9]{4,20}$/', $ga_id)):
+    ?>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QY3FG79QBV"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?= h($ga_id) ?>"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-QY3FG79QBV');
+  gtag('config', <?= json_encode($ga_id) ?>);
 </script>
+    <?php endif; ?>
 
 <?php require_once __DIR__ . '/accessibility-widget.php'; ?>
 </head>
