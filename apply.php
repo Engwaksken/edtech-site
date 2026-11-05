@@ -1,9 +1,8 @@
 <?php
 include __DIR__ . '/includes/header.php';
 
-// The application form lives in IMS. Admins can change its address under
-// Site Settings > Integrations; only an https address is accepted here.
-$ims_default = 'https://ims.hivecolab.com/opportunity-embed.php?id=1';
+
+$ims_default = 'https://ims.hivecolab.com/opportunity-embed.php?id=5';
 $ims_url = function_exists('get_setting') ? trim(get_setting($conn, 'integration_ims_url', $ims_default)) : $ims_default;
 if (!filter_var($ims_url, FILTER_VALIDATE_URL) || strtolower((string) parse_url($ims_url, PHP_URL_SCHEME)) !== 'https') {
     $ims_url = $ims_default;
