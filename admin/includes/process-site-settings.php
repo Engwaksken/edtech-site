@@ -4,6 +4,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/site-settings-service.php';
+require_once __DIR__ . '/../../includes/legal-pages.php';
+require_once __DIR__ . '/../../includes/rich-html.php';
 
 if (!isset($conn) || !($conn instanceof mysqli)) {
     die('Database connection not found.');
@@ -38,7 +40,7 @@ if (!function_exists('h')) {
 
 ss_ensure_tables($conn);
 
-const SS_TABS = ['general', 'theme', 'fonts', 'popup', 'backups', 'integrations', 'security', 'golive'];
+const SS_TABS = ['general', 'theme', 'fonts', 'popup', 'legal', 'backups', 'integrations', 'security', 'golive'];
 
 $active_tab = (string)($_GET['tab'] ?? $_POST['settings_active_tab'] ?? 'general');
 if (!in_array($active_tab, SS_TABS, true)) {
@@ -564,6 +566,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ss_save($conn, $key, '');
                 }
                 ss_redirect($tab, 'UAT sign-off cleared.');
+            }
+
+            case 'save_legal': {
+                $changed = [];
+                foreach (LEGAL_PAGES as $key => $meta) {
+                    $field = 'legal_' . $key . '_html';
+                    if (!isset($_POST[$field])) continue;
+                    $html = trim((string)$_POST[$field]);
+                    if (strlen($html) > 60000) {
+                        throw new RuntimeException($meta['title'] . ' is too long (limit about 60,000 characters).');
+                    }
+                    // Store what the public page will show, so the editor reflects it.
+                    $clean = site_rich_html($html);
+                    if ($clean !== get_setting($conn, $meta['setting'], '')) {
+                        ss_save($conn, $meta['setting'], $clean);
+                        ss_save($conn, $meta['updated'], date('Y-m-d'));
+                        $changed[] = $meta['title'];
+                    }
+                }
+                ss_redirect($tab, $changed ? implode(' and ', $changed) . ' saved.' : 'No changes to save.');
             }
 
             case 'save_golive': {

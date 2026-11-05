@@ -69,6 +69,7 @@ $site_location= get_setting($conn, 'site_location', 'Kampala, Uganda');
 
     <div class="footer-bottom">
       <p>© <?= date('Y') ?> <?= h($site_name) ?>. Implemented by <a href="https://hivecolab.com" target="_blank" rel="noopener noreferrer">Hive Colab</a> in partnership with the <a href="https://mastercardfdn.org" target="_blank" rel="noopener noreferrer">Mastercard Foundation</a>.</p>
+      <p class="footer-legal"><a href="<?= SITE_URL ?>/privacy-policy">Privacy Policy</a> <span aria-hidden="true">&middot;</span> <a href="<?= SITE_URL ?>/terms-of-service">Terms of Service</a></p>
      
     </div>
   </div>

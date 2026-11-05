@@ -6,6 +6,7 @@ $tabs = [
     'theme'        => ['Theme Colours', 'fa-palette'],
     'fonts'        => ['Typography', 'fa-font'],
     'popup'        => ['Frontend Popup', 'fa-window-restore'],
+    'legal'        => ['Legal Pages', 'fa-balance-scale'],
     'backups'      => ['Backups', 'fa-database'],
     'integrations' => ['Integrations', 'fa-plug'],
     'security'     => ['UAT & Security', 'fa-shield-alt'],
@@ -250,6 +251,49 @@ $checklist_progress = static function (array $items, array $state): array {
             <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save Typography</button>
             <button type="submit" name="reset_fonts" value="1" class="btn btn-secondary" onclick="return confirm('Reset fonts to the defaults?')"><i class="fa fa-undo"></i> Reset to Defaults</button>
           </div>
+        </form></section>
+
+        <?php /* ================================================= LEGAL */ ?>
+        <?php ss_tab_open('legal', $active_tab); ss_form_open('save_legal', 'legal'); ?>
+          <p class="settings-tab-help">Public pages for your privacy policy and terms of service. Google requires both links on the OAuth consent screen (Branding) before Google Calendar can be used by everyone. You can use HTML: headings, paragraphs, bold, italics, lists, links, quotes and tables are kept; scripts, styles, images and forms are removed when you save.</p>
+          <?php
+            $legal_site_name = $settings['site_name'] ?? 'Mastercard Foundation EdTech Fellowship';
+            $legal_site_email = $settings['site_email'] ?? 'edtech@hivecolab.com';
+          ?>
+          <?php foreach (LEGAL_PAGES as $legal_key => $legal_meta): ?>
+            <?php
+              $legal_url = SITE_URL . '/' . $legal_meta['path'];
+              $legal_value = (string)($settings[$legal_meta['setting']] ?? '');
+              $legal_updated = (string)($settings[$legal_meta['updated']] ?? '');
+            ?>
+            <div class="ss-legal-block">
+              <div class="ss-legal-head">
+                <h4><i class="fa <?= h($legal_meta['icon']) ?>"></i> <?= h($legal_meta['title']) ?></h4>
+                <span class="badge <?= $legal_value !== '' ? 'badge-success' : 'badge-warning' ?>"><?= $legal_value !== '' ? 'Published' : 'Not written yet' ?></span>
+              </div>
+              <div class="ss-legal-url">
+                <label for="legalUrl<?= h($legal_key) ?>">Public link (paste this into Google Cloud Console)</label>
+                <div class="ss-legal-url-row">
+                  <input id="legalUrl<?= h($legal_key) ?>" type="text" class="form-control" readonly value="<?= h($legal_url) ?>" onclick="this.select()">
+                  <button type="button" class="btn btn-secondary" data-copy-target="legalUrl<?= h($legal_key) ?>"><i class="fa fa-copy"></i> Copy</button>
+                  <a class="btn btn-secondary" href="<?= h($legal_url) ?>" target="_blank" rel="noopener"><i class="fa fa-external-link-alt"></i> View</a>
+                </div>
+                <?php if ($legal_updated !== ''): ?><small>Last updated <?= h(date('j M Y', strtotime($legal_updated) ?: time())) ?></small><?php endif; ?>
+              </div>
+              <div class="form-group">
+                <label for="legalHtml<?= h($legal_key) ?>">Page content (HTML)</label>
+                <textarea id="legalHtml<?= h($legal_key) ?>" name="legal_<?= h($legal_key) ?>_html" class="form-control ss-legal-editor" rows="18" spellcheck="true"><?= h($legal_value) ?></textarea>
+                <template id="legalStarter<?= h($legal_key) ?>"><?= legal_page_starter($legal_key, $legal_site_name, $legal_site_email) ?></template>
+                <div class="ss-legal-tools">
+                  <button type="button" class="btn btn-secondary btn-sm" data-legal-starter="<?= h($legal_key) ?>"><i class="fa fa-magic"></i> Insert starter text</button>
+                  <button type="button" class="btn btn-secondary btn-sm" data-legal-preview="<?= h($legal_key) ?>"><i class="fa fa-eye"></i> Preview</button>
+                  <small>Starter text is a draft: review it with whoever handles legal matters before publishing.</small>
+                </div>
+                <iframe class="ss-legal-preview" id="legalPreview<?= h($legal_key) ?>" title="<?= h($legal_meta['title']) ?> preview" sandbox hidden></iframe>
+              </div>
+            </div>
+          <?php endforeach; ?>
+          <div class="ss-actions"><button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save Legal Pages</button></div>
         </form></section>
 
         <?php /* ================================================= POPUP */ ?>
@@ -794,6 +838,18 @@ $checklist_progress = static function (array $items, array $state): array {
 .settings-tab:hover{color:#172033}
 .settings-tab.active{border-bottom-color:var(--primary,#fc7f10);color:#172033}
 .settings-tab-panel[hidden]{display:none}
+.ss-legal-block{border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:20px}
+.ss-legal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.ss-legal-head h4{margin:0}
+.ss-legal-url{margin-bottom:14px}
+.ss-legal-url label{display:block;font-weight:600;margin-bottom:6px}
+.ss-legal-url-row{display:flex;gap:8px;flex-wrap:wrap}
+.ss-legal-url-row .form-control{flex:1 1 260px;min-width:0}
+.ss-legal-editor{font-family:Consolas,Menlo,monospace;font-size:13px;line-height:1.5}
+.ss-legal-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ss-legal-tools small{color:#64748b}
+.ss-legal-preview{display:block;width:100%;height:480px;margin-top:12px;border:1px dashed #cbd5e1;border-radius:10px;background:#fff}
+.ss-legal-preview[hidden]{display:none}
 .ss-subtabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid #e2e8f0;margin:4px 0 18px}
 .ss-subtab{border:0;border-bottom:3px solid transparent;background:transparent;padding:10px 14px;color:#475569;font:inherit;font-weight:650;cursor:pointer}
 .ss-subtab:hover,.ss-subtab.active{color:#172033}
@@ -988,6 +1044,55 @@ form + .ss-inline-form{margin-top:10px}
   modal.querySelectorAll('[data-close-modal]').forEach(function (b) { b.addEventListener('click', closeModal); });
   modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+})();
+
+// Legal pages: copy link, starter text, sandboxed preview.
+(function () {
+  document.querySelectorAll('[data-copy-target]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var input = document.getElementById(btn.getAttribute('data-copy-target'));
+      if (!input) return;
+      input.select();
+      var done = function () { btn.innerHTML = '<i class="fa fa-check"></i> Copied'; setTimeout(function () { btn.innerHTML = '<i class="fa fa-copy"></i> Copy'; }, 1800); };
+      if (navigator.clipboard) { navigator.clipboard.writeText(input.value).then(done, function () { document.execCommand('copy'); done(); }); }
+      else { document.execCommand('copy'); done(); }
+    });
+  });
+
+  document.querySelectorAll('[data-legal-starter]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var key = btn.getAttribute('data-legal-starter');
+      var box = document.getElementById('legalHtml' + key);
+      var tpl = document.getElementById('legalStarter' + key);
+      if (!box || !tpl) return;
+      if (box.value.trim() !== '' && !confirm('Replace the current text with the starter text?')) return;
+      box.value = tpl.innerHTML.trim();
+      box.focus();
+    });
+  });
+
+  var previewCss = '<style>body{font-family:Arial,sans-serif;color:#374151;line-height:1.75;padding:18px;margin:0}'
+    + 'h2,h3,h4{color:#111;margin:1.4em 0 .4em}ul,ol{padding-left:1.4em}a{color:#c85f00}'
+    + 'blockquote{margin:0 0 1em;padding:10px 16px;border-left:4px solid #fc7f10;background:#fff7ed}'
+    + 'table{border-collapse:collapse}th,td{border:1px solid #e5e7eb;padding:6px 10px}</style>';
+
+  document.querySelectorAll('[data-legal-preview]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var key = btn.getAttribute('data-legal-preview');
+      var box = document.getElementById('legalHtml' + key);
+      var frame = document.getElementById('legalPreview' + key);
+      if (!box || !frame) return;
+      if (!frame.hidden && btn.dataset.open === '1') {
+        frame.hidden = true; btn.dataset.open = '0';
+        btn.innerHTML = '<i class="fa fa-eye"></i> Preview';
+        return;
+      }
+      // sandbox (no allow-scripts): nothing in the preview can run.
+      frame.srcdoc = '<!doctype html><meta charset="utf-8">' + previewCss + box.value;
+      frame.hidden = false; btn.dataset.open = '1';
+      btn.innerHTML = '<i class="fa fa-eye-slash"></i> Hide preview';
+    });
+  });
 })();
 </script>
 
