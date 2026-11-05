@@ -27,7 +27,11 @@ if (!defined('GOOGLE_CALENDAR_CLIENT_ID')) {
     define('GOOGLE_CALENDAR_CLIENT_ID', (getenv('GOOGLE_CALENDAR_CLIENT_ID') ?: '') ?: google_calendar_setting('google_calendar_client_id'));
 }
 if (!defined('GOOGLE_CALENDAR_CLIENT_SECRET')) {
-    define('GOOGLE_CALENDAR_CLIENT_SECRET', (getenv('GOOGLE_CALENDAR_CLIENT_SECRET') ?: '') ?: google_calendar_setting('google_calendar_client_secret'));
+    // Site Settings stores the secret encrypted; decrypt it before use.
+    define('GOOGLE_CALENDAR_CLIENT_SECRET', (getenv('GOOGLE_CALENDAR_CLIENT_SECRET') ?: '') ?: ss_secret(
+        ['google_calendar_client_secret' => google_calendar_setting('google_calendar_client_secret')],
+        'google_calendar_client_secret'
+    ));
 }
 if (!defined('GOOGLE_CALENDAR_REDIRECT_URI')) {
     $base = defined('SITE_URL') ? rtrim((string)SITE_URL, '/') : '';
