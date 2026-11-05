@@ -280,233 +280,7 @@ if (!function_exists('meal_ensure_participant_reporting_columns')) {
 
 meal_ensure_participant_reporting_columns($conn);
 
-if (!function_exists('meal_template_field_specs')) {
-    function meal_template_field_specs(string $type): array
-    {
-        $yes_no = ['Yes', 'No'];
-
-        $specs = [
-            'participants' => [
-                ['label' => 'Date (DD/MM/YYYY)',                      'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Learner Number (Unique ID)',            'options' => null, 'example' => 'UG-EDT-001'],
-                ['label' => 'Full Name (First Name, Surname)',       'options' => null, 'example' => 'Jane Namukasa'],
-                ['label' => 'Phone',                                 'options' => null, 'example' => '+256700000000'],
-                ['label' => 'Email',                                 'options' => null, 'example' => 'jane@example.com'],
-                ['label' => 'Enrollment Category',                   'options' => ['New', 'Returning'], 'example' => 'New'],
-                ['label' => 'Gender',                                'options' => ['Male', 'Female'], 'example' => 'Female'],
-                ['label' => 'Specific Location (District/Village)',  'options' => null, 'example' => 'Kampala / Makindye'],
-                ['label' => 'Urban/Rural',                           'options' => ['Urban', 'Peri-Urban', 'Rural'], 'example' => 'Urban'],
-                ['label' => 'Age of Learner',                        'options' => null, 'example' => '24'],
-                ['label' => 'Displaced/Refugee Status',              'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Refugee Settlement',                    'options' => [
-                    'Bidi bidi Refugee Settlement',
-                    'Nakivale Refugee Settlement',
-                    'Rhino Camp Refugee Settlement',
-                    'Palorinya Refugee Settlement',
-                    'Kyangwali Refugee Settlement',
-                    'Adjumani Settlements',
-                    'Kyaka II Refugee Settlement',
-                    'Other (please specify)'
-                ], 'example' => 'Nakivale Refugee Settlement'],
-                ['label' => 'Other Refugee Settlement (please specify)', 'options' => null, 'example' => ''],
-                ['label' => 'PWD Status',                            'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Type of Impairment',                    'options' => null, 'example' => ''],
-                ['label' => 'Education Level',                       'options' => ['Primary', 'Secondary', 'TVET', 'Tertiary'], 'example' => 'TVET'],
-                ['label' => 'Learner Status',                        'options' => ['Active', 'On hold', 'Dropped', 'Completed', 'Certified'], 'example' => 'Active'],
-                ['label' => 'Verified Learner Outcomes',              'options' => ['Increased pass rates', 'Improved grades in STEM', 'Increased Agency and Voice', 'Others please specify'], 'example' => 'Increased pass rates'],
-                ['label' => 'Other Verified Learner Outcome',         'options' => null, 'example' => ''],
-                ['label' => 'YIW (Youth In Work) Before',            'options' => ['Self-employment', 'Wage employment', 'No'], 'example' => 'No'],
-                ['label' => 'Transformation Objective',              'options' => null, 'example' => 'Education & Skilling'],
-                ['label' => 'After-work Status',                     'options' => ['New', 'Additional', 'Improved'], 'example' => 'New'],
-                ['label' => 'After-work Pathway',                    'options' => ['Self-employment', 'Wage employment'], 'example' => 'Self-employment'],
-            ],
-            'teachers' => [
-                ['label' => 'Date (DD/MM/YYYY)',           'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Teacher/Educator Name',       'options' => null, 'example' => 'Grace Achieng'],
-                ['label' => 'Gender',                      'options' => ['Male', 'Female', 'Other'], 'example' => 'Female'],
-                ['label' => 'Age Category',                'options' => ['13-20', '21-35', 'Above 35'], 'example' => '21-35'],
-                ['label' => 'Refugee/Displaced Status',    'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Host Community',              'options' => $yes_no, 'example' => 'Yes'],
-                ['label' => 'Urban/Rural',               'options' => ['Rural', 'Urban', 'Peri-Urban'], 'example' => 'Rural'],
-                ['label' => 'PWD Status',                  'options' => $yes_no, 'example' => 'No'],
-            ],
-            'schools' => [
-                ['label' => 'Date (DD/MM/YYYY)',           'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'School / Institution Name',  'options' => null, 'example' => "St. Mary's Secondary School"],
-                ['label' => 'Geographical Location',       'options' => ['Rural', 'Urban', 'Peri-Urban'], 'example' => 'Rural'],
-                ['label' => 'Ownership Type',              'options' => ['Government-aided', 'Private'], 'example' => 'Government-aided'],
-                ['label' => 'Level of School',             'options' => ['Secondary', 'Tertiary', 'BTVET'], 'example' => 'Secondary'],
-            ],
-            'other_users' => [
-                ['label' => 'Date (DD/MM/YYYY)',                       'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Gender',                                  'options' => ['Male', 'Female', 'Other'], 'example' => 'Male'],
-                ['label' => 'Host Community',                          'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Urban/Rural',                           'options' => ['Rural', 'Urban', 'Peri-Urban'], 'example' => 'Urban'],
-                ['label' => 'PWD Status',                              'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Education Level',                         'options' => ['Primary', 'Secondary', 'Tertiary'], 'example' => 'Tertiary'],
-            ],
-            'employment' => [
-                ['label' => 'Placement Date (DD/MM/YYYY)',             'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Full Name (First Name, Surname)',         'options' => null, 'example' => 'David Ochieng'],
-                ['label' => 'Gender',                                  'options' => ['Male', 'Female'], 'example' => 'Male'],
-                ['label' => 'Age Category',                            'options' => ['13-20', '21-35', 'Above 35'], 'example' => '21-35'],
-                ['label' => 'PWD Status',                              'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Employment Type',                        'options' => ['Full-Time', 'Part-Time', 'Contract', 'Volunteer'], 'example' => 'Full-Time'],
-                ['label' => 'Job Title / Role',                       'options' => null, 'example' => 'Software Developer'],
-                ['label' => 'Status',                                 'options' => ['Active', 'Suspended', 'Terminated', 'On Leave'], 'example' => 'Active'],
-            ],
-            'finance' => [
-                ['label' => 'Date Mobilised (DD/MM/YYYY)', 'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Amount in USD',               'options' => null, 'example' => '50000'],
-                ['label' => 'Funding Form',                'options' => ['Debt / Loan', 'Grant', 'Equity', 'Convertible Note', 'Blended Finance', 'Other'], 'example' => 'Grant'],
-                ['label' => 'Funding Source',              'options' => null, 'example' => 'Village Capital'],
-            ],
-            'partnerships' => [
-                ['label' => 'Partnership Date (DD/MM/YYYY)', 'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Key Partner Name',              'options' => null, 'example' => 'Google.org'],
-                ['label' => 'Type of Partnership',           'options' => ['Financial', 'Technical', 'Distribution', 'Academic', 'Government', 'Other'], 'example' => 'Financial'],
-                ['label' => 'Partnership Status',            'options' => ['Active', 'Pending', 'Inactive', 'Completed'], 'example' => 'Active'],
-            ],
-            'revenue' => [
-                ['label' => 'Revenue Month-end Date (DD/MM/YYYY)', 'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Gross Revenue Generated (UGX)',       'options' => null, 'example' => '12500000'],
-                ['label' => 'Primary Revenue Stream',              'options' => null, 'example' => 'Subscription fees'],
-            ],
-        ];
-
-        return $specs[$type] ?? [];
-    }
-}
-
-/**
- * Streams an .xlsx template with a bold header row, an italic example row,
- * and a real Excel dropdown (data validation list) on every column that
- * has 'options' set - so filling the template is "pick from the list"
- * instead of "remember the exact spelling". Falls back to a plain CSV
- * (no dropdowns, since CSV has no concept of cell validation) if
- * PhpSpreadsheet isn't installed, so downloads never hard-fail.
- */
-if (!function_exists('meal_stream_xlsx_template')) {
-    function meal_stream_xlsx_template(array $fields, string $baseFilename): void
-    {
-        $autoload_candidates = [
-            __DIR__ . '/vendor/autoload.php',
-            dirname(__DIR__) . '/vendor/autoload.php',
-        ];
-        $loaded = false;
-        foreach ($autoload_candidates as $autoload) {
-            if (file_exists($autoload)) {
-                require_once $autoload;
-                $loaded = true;
-                break;
-            }
-        }
-
-        if (!$loaded || !class_exists('PhpOffice\\PhpSpreadsheet\\Spreadsheet')) {
-            meal_stream_csv_template_fallback($fields, $baseFilename);
-            return;
-        }
-
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Template');
-
-        $lastValidationRow = 500; // rows pre-loaded with the dropdown
-
-        foreach ($fields as $i => $field) {
-            $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 1);
-
-            $sheet->setCellValue("{$col}1", $field['label']);
-            $sheet->getStyle("{$col}1")->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
-            $sheet->getStyle("{$col}1")->getFill()
-                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                ->getStartColor()->setRGB('FC7F10');
-            $sheet->getColumnDimension($col)->setWidth(max(20, (int)(strlen((string)$field['label']) * 0.95)));
-
-            if (isset($field['example']) && $field['example'] !== '') {
-                $sheet->setCellValueExplicit("{$col}2", (string)$field['example'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-                $sheet->getStyle("{$col}2")->getFont()->setItalic(true);
-                $sheet->getStyle("{$col}2")->getFont()->getColor()->setRGB('9CA3AF');
-            }
-
-            if (!empty($field['options'])) {
-                $optionsList = '"' . implode(',', $field['options']) . '"';
-
-                for ($row = 2; $row <= $lastValidationRow; $row++) {
-                    $validation = $sheet->getCell("{$col}{$row}")->getDataValidation();
-                    $validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
-                    $validation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_STOP);
-                    $validation->setAllowBlank(true);
-                    $validation->setShowInputMessage(true);
-                    $validation->setShowErrorMessage(true);
-                    $validation->setShowDropDown(true);
-                    $validation->setErrorTitle('Invalid entry');
-                    $validation->setError('Please choose one of the listed options.');
-                    $validation->setPromptTitle('Pick from the list');
-                    $validation->setPrompt('Click the cell, then use the dropdown arrow to choose a value.');
-                    $validation->setFormula1($optionsList);
-                }
-            }
-        }
-
-        $sheet->freezePane('A2');
-
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="' . $baseFilename . '.xlsx"');
-        header('Cache-Control: max-age=0');
-        header('Pragma: public');
-
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $writer->save('php://output');
-        exit;
-    }
-}
-
-/**
- * No-dropdown fallback used only if PhpSpreadsheet isn't installed
- * (composer require phpoffice/phpspreadsheet). Keeps downloads working,
- * just without the Excel dropdown convenience.
- */
-if (!function_exists('meal_stream_csv_template_fallback')) {
-    function meal_stream_csv_template_fallback(array $fields, string $baseFilename): void
-    {
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
-
-        header('Content-Type: text/csv; charset=UTF-8');
-        header('Content-Disposition: attachment; filename="' . $baseFilename . '.csv"');
-        header('Cache-Control: no-cache, no-store, must-revalidate');
-        header('Pragma: no-cache');
-        header('Expires: 0');
-
-        echo "\xEF\xBB\xBF"; // UTF-8 BOM for Excel
-        $fh = fopen('php://output', 'w');
-        fputcsv($fh, array_column($fields, 'label'));
-        fputcsv($fh, array_map(fn($f) => $f['example'] ?? '', $fields));
-        fclose($fh);
-        exit;
-    }
-}
-
-if (!function_exists('meal_download_csv_template')) {
-    function meal_download_csv_template(string $type): void
-    {
-        $fields = meal_template_field_specs($type);
-
-        if (!$fields) {
-            http_response_code(400);
-            echo 'Invalid template type.';
-            exit;
-        }
-
-        meal_stream_xlsx_template($fields, $type . '_template');
-    }
-}
+require_once __DIR__ . '/includes/meal-templates.php';
 
 if (isset($_GET['download_template'])) {
     $download_type = trim((string)$_GET['download_template']);
@@ -704,7 +478,14 @@ if (!function_exists('meal_fetch_export_rows')) {
         $columns = array_keys($cfg['columns']);
         $select = '`' . implode('`,`', array_map(static fn($c) => preg_replace('/[^a-z0-9_]/i', '', $c), $columns)) . '`';
 
-        $stmt = $conn->prepare("SELECT {$select} FROM `{$table}` WHERE venture_id = ? ORDER BY {$order}");
+        // Learners export follows the Learners tab search (?q=).
+        $search = '';
+        if ($type === 'participants') {
+            require_once __DIR__ . '/includes/learner-search.php';
+            $search = learner_search_clause($conn, learner_search_term($_GET['q'] ?? ''), 'p');
+        }
+
+        $stmt = $conn->prepare("SELECT {$select} FROM `{$table}` p WHERE p.venture_id = ?{$search} ORDER BY {$order}");
         if (!$stmt) return [];
         $stmt->bind_param('i', $venture_id);
         $stmt->execute();
@@ -1014,11 +795,20 @@ if (isset($_GET['export'], $_GET['type'])) {
 
 
 
-$ben_page  = meal_page('ben');
-$ben_off   = ($ben_page - 1) * $PER;
-$ben_total = (int)$conn->query("SELECT COUNT(*) FROM venture_participants  WHERE venture_id=$venture_id")->fetch_row()[0];
-$ben_pages = max(1, (int)ceil($ben_total / $PER));
-$ben_rows  = $conn->query("SELECT * FROM venture_participants  WHERE venture_id=$venture_id ORDER BY entry_date DESC, id DESC LIMIT $PER OFFSET $ben_off");
+require_once __DIR__ . '/includes/learner-search.php';
+
+$ben_q      = learner_search_term($_GET['q'] ?? '');
+$ben_search = learner_search_clause($conn, $ben_q, 'p');
+$ben_page   = meal_page('ben');
+$ben_off    = ($ben_page - 1) * $PER;
+// $ben_total is every learner for the venture (tab badge + KPIs);
+// $ben_match_total is what the search matches (table + pagination).
+$ben_total  = (int)$conn->query("SELECT COUNT(*) FROM venture_participants  WHERE venture_id=$venture_id")->fetch_row()[0];
+$ben_match_total = $ben_q === ''
+    ? $ben_total
+    : (int)$conn->query("SELECT COUNT(*) FROM venture_participants p WHERE p.venture_id=$venture_id{$ben_search}")->fetch_row()[0];
+$ben_pages  = max(1, (int)ceil($ben_match_total / $PER));
+$ben_rows   = $conn->query("SELECT p.* FROM venture_participants p WHERE p.venture_id=$venture_id{$ben_search} ORDER BY p.entry_date DESC, p.id DESC LIMIT $PER OFFSET $ben_off");
 
 
 /* -- TEACHERS / EDUCATORS REACHED -------------------------- */
@@ -1468,6 +1258,13 @@ if (
 
 
 <style>
+
+.learner-search-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 12px}
+.learner-search-field{position:relative;flex:1 1 320px;max-width:520px}
+.learner-search-field .fa-search{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:.8rem;pointer-events:none}
+.learner-search-field .form-control{padding-left:34px;width:100%}
+.learner-search-count{font-size:.78rem;color:#64748b;font-weight:600}
+@media(max-width:640px){.learner-search-bar .btn{flex:1 1 auto;justify-content:center}}
 
 .meal-modal{
   position:fixed !important;
@@ -2321,9 +2118,9 @@ body > .meal-modal.open,
       <div class="dl-bar">
         <a href="meal-data.php?download_template=participants&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-csv"><i class="fa fa-file-excel"></i> Download Template</a>
-        <a href="meal-data.php?export=csv&type=participants&venture_id=<?= $venture_id ?>"
+        <a href="meal-data.php?export=csv&type=participants&venture_id=<?= $venture_id ?><?= $ben_q !== '' ? '&amp;q=' . h(urlencode($ben_q)) : '' ?>"
            class="btn-dl btn-dl-export"><i class="fa fa-file-export"></i> Export CSV</a>
-        <a href="meal-data.php?export=pdf&type=participants&venture_id=<?= $venture_id ?>"
+        <a href="meal-data.php?export=pdf&type=participants&venture_id=<?= $venture_id ?><?= $ben_q !== '' ? '&amp;q=' . h(urlencode($ben_q)) : '' ?>"
            class="btn-dl btn-dl-pdf"><i class="fa fa-file-pdf"></i> Export PDF</a>
         <?php if ($MEAL_CAN_EDIT): ?>
         <a
@@ -2575,8 +2372,26 @@ body > .meal-modal.open,
       </div>
 
       <!-- Table -->
+      <form method="GET" action="" class="learner-search-bar" role="search">
+        <input type="hidden" name="tab" value="participants">
+        <div class="learner-search-field">
+          <i class="fa fa-search" aria-hidden="true"></i>
+          <input type="search" name="q" value="<?= h($ben_q) ?>" class="form-control"
+                 placeholder="Search learners by name, learner ID, phone, email or location"
+                 aria-label="Search learners" maxlength="100">
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+        <?php if ($ben_q !== ''): ?>
+          <a href="?tab=participants" class="btn btn-secondary"><i class="fa fa-times"></i> Clear</a>
+          <span class="learner-search-count"><?= number_format($ben_match_total) ?> of <?= number_format($ben_total) ?> learners match</span>
+        <?php endif; ?>
+      </form>
+
       <div class="data-table-wrap">
-        <?php if ($ben_total === 0): ?>
+        <?php if ($ben_total > 0 && $ben_match_total === 0): ?>
+          <div class="no-data"><i class="fa fa-search" style="font-size:2rem;margin-bottom:8px;display:block;color:#d1d5db"></i>
+            No learners match &ldquo;<?= h($ben_q) ?>&rdquo;.</div>
+        <?php elseif ($ben_total === 0): ?>
           <div class="no-data"><i class="fa fa-users" style="font-size:2rem;margin-bottom:8px;display:block;color:#d1d5db"></i>
             No learner records yet.<br>Use the form above or upload a CSV to get started.</div>
         <?php else: ?>
@@ -4229,14 +4044,21 @@ body > .meal-modal.open,
 <?php
 function render_pagination(int $page, int $total_pages, string $prefix): string {
     if ($total_pages <= 1) return '';
-    $tab = $_GET['tab'] ?? 'participants';
+    global $tab, $ben_q;
+    $url = static function (int $p) use ($tab, $ben_q, $prefix): string {
+        $params = ['tab' => $tab, $prefix . '_page' => $p];
+        if ($prefix === 'ben' && (string)$ben_q !== '') {
+            $params['q'] = $ben_q;
+        }
+        return h('?' . http_build_query($params));
+    };
     $out = '<div class="pagination">';
-    $prev = $page > 1 ? '?tab='.$tab.'&'.$prefix.'_page='.($page-1) : '#';
+    $prev = $page > 1 ? $url($page - 1) : '#';
     $out .= '<a href="'.$prev.'" class="page-btn '.($page<=1?'disabled':'').'">&lsaquo;</a>';
     for ($i = max(1,$page-2); $i <= min($total_pages,$page+2); $i++) {
-        $out .= '<a href="?tab='.$tab.'&'.$prefix.'_page='.$i.'" class="page-btn '.($i===$page?'active':'').'">'.$i.'</a>';
+        $out .= '<a href="'.$url($i).'" class="page-btn '.($i===$page?'active':'').'">'.$i.'</a>';
     }
-    $next = $page < $total_pages ? '?tab='.$tab.'&'.$prefix.'_page='.($page+1) : '#';
+    $next = $page < $total_pages ? $url($page + 1) : '#';
     $out .= '<a href="'.$next.'" class="page-btn '.($page>=$total_pages?'disabled':'').'">&rsaquo;</a>';
     $out .= '</div>';
     return $out;

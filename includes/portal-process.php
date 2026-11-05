@@ -3819,194 +3819,7 @@ if ($action === 'cancel_session') {
 }
 
 
-if (!function_exists('meal_template_field_specs')) {
-    function meal_template_field_specs(string $type): array
-    {
-        $yes_no = ['Yes', 'No'];
-
-        $specs = [
-            'participants' => [
-                ['label' => 'Date (DD/MM/YYYY)',                      'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Learner Number (Unique ID)',                'options' => null, 'example' => 'UG-EDT-001'],
-                ['label' => 'Full Name (First Name, Surname)',        'options' => null, 'example' => 'Jane Namukasa'],
-                ['label' => 'Learner Status',                            'options' => ['New Learner', 'Returning Learner'], 'example' => 'New Learner'],
-                ['label' => 'Gender',                                 'options' => ['Male', 'Female'], 'example' => 'Female'],
-                ['label' => 'Specific Location (District/Village)',   'options' => null, 'example' => 'Kampala / Makindye'],
-                ['label' => 'Urban/Rural',                          'options' => ['Urban', 'Peri-Urban', 'Rural'], 'example' => 'Urban'],
-                ['label' => 'Age Category',                           'options' => ['13-20', '21-35', 'Above 35'], 'example' => '21-35'],
-                ['label' => 'Displaced/Refugee Status',               'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Refugee Settlement Name',                'options' => null, 'example' => ''],
-                ['label' => 'PWD Status',                             'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Type of Impairment',                     'options' => null, 'example' => ''],
-                ['label' => 'Education Level',                        'options' => ['Primary', 'Secondary', 'Tertiary'], 'example' => 'Secondary'],
-                ['label' => 'Currently Working at Point of Entry (occupation or No)', 'options' => null, 'example' => 'No'],
-                ['label' => 'Prior MCF Beneficiary',                  'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Transformation Objective',               'options' => null, 'example' => 'Education & Skilling'],
-                ['label' => 'After-work Status',      'options' => ['New', 'Additional', 'Improved'], 'example' => 'New'],
-            ],
-            'teachers' => [
-                ['label' => 'Date (DD/MM/YYYY)',           'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Teacher/Educator Name',       'options' => null, 'example' => 'Grace Achieng'],
-                ['label' => 'Gender',                      'options' => ['Male', 'Female', 'Other'], 'example' => 'Female'],
-                ['label' => 'Age Category',                'options' => ['13-20', '21-35', 'Above 35'], 'example' => '21-35'],
-                ['label' => 'Refugee/Displaced Status',    'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Host Community',              'options' => $yes_no, 'example' => 'Yes'],
-                ['label' => 'Urban/Rural',               'options' => ['Rural', 'Urban', 'Peri-Urban'], 'example' => 'Rural'],
-                ['label' => 'PWD Status',                  'options' => $yes_no, 'example' => 'No'],
-            ],
-            'schools' => [
-                ['label' => 'Date (DD/MM/YYYY)',           'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'School / Institution Name',  'options' => null, 'example' => "St. Mary's Secondary School"],
-                ['label' => 'Geographical Location',       'options' => ['Rural', 'Urban', 'Peri-Urban'], 'example' => 'Rural'],
-                ['label' => 'Ownership Type',              'options' => ['Government-aided', 'Private'], 'example' => 'Government-aided'],
-                ['label' => 'Level of School',             'options' => ['Secondary', 'Tertiary', 'BTVET'], 'example' => 'Secondary'],
-            ],
-            'other_users' => [
-                ['label' => 'Date (DD/MM/YYYY)',                       'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Full Name',                               'options' => null, 'example' => 'Peter Okello'],
-                ['label' => 'Gender',                                  'options' => ['Male', 'Female', 'Other'], 'example' => 'Male'],
-                ['label' => 'Age Category',                            'options' => ['13-20', '21-35', 'Above 35'], 'example' => '21-35'],
-                ['label' => 'Refugee/Displaced Status',                'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Host Community',                          'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Urban/Rural',                           'options' => ['Rural', 'Urban', 'Peri-Urban'], 'example' => 'Urban'],
-                ['label' => 'PWD Status',                              'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Education Level',                         'options' => ['Primary', 'Secondary', 'Tertiary'], 'example' => 'Tertiary'],
-                ['label' => 'Current Occupation / Employment Status',  'options' => null, 'example' => 'Self-employed'],
-            ],
-            'employment' => [
-                ['label' => 'Placement Date (DD/MM/YYYY)',             'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Full Name (First Name, Surname)',         'options' => null, 'example' => 'David Ochieng'],
-                ['label' => 'Gender',                                  'options' => ['Male', 'Female'], 'example' => 'Male'],
-                ['label' => 'Age Category',                            'options' => ['13-20', '21-35', 'Above 35'], 'example' => '21-35'],
-                ['label' => 'PWD Status',                              'options' => $yes_no, 'example' => 'No'],
-                ['label' => 'Employment Type',                        'options' => ['Full-Time', 'Part-Time', 'Contract', 'Volunteer'], 'example' => 'Full-Time'],
-                ['label' => 'Job Title / Role',                       'options' => null, 'example' => 'Software Developer'],
-                ['label' => 'Status',                                 'options' => ['Active', 'Suspended', 'Terminated', 'On Leave'], 'example' => 'Active'],
-            ],
-            'finance' => [
-                ['label' => 'Date Mobilised (DD/MM/YYYY)', 'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Amount in USD',               'options' => null, 'example' => '50000'],
-                ['label' => 'Funding Form',                'options' => ['Debt / Loan', 'Grant', 'Equity', 'Convertible Note', 'Blended Finance', 'Other'], 'example' => 'Grant'],
-                ['label' => 'Funding Source',              'options' => null, 'example' => 'Village Capital'],
-            ],
-            'partnerships' => [
-                ['label' => 'Partnership Date (DD/MM/YYYY)', 'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Key Partner Name',              'options' => null, 'example' => 'Google.org'],
-                ['label' => 'Type of Partnership',           'options' => ['Financial', 'Technical', 'Distribution', 'Academic', 'Government', 'Other'], 'example' => 'Financial'],
-                ['label' => 'Partnership Status',            'options' => ['Active', 'Pending', 'Inactive', 'Completed'], 'example' => 'Active'],
-            ],
-            'revenue' => [
-                ['label' => 'Revenue Month-end Date (DD/MM/YYYY)', 'options' => null, 'example' => date('d/m/Y')],
-                ['label' => 'Gross Revenue Generated (UGX)',       'options' => null, 'example' => '12500000'],
-                ['label' => 'Primary Revenue Stream',              'options' => null, 'example' => 'Subscription fees'],
-            ],
-        ];
-
-        return $specs[$type] ?? [];
-    }
-}
-
-if (!function_exists('meal_stream_xlsx_template')) {
-    function meal_stream_xlsx_template(array $fields, string $baseFilename): void
-    {
-        $autoload_candidates = [
-            __DIR__ . '/vendor/autoload.php',
-            dirname(__DIR__) . '/vendor/autoload.php',
-        ];
-        $loaded = false;
-        foreach ($autoload_candidates as $autoload) {
-            if (file_exists($autoload)) {
-                require_once $autoload;
-                $loaded = true;
-                break;
-            }
-        }
-
-        if (!$loaded || !class_exists('PhpOffice\\PhpSpreadsheet\\Spreadsheet')) {
-            meal_stream_csv_template_fallback($fields, $baseFilename);
-            return;
-        }
-
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Template');
-
-        $lastValidationRow = 500;
-
-        foreach ($fields as $i => $field) {
-            $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 1);
-
-            $sheet->setCellValue("{$col}1", $field['label']);
-            $sheet->getStyle("{$col}1")->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
-            $sheet->getStyle("{$col}1")->getFill()
-                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                ->getStartColor()->setRGB('FC7F10');
-            $sheet->getColumnDimension($col)->setWidth(max(20, (int)(strlen((string)$field['label']) * 0.95)));
-
-            if (isset($field['example']) && $field['example'] !== '') {
-                $sheet->setCellValueExplicit("{$col}2", (string)$field['example'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-                $sheet->getStyle("{$col}2")->getFont()->setItalic(true);
-                $sheet->getStyle("{$col}2")->getFont()->getColor()->setRGB('9CA3AF');
-            }
-
-            if (!empty($field['options'])) {
-                $optionsList = '"' . implode(',', $field['options']) . '"';
-
-                for ($row = 2; $row <= $lastValidationRow; $row++) {
-                    $validation = $sheet->getCell("{$col}{$row}")->getDataValidation();
-                    $validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
-                    $validation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_STOP);
-                    $validation->setAllowBlank(true);
-                    $validation->setShowInputMessage(true);
-                    $validation->setShowErrorMessage(true);
-                    $validation->setShowDropDown(true);
-                    $validation->setErrorTitle('Invalid entry');
-                    $validation->setError('Please choose one of the listed options.');
-                    $validation->setPromptTitle('Pick from the list');
-                    $validation->setPrompt('Click the cell, then use the dropdown arrow to choose a value.');
-                    $validation->setFormula1($optionsList);
-                }
-            }
-        }
-
-        $sheet->freezePane('A2');
-
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="' . $baseFilename . '.xlsx"');
-        header('Cache-Control: max-age=0');
-        header('Pragma: public');
-
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $writer->save('php://output');
-        exit;
-    }
-}
-
-if (!function_exists('meal_stream_csv_template_fallback')) {
-    function meal_stream_csv_template_fallback(array $fields, string $baseFilename): void
-    {
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
-
-        header('Content-Type: text/csv; charset=UTF-8');
-        header('Content-Disposition: attachment; filename="' . $baseFilename . '.csv"');
-        header('Cache-Control: no-cache, no-store, must-revalidate');
-        header('Pragma: no-cache');
-        header('Expires: 0');
-
-        echo "\xEF\xBB\xBF";
-        $fh = fopen('php://output', 'w');
-        fputcsv($fh, array_column($fields, 'label'));
-        fputcsv($fh, array_map(fn($f) => $f['example'] ?? '', $fields));
-        fclose($fh);
-        exit;
-    }
-}
+require_once __DIR__ . '/meal-templates.php';
 
 if ($action === 'download_meal_csv') {
     $type = $_GET['type'] ?? 'participants';
@@ -4111,7 +3924,10 @@ if ($action === 'upload_meal_csv') {
 
         try {
             $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($_FILES['csv_file']['tmp_name']);
-            $sheetData   = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
+            // Read the "Template" sheet even if the file was saved with the
+            // Instructions sheet active.
+            $dataSheet   = $spreadsheet->getSheetByName('Template') ?? $spreadsheet->getActiveSheet();
+            $sheetData   = $dataSheet->toArray(null, true, true, false);
         } catch (Throwable $e) {
             vp_flash('Could not read the uploaded Excel file: ' . $e->getMessage(), 'error');
             vp_redir('meal-data.php?tab=' . urlencode($type));
@@ -4122,7 +3938,27 @@ if ($action === 'upload_meal_csv') {
             vp_redir('meal-data.php?tab=' . urlencode($type));
         }
 
+        $headerRow = $sheetData[0] ?? [];
         $dataRows = array_slice($sheetData, 1);
+    }
+
+    // Match columns by header name against the current template, so a file
+    // that isn't the template (e.g. an Export CSV) or is missing columns is
+    // rejected instead of silently importing values into the wrong fields.
+    $templateFields = meal_template_field_specs($type);
+    $templateColumnCount = count($templateFields);
+    $columnMapping = meal_template_map_columns($type, is_array($headerRow) ? $headerRow : []);
+
+    if ($columnMapping['missing']) {
+        $missingList = array_slice($columnMapping['missing'], 0, 5);
+        vp_flash(
+            'This file does not match the current template. Missing column(s): '
+            . implode(', ', $missingList)
+            . (count($columnMapping['missing']) > 5 ? ', ...' : '')
+            . '. Click "Download Template", fill it in and upload that file.',
+            'error'
+        );
+        vp_redir('meal-data.php?tab=' . urlencode($type));
     }
 
 
@@ -4152,10 +3988,18 @@ if ($action === 'upload_meal_csv') {
         return is_numeric($raw) ? (float)$raw : 0.0;
     };
 
+    $exampleRowsSkipped = 0;
+
     foreach ($dataRows as $row) {
-        $row = array_map(static fn($v) => trim((string)($v ?? '')), $row);
+        $row = meal_template_reorder_row((array)$row, $columnMapping['map'], $templateColumnCount);
 
         if (implode('', $row) === '') {
+            continue;
+        }
+
+        // Older templates shipped with a sample row; never import it.
+        if (meal_template_is_example_row($type, $row)) {
+            $exampleRowsSkipped++;
             continue;
         }
 
@@ -4167,7 +4011,7 @@ if ($action === 'upload_meal_csv') {
                 $full_name                      = $row[2] ?? '';
                 $phone                          = $row[3] ?? '';
                 $email                          = $row[4] ?? '';
-                $user_status                    = $row[5] ?? 'Active';
+                $enrollment_category            = $row[5] ?? '';
                 $gender                         = $row[6] ?? '';
                 $specific_location              = $row[7] ?? '';
                 $location_type                  = $row[8] ?? '';
@@ -4178,13 +4022,18 @@ if ($action === 'upload_meal_csv') {
                 $pwd_status                     = $row[13] ?? 'No';
                 $impairment_type                = $row[14] ?? '';
                 $education_level                = $row[15] ?? '';
-                $verified_learner_outcome       = $row[16] ?? '';
-                $verified_learner_outcome_other = $row[17] ?? '';
-                $working_at_entry               = $row[18] ?? '';
-                $prior_mcf                      = $row[19] ?? 'No';
+                $user_status                    = $row[16] ?? 'Active';
+                $verified_learner_outcome       = $row[17] ?? '';
+                $verified_learner_outcome_other = $row[18] ?? '';
+                $working_at_entry               = $row[19] ?? '';
+                $prior_mcf                      = 'No'; // not collected by the template
                 $transformation_objective       = $row[20] ?? '';
                 $in_work_status                 = $row[21] ?? '';
                 $after_work_pathway              = $row[22] ?? '';
+
+                if (!in_array($enrollment_category, ['New', 'Returning'], true)) {
+                    $enrollment_category = '';
+                }
 
                 $valid_statuses = ['Active', 'On hold', 'Dropped', 'Completed', 'Certified'];
                 if (!in_array($user_status, $valid_statuses, true)) {
@@ -4281,7 +4130,23 @@ if ($action === 'upload_meal_csv') {
                     throw new Exception($stmt->error);
                 }
 
+                $newLearnerId = (int)$stmt->insert_id;
                 $stmt->close();
+
+                static $hasEnrollmentColumn = null;
+                if ($hasEnrollmentColumn === null) {
+                    $colRes = $conn->query("SHOW COLUMNS FROM venture_participants LIKE 'enrollment_category'");
+                    $hasEnrollmentColumn = $colRes instanceof mysqli_result && $colRes->num_rows > 0;
+                }
+                if ($hasEnrollmentColumn && $enrollment_category !== '' && $newLearnerId > 0) {
+                    $enr = $conn->prepare('UPDATE venture_participants SET enrollment_category = ? WHERE id = ? AND venture_id = ?');
+                    if ($enr) {
+                        $enr->bind_param('sii', $enrollment_category, $newLearnerId, $venture_id);
+                        $enr->execute();
+                        $enr->close();
+                    }
+                }
+
                 $inserted++;
                 continue;
             }
@@ -4375,16 +4240,18 @@ if ($action === 'upload_meal_csv') {
             }
 
             if ($type === 'other_users') {
+                // Template: Date, Gender, Host Community, Urban/Rural, PWD, Education.
                 $entry_date        = $parse_date($row[0] ?? '');
-                $full_name         = $row[1] ?? '';
-                $gender            = $row[2] ?? '';
-                $age_category      = trim((string)($row[3] ?? ''));
-                $refugee_status    = ($row[4] ?? 'No');
-                $host_community    = ($row[5] ?? 'No');
-                $location_type     = $row[6] ?? '';
-                $pwd_status        = ($row[7] ?? 'No');
-                $education_level   = $row[8] ?? '';
-                $occupation_status = $row[9] ?? '';
+                $gender            = $row[1] ?? '';
+                $host_community    = ($row[2] ?? 'No');
+                $location_type     = $row[3] ?? '';
+                $pwd_status        = ($row[4] ?? 'No');
+                $education_level   = $row[5] ?? '';
+                // Not collected by the Other Users template.
+                $full_name         = '';
+                $age_category      = '';
+                $refugee_status    = 'No';
+                $occupation_status = '';
 
                 $refugee_status = strcasecmp(trim($refugee_status), 'yes') === 0 ? 'Yes' : 'No';
                 $host_community = strcasecmp(trim($host_community), 'yes') === 0 ? 'Yes' : 'No';
@@ -4596,6 +4463,9 @@ if ($action === 'upload_meal_csv') {
     $msg = "Imported {$inserted} record(s).";
     if ($skipped > 0) {
         $msg .= " {$skipped} row(s) skipped (missing required field or duplicate).";
+    }
+    if ($exampleRowsSkipped > 0) {
+        $msg .= " {$exampleRowsSkipped} template sample row(s) ignored.";
     }
     if (!empty($errors)) {
         $msg .= ' Errors: ' . implode('; ', array_slice(array_unique($errors), 0, 3));

@@ -475,6 +475,12 @@ if ($action === 'bulk_delete') {
             $params[] = $toScope;
         }
 
+        // Learners tab search: only delete the rows the search matched.
+        if ($type === 'participants') {
+            require_once __DIR__ . '/../../includes/learner-search.php';
+            $sql .= learner_search_clause($conn, learner_search_term($_POST['q'] ?? ''), 't', 'v');
+        }
+
         try {
             if (!$conn->begin_transaction()) {
                 throw new RuntimeException('Could not start bulk deletion.');

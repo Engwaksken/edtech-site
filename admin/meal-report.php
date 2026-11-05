@@ -53,6 +53,11 @@ $f_cohort   = (int)($_GET['cohort_id']  ?? 0);
 $f_from     = trim($_GET['from'] ?? '');
 $f_to       = trim($_GET['to']   ?? '');
 
+require_once __DIR__ . '/../includes/learner-search.php';
+// Learner search (?q=). Narrows the Learners table, its pagination,
+// exports and "select all matching" deletes - not the KPI cards.
+$f_q        = learner_search_term($_GET['q'] ?? '');
+
 $meal_page = max(
     1,
     (int)(
@@ -90,18 +95,22 @@ function meal_page_url(
     int $ventureId,
     int $cohortId,
     string $from,
-    string $to
+    string $to,
+    string $q = ''
 ): string {
-    return '?'
-        . http_build_query([
-            'tab' => $tab,
-            'page' => max(1, $pageNumber),
-            'per_page' => $perPage,
-            'venture_id' => $ventureId,
-            'cohort_id' => $cohortId,
-            'from' => $from,
-            'to' => $to,
-        ]);
+    $params = [
+        'tab' => $tab,
+        'page' => max(1, $pageNumber),
+        'per_page' => $perPage,
+        'venture_id' => $ventureId,
+        'cohort_id' => $cohortId,
+        'from' => $from,
+        'to' => $to,
+    ];
+    if ($q !== '') {
+        $params['q'] = $q;
+    }
+    return '?' . http_build_query($params);
 }
 
 
@@ -113,7 +122,8 @@ function meal_pagination_html(
     int $ventureId,
     int $cohortId,
     string $from,
-    string $to
+    string $to,
+    string $q = ''
 ): string {
     if ($totalRows <= 0) {
         return '';
@@ -167,7 +177,8 @@ function meal_pagination_html(
                     $ventureId,
                     $cohortId,
                     $from,
-                    $to
+                    $to,
+                    $q
                 )
             ) ?>"
             title="Previous page"
@@ -177,7 +188,7 @@ function meal_pagination_html(
         <?php endif; ?>
 
         <?php if ($start > 1): ?>
-          <a href="<?= h(meal_page_url(1,$tab,$perPage,$ventureId,$cohortId,$from,$to)) ?>">1</a>
+          <a href="<?= h(meal_page_url(1,$tab,$perPage,$ventureId,$cohortId,$from,$to,$q)) ?>">1</a>
           <?php if ($start > 2): ?>
             <span class="meal-page-dots">...</span>
           <?php endif; ?>
@@ -187,7 +198,7 @@ function meal_pagination_html(
           <?php if ($p === $currentPage): ?>
             <span class="current"><?= $p ?></span>
           <?php else: ?>
-            <a href="<?= h(meal_page_url($p,$tab,$perPage,$ventureId,$cohortId,$from,$to)) ?>">
+            <a href="<?= h(meal_page_url($p,$tab,$perPage,$ventureId,$cohortId,$from,$to,$q)) ?>">
               <?= $p ?>
             </a>
           <?php endif; ?>
@@ -197,7 +208,7 @@ function meal_pagination_html(
           <?php if ($end < $totalPages - 1): ?>
             <span class="meal-page-dots">...</span>
           <?php endif; ?>
-          <a href="<?= h(meal_page_url($totalPages,$tab,$perPage,$ventureId,$cohortId,$from,$to)) ?>">
+          <a href="<?= h(meal_page_url($totalPages,$tab,$perPage,$ventureId,$cohortId,$from,$to,$q)) ?>">
             <?= $totalPages ?>
           </a>
         <?php endif; ?>
@@ -212,7 +223,8 @@ function meal_pagination_html(
                     $ventureId,
                     $cohortId,
                     $from,
-                    $to
+                    $to,
+                    $q
                 )
             ) ?>"
             title="Next page"
@@ -430,7 +442,7 @@ function export_config(mysqli $conn, string $type): array {
     };
 }
 
-function build_export_sql(mysqli $conn, string $type, int $f_venture, int $f_cohort, string $f_from, string $f_to): array {
+function build_export_sql(mysqli $conn, string $type, int $f_venture, int $f_cohort, string $f_from, string $f_to, string $f_q = ''): array {
     $cfg = export_config($conn, $type);
     if (empty($cfg)) {
         return ['', []];
@@ -455,6 +467,10 @@ function build_export_sql(mysqli $conn, string $type, int $f_venture, int $f_coh
 
     if ($f_to !== '') {
         $sql .= " AND DATE({$alias}.{$date}) <= '" . $conn->real_escape_string($f_to) . "'";
+    }
+
+    if ($type === 'participants') {
+        $sql .= learner_search_clause($conn, $f_q, $alias, 'v');
     }
 
     $sql .= " ORDER BY {$alias}.{$date} DESC, {$alias}.id DESC";
@@ -1136,8 +1152,8 @@ function export_pdf(mysqli $conn, string $type, array $cfg, string $sql, string 
     exit;
 }
 
-function export_url(string $tab, string $type, string $format, int $venture_id, int $cohort_id, string $from, string $to): string {
-    return '?' . http_build_query([
+function export_url(string $tab, string $type, string $format, int $venture_id, int $cohort_id, string $from, string $to, string $q = ''): string {
+    $params = [
         'tab'        => $tab,
         'export'     => $type,
         'format'     => $format,
@@ -1145,7 +1161,11 @@ function export_url(string $tab, string $type, string $format, int $venture_id, 
         'cohort_id'  => $cohort_id,
         'from'       => $from,
         'to'         => $to,
-    ]);
+    ];
+    if ($q !== '') {
+        $params['q'] = $q;
+    }
+    return '?' . http_build_query($params);
 }
 
 $site_name = $conn->query("SELECT setting_value FROM site_settings WHERE setting_key='site_name' LIMIT 1")->fetch_row()[0] ?? 'EdTech Fellowship';
@@ -1163,7 +1183,7 @@ if (($_GET['export'] ?? '') !== '') {
         $format = 'csv';
     }
 
-    [$sql, $cfg] = build_export_sql($conn, $export_type, $f_venture, $f_cohort, $f_from, $f_to);
+    [$sql, $cfg] = build_export_sql($conn, $export_type, $f_venture, $f_cohort, $f_from, $f_to, $f_q);
 
     if ($sql === '' || empty($cfg)) {
         die('Export configuration not found.');
@@ -1409,6 +1429,11 @@ $participantOptionalSelect = implode(', ', [
     meal_optional_select($conn, 'venture_participants', 'mb', 'updated_at', 'updated_at'),
 ]);
 
+$ben_search_sql = learner_search_clause($conn, $f_q, 'mb', 'v');
+$ben_list_total = $f_q === ''
+    ? (int)$s['total']
+    : (int)$stat("SELECT COUNT(*) {$base_b}{$ben_search_sql}");
+
 $recent_ben = $conn->query("
     SELECT
         mb.id,
@@ -1431,7 +1456,7 @@ $recent_ben = $conn->query("
         mb.in_work_status,
         {$participantOptionalSelect},
         v.name AS venture_name
-    {$base_b}
+    {$base_b}{$ben_search_sql}
     ORDER BY mb.id DESC
     LIMIT {$meal_per_page} OFFSET {$meal_offset}
 ");
@@ -1448,6 +1473,12 @@ $recent_ben = $conn->query("
   <link rel="stylesheet" href="assets/css/admin.css">
   
 <style>
+.learner-search-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0}
+.learner-search-field{position:relative;flex:1 1 320px;max-width:560px}
+.learner-search-field .fa-search{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:.8rem;pointer-events:none}
+.learner-search-field .form-control{padding-left:34px;width:100%}
+.learner-search-count{font-size:.78rem;color:#64748b;font-weight:600}
+@media(max-width:640px){.learner-search-bar .btn{flex:1 1 auto;justify-content:center}}
 .meal-bulk-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:12px 0;padding:10px 12px;border:1px solid #e2e8f0;border-radius:10px;background:#fff}
 .meal-bulk-left,.meal-bulk-right,.meal-lock-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .meal-check{width:16px;height:16px;accent-color:var(--primary,#f97316);cursor:pointer}
@@ -1790,6 +1821,7 @@ body.meal-doc-modal-open{
     <form method="GET" action="">
       <input type="hidden" name="tab" value="<?= h($tab) ?>">
       <input type="hidden" name="page" value="1">
+      <?php if ($f_q !== ''): ?><input type="hidden" name="q" value="<?= h($f_q) ?>"><?php endif; ?>
       <div class="filter-bar">
         <div class="fb-group">
           <label>Venture</label>
@@ -2133,15 +2165,36 @@ body.meal-doc-modal-open{
     <!-- ------- LEARNERS --------------------------------------- -->
     <div class="meal-panel <?= $tab==='participants'?'active':'' ?>" id="panel-participants">
       <div class="export-bar">
-        <a href="<?= export_url('participants', 'participants', 'csv', $f_venture, $f_cohort, $f_from, $f_to) ?>"
+        <a href="<?= h(export_url('participants', 'participants', 'csv', $f_venture, $f_cohort, $f_from, $f_to, $f_q)) ?>"
            class="btn-exp"><i class="fa fa-file-csv"></i> Export CSV</a>
-        <a href="<?= export_url('participants', 'participants', 'pdf', $f_venture, $f_cohort, $f_from, $f_to) ?>"
+        <a href="<?= h(export_url('participants', 'participants', 'pdf', $f_venture, $f_cohort, $f_from, $f_to, $f_q)) ?>"
            class="btn-exp btn-exp-pdf"><i class="fa fa-file-pdf"></i> Export PDF</a>
       </div>
+
+      <form method="GET" action="" class="learner-search-bar" role="search">
+        <input type="hidden" name="tab" value="participants">
+        <input type="hidden" name="venture_id" value="<?= (int)$f_venture ?>">
+        <input type="hidden" name="cohort_id" value="<?= (int)$f_cohort ?>">
+        <input type="hidden" name="from" value="<?= h($f_from) ?>">
+        <input type="hidden" name="to" value="<?= h($f_to) ?>">
+        <input type="hidden" name="per_page" value="<?= (int)$meal_per_page ?>">
+        <div class="learner-search-field">
+          <i class="fa fa-search" aria-hidden="true"></i>
+          <input type="search" name="q" value="<?= h($f_q) ?>" class="form-control"
+                 placeholder="Search learners by name, learner ID, phone, email, location or venture"
+                 aria-label="Search learners" maxlength="100">
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+        <?php if ($f_q !== ''): ?>
+          <a href="<?= h(meal_page_url(1, 'participants', $meal_per_page, $f_venture, $f_cohort, $f_from, $f_to)) ?>" class="btn btn-secondary"><i class="fa fa-times"></i> Clear</a>
+          <span class="learner-search-count"><?= number_format($ben_list_total) ?> of <?= number_format((int)$s['total']) ?> learners match</span>
+        <?php endif; ?>
+      </form>
       
-      <form method="POST" action="includes/process-meal-report.php" id="mealBulkParticipants" class="meal-bulk-toolbar" data-total-matching="<?= (int)$s['total'] ?>" onsubmit="return mealConfirmBulkDelete(this);">
+      <form method="POST" action="includes/process-meal-report.php" id="mealBulkParticipants" class="meal-bulk-toolbar" data-total-matching="<?= (int)$ben_list_total ?>" onsubmit="return mealConfirmBulkDelete(this);">
         <input type="hidden" name="action" value="bulk_delete">
         <input type="hidden" name="data_type" value="participants">
+        <input type="hidden" name="q" value="<?= h($f_q) ?>">
         <input type="hidden" name="token" value="<?= h($mealReportToken) ?>">
         <input type="hidden" name="venture_id_scope" value="<?= (int)$f_venture ?>">
         <input type="hidden" name="cohort_id_scope" value="<?= (int)$f_cohort ?>">
@@ -2214,19 +2267,22 @@ body.meal-doc-modal-open{
             <?php endwhile; ?>
           </tbody>
         </table>
-        <?php if ($s['total'] === 0): ?>
-        <div class="legacy-style-55b117929b">No learner data found for the selected filters.</div>
+        <?php if ($ben_list_total === 0): ?>
+        <div class="legacy-style-55b117929b"><?= $f_q !== ''
+            ? 'No learners match &ldquo;' . h($f_q) . '&rdquo; for the selected filters.'
+            : 'No learner data found for the selected filters.' ?></div>
         <?php endif; ?>
   
       <?= meal_pagination_html(
-          (int)($s['total']),
+          $ben_list_total,
           $meal_page,
           $meal_per_page,
           'participants',
           $f_venture,
           $f_cohort,
           $f_from,
-          $f_to
+          $f_to,
+          $f_q
       ) ?>
     </div>
       
