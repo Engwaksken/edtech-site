@@ -1306,6 +1306,17 @@ $s = [
 // Enrollment Category gets filled in going forward.
 $s['pct_denominator'] = $s['new_learners'] > 0 ? $s['new_learners'] : $s['total'];
 
+// Percentage numerators MUST come from the same population as the
+// denominator. Dividing female/youth/refugee/PWD counts taken across ALL
+// learners by the New Learners count produced impossible values such as
+// "Female New Learners: 203%". When New Learners exist, count only New
+// learners in the numerator; otherwise (fallback) count across everyone.
+$pctScope = $s['new_learners'] > 0 ? " AND {$newLearnerCondition}" : '';
+$s['pct_female']  = (int)$stat("SELECT COUNT(*) {$base_b}{$pctScope} AND mb.gender='Female'");
+$s['pct_youth']   = (int)$stat("SELECT COUNT(*) {$base_b}{$pctScope} AND {$learner_youth_sql}");
+$s['pct_refugee'] = (int)$stat("SELECT COUNT(*) {$base_b}{$pctScope} AND mb.refugee_status='Yes'");
+$s['pct_pwd']     = (int)$stat("SELECT COUNT(*) {$base_b}{$pctScope} AND mb.pwd_status='Yes'");
+
 $yiw = [
     'new_self' => $hasAfterWorkPathway
         ? (int)$stat("SELECT COUNT(*) {$base_b} AND mb.in_work_status='New' AND mb.after_work_pathway='Self-employment'")
@@ -1404,6 +1415,10 @@ $venture_summary = $conn->query("
         SUM(mb.refugee_status='Yes') AS refugees,
         SUM(mb.pwd_status='Yes') AS pwds,
         SUM((mb.age_category REGEXP '^[0-9][0-9]*$' AND (mb.age_category + 0) BETWEEN 18 AND 34)) AS youth,
+        SUM({$newLearnerCondition} AND mb.gender='Female') AS new_female,
+        SUM({$newLearnerCondition} AND mb.refugee_status='Yes') AS new_refugees,
+        SUM({$newLearnerCondition} AND mb.pwd_status='Yes') AS new_pwds,
+        SUM({$newLearnerCondition} AND (mb.age_category REGEXP '^[0-9][0-9]*$' AND (mb.age_category + 0) BETWEEN 18 AND 34)) AS new_youth,
         SUM(mb.in_work_status='New' AND {$afterWorkPathwayExpr}='Self-employment') AS yiw_new_self,
         SUM(mb.in_work_status='Additional' AND {$afterWorkPathwayExpr}='Self-employment') AS yiw_additional_self,
         SUM(mb.in_work_status='Improved' AND {$afterWorkPathwayExpr}='Self-employment') AS yiw_improved_self,
@@ -1867,16 +1882,16 @@ body.meal-doc-modal-open{
     <!-- -- KPI Row -- -->
     <div class="kpi-grid">
       <div class="kpi"><div class="val"><?= number_format($s['total']) ?></div><div class="lbl">Total Learners Reached</div></div>
-      <div class="kpi <?= $pct($s['female'],$s['pct_denominator']) >= 70 ? 'ok' : 'warn' ?>">
-        <div class="val"><?= $pct($s['female'],$s['pct_denominator']) ?>%</div>
+      <div class="kpi <?= $pct($s['pct_female'],$s['pct_denominator']) >= 70 ? 'ok' : 'warn' ?>">
+        <div class="val"><?= $pct($s['pct_female'],$s['pct_denominator']) ?>%</div>
         <div class="lbl">Female New Learners (Target 70%)</div>
       </div>
-      <div class="kpi <?= $pct($s['refugee'],$s['pct_denominator']) >= 15 ? 'ok' : 'warn' ?>">
-        <div class="val"><?= $pct($s['refugee'],$s['pct_denominator']) ?>%</div>
+      <div class="kpi <?= $pct($s['pct_refugee'],$s['pct_denominator']) >= 15 ? 'ok' : 'warn' ?>">
+        <div class="val"><?= $pct($s['pct_refugee'],$s['pct_denominator']) ?>%</div>
         <div class="lbl">Refugees (Target 15%)</div>
       </div>
-      <div class="kpi <?= $pct($s['pwd'],$s['pct_denominator']) >= 15 ? 'ok' : 'warn' ?>">
-        <div class="val"><?= $pct($s['pwd'],$s['pct_denominator']) ?>%</div>
+      <div class="kpi <?= $pct($s['pct_pwd'],$s['pct_denominator']) >= 15 ? 'ok' : 'warn' ?>">
+        <div class="val"><?= $pct($s['pct_pwd'],$s['pct_denominator']) ?>%</div>
         <div class="lbl">PWDs (Target 15%)</div>
       </div>
       <div class="kpi"><div class="val"><?= number_format($s['new_learners']) ?></div><div class="lbl">New Learners</div></div>
@@ -1917,10 +1932,10 @@ body.meal-doc-modal-open{
     <div class="compliance">
       <?php
         $checks = [
-            ['label'=>'Female New Learners', 'pct'=>$pct($s['female'],$s['pct_denominator']), 'target'=>70],
-            ['label'=>'New Learner Refugees',    'pct'=>$pct($s['refugee'],$s['pct_denominator']),'target'=>15],
-            ['label'=>'New Learners with PWD',        'pct'=>$pct($s['pwd'],$s['pct_denominator']),    'target'=>15],
-            ['label'=>'New Learner Youth 18-34', 'pct'=>$pct($s['youth'],$s['pct_denominator']),  'target'=>70],
+            ['label'=>'Female New Learners', 'pct'=>$pct($s['pct_female'],$s['pct_denominator']), 'target'=>70],
+            ['label'=>'New Learner Refugees',    'pct'=>$pct($s['pct_refugee'],$s['pct_denominator']),'target'=>15],
+            ['label'=>'New Learners with PWD',        'pct'=>$pct($s['pct_pwd'],$s['pct_denominator']),    'target'=>15],
+            ['label'=>'New Learner Youth 18-34', 'pct'=>$pct($s['pct_youth'],$s['pct_denominator']),  'target'=>70],
         ];
         foreach ($checks as $c):
             $diff = $c['pct'] - $c['target'];
@@ -2009,11 +2024,14 @@ body.meal-doc-modal-open{
             // Same fallback as the KPI row above: if this venture hasn't
             // tagged anyone as "New" yet, use its total learner count so
             // the row doesn't show a misleading 0% across the board.
+            // Numerators come from the same population as the denominator
+            // so a percentage can never exceed 100%.
             $pct_denom = $new > 0 ? $new : $tot;
-            $f_p  = $pct($vr['female'],   $pct_denom);
-            $r_p  = $pct($vr['refugees'], $pct_denom);
-            $p_p  = $pct($vr['pwds'],     $pct_denom);
-            $y_p  = $pct($vr['youth'],    $pct_denom);
+            $np   = $new > 0 ? 'new_' : '';
+            $f_p  = $pct($vr[$np.'female'],   $pct_denom);
+            $r_p  = $pct($vr[$np.'refugees'], $pct_denom);
+            $p_p  = $pct($vr[$np.'pwds'],     $pct_denom);
+            $y_p  = $pct($vr[$np.'youth'],    $pct_denom);
 
             $ventureYiwTotal =
                 (int)($vr['yiw_new_self'] ?? 0)

@@ -891,8 +891,18 @@ $stats['pct_denominator'] =
         ? $stats['new_learners']
         : $stats['total_users'];
 
-$female_pct = $stats['pct_denominator'] ? round(($stats['female'] / $stats['pct_denominator']) * 100) : 0;
-$youth_pct  = $stats['pct_denominator'] ? round(($stats['youth']  / $stats['pct_denominator']) * 100) : 0;
+// Numerators must come from the same population as the denominator,
+// otherwise counts across ALL learners divided by New Learners can
+// exceed 100% (e.g. "Female 203%").
+$pctScope = $stats['new_learners'] > 0 ? " AND enrollment_category='New'" : '';
+$pctCount = fn(string $cond) => (int)$conn->query("SELECT COUNT(*) FROM venture_participants WHERE venture_id=$venture_id{$pctScope} AND {$cond}")->fetch_row()[0];
+$stats['pct_female']  = $pctCount("gender='Female'");
+$stats['pct_youth']   = $pctCount("CAST(age_category AS UNSIGNED) BETWEEN 18 AND 34");
+$stats['pct_refugee'] = $pctCount("refugee_status='Yes'");
+$stats['pct_pwd']     = $pctCount("pwd_status='Yes'");
+
+$female_pct = $stats['pct_denominator'] ? round(($stats['pct_female'] / $stats['pct_denominator']) * 100) : 0;
+$youth_pct  = $stats['pct_denominator'] ? round(($stats['pct_youth']  / $stats['pct_denominator']) * 100) : 0;
 
 $hasAfterWorkPathway = meal_participant_column_exists($conn, 'after_work_pathway');
 $hasDignifiedWork = meal_participant_column_exists($conn, 'dignified_fulfilling_work');
@@ -2059,8 +2069,8 @@ body > .meal-modal.open,
         Female Learners <?= $female_pct ?>% (Target 70%)
       </span>
       <?php
-        $ref_pct = round(($stats['refugee']/$stats['pct_denominator'])*100);
-        $pwd_pct = round(($stats['pwd']/$stats['pct_denominator'])*100);
+        $ref_pct = round(($stats['pct_refugee']/$stats['pct_denominator'])*100);
+        $pwd_pct = round(($stats['pct_pwd']/$stats['pct_denominator'])*100);
       ?>
       <span class="target-pill <?= $ref_pct >= 15 ? 'met' : 'unmet' ?>">
         <i class="fa <?= $ref_pct >= 15 ? 'fa-check-circle' : 'fa-exclamation-circle' ?>"></i>
@@ -2071,7 +2081,7 @@ body > .meal-modal.open,
         PWDs <?= $pwd_pct ?>% (Target 15%)
       </span>
       <?php
-        $youth_pct2 = $stats['pct_denominator'] ? round(($stats['youth']/$stats['pct_denominator'])*100) : 0;
+        $youth_pct2 = $stats['pct_denominator'] ? round(($stats['pct_youth']/$stats['pct_denominator'])*100) : 0;
       ?>
       <span class="target-pill <?= $youth_pct2 >= 70 ? 'met' : 'unmet' ?>">
         <i class="fa fa-users"></i> 21-35: <?= $youth_pct2 ?>%

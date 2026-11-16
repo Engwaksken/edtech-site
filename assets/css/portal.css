@@ -2796,8 +2796,8 @@ h1.hero-title em {
 
 .vp-btn {
   min-width: 112px;
-  min-height: 52px;
-  padding: 13px 22px;
+  min-height: 44px;
+  padding: 10px 22px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;

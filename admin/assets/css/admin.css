@@ -842,8 +842,8 @@ select.form-control {
 
 .login-site-logo{
     width:auto;
-    max-width:220px;
-    max-height:90px;
+    max-width:180px;
+    max-height:64px;
     object-fit:contain;
     display:block;
     margin:0 auto 14px;
@@ -891,8 +891,8 @@ select.form-control {
 @media (max-width:768px){
 
     .login-site-logo{
-        max-width:180px;
-        max-height:75px;
+        max-width:160px;
+        max-height:56px;
     }
 
     .login-logo-icon{
@@ -910,8 +910,8 @@ select.form-control {
 @media (max-width:480px){
 
     .login-site-logo{
-        max-width:150px;
-        max-height:65px;
+        max-width:140px;
+        max-height:48px;
     }
 
     .login-logo{
@@ -9261,9 +9261,9 @@ body.admin-login-page .login-logo {
 body.admin-login-page .login-site-logo {
   display: block;
   width: auto;
-  max-width: 280px;
-  max-height: 125px;
-  margin: 0 auto 24px;
+  max-width: 180px;
+  max-height: 64px;
+  margin: 0 auto 20px;
   object-fit: contain;
 }
 body.admin-login-page .login-card .subtitle {
@@ -9274,7 +9274,7 @@ body.admin-login-page .login-card .subtitle {
 }
 body.admin-login-page .form-group { margin-bottom: 20px; }
 body.admin-login-page .form-control {
-  min-height: 52px;
+  min-height: 44px;
   background: #fff;
   border: 1px solid #cbd5e1;
 }
@@ -9283,7 +9283,7 @@ body.admin-login-page .form-control:focus {
   box-shadow: 0 0 0 4px rgba(252,127,16,.13);
 }
 body.admin-login-page .btn-primary {
-  min-height: 52px;
+  min-height: 44px;
   width: 100%;
   justify-content: center;
   font-size: 1rem;
@@ -9291,7 +9291,7 @@ body.admin-login-page .btn-primary {
 @media (max-width: 560px) {
   body.admin-login-page .login-wrap { padding: 16px 12px; }
   body.admin-login-page .login-card { padding: 30px 22px 26px; border-radius: 16px; }
-  body.admin-login-page .login-site-logo { max-width: 230px; max-height: 100px; }
+  body.admin-login-page .login-site-logo { max-width: 150px; max-height: 52px; }
 }
 
 
