@@ -228,7 +228,7 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
                     <a href="<?= h($site_url) ?>/login"
                        class="nav-login-btn <?= $current_page === 'login' ? 'active-login' : '' ?>">
                         <i class="fas fa-sign-in-alt"></i>
-                        Login
+                        Current Fellows
                     </a>
                 </li>
 
