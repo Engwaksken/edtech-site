@@ -1,11 +1,13 @@
 <?php
 declare(strict_types=1);
 
-require_once 'includes/config.php';
+require_once __DIR__ . '/../includes/config.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+if (empty($_SESSION['admin_id'])) {
+    header('Location: ../login');
+    exit;
 }
+require_once __DIR__ . '/includes/auth.php';
 
 check_role([
     'Administrator',
@@ -24,8 +26,8 @@ $conn->set_charset('utf8mb4');
 
 function redirect_with_message(string $message, string $type = 'danger', string $location = 'milestones'): void
 {
-    if (function_exists('send_notification') && isset($_SESSION['user_id'])) {
-        send_notification((int)$_SESSION['user_id'], $message, $type);
+    if (function_exists('send_notification') && isset($_SESSION['admin_id'])) {
+        send_notification((int)$_SESSION['admin_id'], $message, $type);
     } else {
         $_SESSION['message'] = $message;
         $_SESSION['message_type'] = $type;
@@ -197,8 +199,7 @@ function resolve_entity(mysqli $conn, ?string $entityType, ?int &$projectId, ?in
     return 'Please select a valid entity type.';
 }
 
-$userId = (int)($_SESSION['user_id'] ?? 0);
-$userRole = (string)($_SESSION['role'] ?? '');
+$userId = (int)($_SESSION['admin_id'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: milestones');
@@ -498,7 +499,7 @@ if (isset($_POST['edit_milestone'])) {
 |--------------------------------------------------------------------------
 */
 if (isset($_POST['delete_milestone'])) {
-    if (!in_array($userRole, ['Administrator', 'Programs Lead'], true)) {
+    if (!admin_role_allowed(['Administrator', 'Programs Lead'])) {
         redirect_with_message('You are not allowed to delete milestones.');
     }
 

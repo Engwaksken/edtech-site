@@ -2,7 +2,9 @@
 declare(strict_types=1);
 
 $page_title = 'Milestones Management';
-//include 'includes/header.php';
+// Shared site config + admin login (redirects to login when signed out).
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/includes/auth.php';
 
 check_role([
     'Administrator',
@@ -14,6 +16,8 @@ check_role([
     'Project Officer'
 ]);
 
+include 'includes/header.php';
+
 if (!isset($conn) || !($conn instanceof mysqli)) {
     die('Database connection not found.');
 }
@@ -21,9 +25,11 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 $conn->set_charset('utf8mb4');
 
 
-function h(mixed $value): string
-{
-    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+if (!function_exists('h')) {
+    function h(mixed $value): string
+    {
+        return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+    }
 }
 
 function table_exists(mysqli $conn, string $table): bool
@@ -781,7 +787,7 @@ $status_badge = [
                                             <i class="fas fa-edit"></i>
                                         </a>
 
-                                        <?php if (in_array($_SESSION['role'] ?? '', ['Administrator', 'Programs Lead'], true)): ?>
+                                        <?php if (admin_role_allowed(['Administrator', 'Programs Lead'])): ?>
                                             <button
                                                 type="button"
                                                 class="btn btn-sm btn-red"
