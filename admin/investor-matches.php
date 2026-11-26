@@ -58,7 +58,7 @@ $site_name = function_exists('get_setting') ? get_setting($conn, 'site_name', 'E
 
 <header class="admin-topbar">
   <div class="topbar-left">
-    <div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> > <a href="investors.php">Investors</a> > <strong>Matchmaking</strong></div>
+    <div class="topbar-breadcrumb"><a href="./">Dashboard</a> > <a href="investors">Investors</a> > <strong>Matchmaking</strong></div>
   </div>
   <div class="topbar-right">
     <div class="admin-avatar"><div class="avatar-circle"><?= strtoupper(substr($ADMIN['full_name'],0,1)) ?></div></div>
@@ -102,7 +102,7 @@ $site_name = function_exists('get_setting') ? get_setting($conn, 'site_name', 'E
       <?php endforeach; ?>
     </select>
     <?php if ($investor_id||$venture_id||$filter_status): ?>
-      <a href="investor-matches.php" class="btn btn-sm legacy-style-2af7847e65"><i class="fa fa-times"></i> Clear</a>
+      <a href="investor-matches" class="btn btn-sm legacy-style-2af7847e65"><i class="fa fa-times"></i> Clear</a>
     <?php endif; ?>
   </form>
 </div>

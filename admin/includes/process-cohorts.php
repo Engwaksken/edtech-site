@@ -10,7 +10,7 @@ $conn->set_charset('utf8mb4');
 
 function redirect_cohorts(): void
 {
-    header('Location: ../cohorts.php');
+    header('Location: ../cohorts');
     exit;
 }
 

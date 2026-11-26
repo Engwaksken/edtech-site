@@ -90,7 +90,7 @@ $site_name = function_exists('get_setting')
   <header class="admin-topbar">
     <div class="topbar-left">
       <div class="topbar-breadcrumb">
-        <a href="index.php">Dashboard</a> › <strong>Startups</strong>
+        <a href="./">Dashboard</a> › <strong>Startups</strong>
       </div>
     </div>
 
@@ -149,7 +149,7 @@ $site_name = function_exists('get_setting')
         <i class="fa fa-filter"></i> Filter
       </button>
 
-      <a href="startups.php" class="btn btn-secondary">
+      <a href="startups" class="btn btn-secondary">
         <i class="fa fa-times"></i> Clear
       </a>
     </form>
@@ -220,14 +220,6 @@ $site_name = function_exists('get_setting')
 
                 <td>
                   <div class="tbl-actions">
-                    <a href="startup-team.php?startup_id=<?= (int)$st['id'] ?>" class="btn btn-sm btn-teal" title="Manage team">
-                      <i class="fa fa-users"></i>
-                    </a>
-
-                    <a href="assign-staff.php?startup_id=<?= (int)$st['id'] ?>" class="btn btn-sm btn-secondary" title="Assign staff">
-                      <i class="fa fa-link"></i>
-                    </a>
-
                     <button type="button"
                             onclick="editStartup(<?= h(json_encode($st, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)) ?>)"
                             class="btn btn-sm btn-secondary">

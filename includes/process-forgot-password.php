@@ -10,7 +10,7 @@ if (session_status() === PHP_SESSION_NONE) {
 if (!isset($conn) || !($conn instanceof mysqli)) {
     $_SESSION['forgot_error'] = 'Database connection error.';
 
-    header('Location: ../forgot-password.php');
+    header('Location: ../forgot-password');
     exit;
 }
 
@@ -24,7 +24,7 @@ $conn->set_charset('utf8mb4');
 */
 function vp_forgot_back(): never
 {
-    header('Location: ../forgot-password.php');
+    header('Location: ../forgot-password');
     exit;
 }
 
@@ -368,7 +368,7 @@ if (defined('SITE_URL')) {
 
 $resetUrl =
     $baseUrl
-    . '/reset-password.php?token='
+    . '/reset-password?token='
     . urlencode($plainToken)
     . '&email='
     . urlencode($email);

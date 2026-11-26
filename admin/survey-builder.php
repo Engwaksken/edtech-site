@@ -16,7 +16,7 @@ function sb_h($value): string
 $survey_id = (int)($_GET['id'] ?? 0);
 
 if ($survey_id <= 0) {
-    header('Location: surveys.php');
+    header('Location: surveys');
     exit;
 }
 
@@ -27,7 +27,7 @@ $survey = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 if (!$survey) {
-    header('Location: surveys.php');
+    header('Location: surveys');
     exit;
 }
 
@@ -116,7 +116,7 @@ $file_type_groups = [
     'any'         => 'Any file type',
 ];
 
-$external_link = rtrim(SITE_URL, '/') . '/survey.php?t=' . urlencode($survey['external_token']);
+$external_link = rtrim(SITE_URL, '/') . '/survey?t=' . urlencode($survey['external_token']);
 
 $header_image = $survey['header_image'] ?? '';
 $theme_color  = $survey['theme_color'] ?? '#fc7c10';
@@ -149,9 +149,9 @@ $header_style = $survey['header_style'] ?? 'color';
       <span class="pill">BETA</span>
     </div>
     <nav class="topbar-breadcrumb">
-      <a href="index.php">Dashboard</a>
+      <a href="./">Dashboard</a>
       <span>/</span>
-      <a href="surveys.php">Surveys</a>
+      <a href="surveys">Surveys</a>
       <span>/</span>
       <strong><?= sb_h($survey['title']) ?></strong>
     </nav>

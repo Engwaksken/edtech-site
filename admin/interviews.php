@@ -170,10 +170,10 @@ if ($CAN_MANAGE_INTERVIEWS) {
 
 <!-- -- Topbar ---------------------------------- -->
 <div class="iv-top">
-  <a href="index.php" class="iv-top-brand"><span class="pulse"></span> <?= iv_h($site_name) ?></a>
+  <a href="./" class="iv-top-brand"><span class="pulse"></span> <?= iv_h($site_name) ?></a>
   <div class="iv-crumb">
-    <a href="index.php"><i class="fa fa-home"></i></a>
-    <span>/</span> <a href="milestones.php">Milestones</a>
+    <a href="./"><i class="fa fa-home"></i></a>
+    <span>/</span> <a href="milestones">Milestones</a>
     <span>/</span> <strong>Field Interviews</strong>
   </div>
   <div class="legacy-style-a76d597a07">
@@ -255,7 +255,7 @@ if ($CAN_MANAGE_INTERVIEWS) {
 <?php else: ?>
   <div class="iv-list">
     <?php foreach ($interviews as $iv):
-      $ext_link = $site_url . '/interview.php?t=' . urlencode($iv['token']);
+      $ext_link = $site_url . '/interview?t=' . urlencode($iv['token']);
       $status_badge = match($iv['status']) {
         'completed'   => ['b-green',  '<i class="fa fa-check-circle"></i> Completed'],
         'in_progress' => ['b-amber',  '<i class="fa fa-spinner"></i> In progress'],
@@ -530,7 +530,7 @@ if ($CAN_MANAGE_INTERVIEWS) {
             <div class="iv-card-title"><i class="fa fa-link"></i> Shareable link</div>
           </div>
           <div class="legacy-style-8ebc43724d">
-            <?php $ext = $site_url.'/interview.php?t='.urlencode($edit_iv['token']); ?>
+            <?php $ext = $site_url.'/interview?t='.urlencode($edit_iv['token']); ?>
             <div class="link-box legacy-style-fdf33f2304">
               <i class="fa fa-link legacy-style-e293f77ae7"></i>
               <input type="text" value="<?= iv_h($ext) ?>" readonly onclick="this.select()">

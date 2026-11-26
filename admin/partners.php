@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 partner_save_setting($conn, 'partners_bg_type', 'image');
             } else {
                 flash('partners', $err ?: 'Background image upload failed.', 'error');
-                header('Location: partners.php');
+                header('Location: partners');
                 exit;
             }
         }
@@ -136,13 +136,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 partner_save_setting($conn, 'partners_bg_type', 'video');
             } else {
                 flash('partners', $err ?: 'Background video upload failed.', 'error');
-                header('Location: partners.php');
+                header('Location: partners');
                 exit;
             }
         }
 
         flash('partners', 'Partners section background updated successfully.');
-        header('Location: partners.php');
+        header('Location: partners');
         exit;
     }
 
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         flash('partners', 'Partners background image removed.');
-        header('Location: partners.php');
+        header('Location: partners');
         exit;
     }
 
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         flash('partners', 'Partners background video removed.');
-        header('Location: partners.php');
+        header('Location: partners');
         exit;
     }
 }
@@ -421,7 +421,7 @@ if ($partners_bg_type === 'image' && $partners_bg_image !== '') {
   <header class="admin-topbar">
     <div class="topbar-left">
       <div class="topbar-breadcrumb">
-        <a href="index.php">Dashboard</a> › <strong>Partners</strong>
+        <a href="./">Dashboard</a> › <strong>Partners</strong>
       </div>
     </div>
 

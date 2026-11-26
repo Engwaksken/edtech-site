@@ -310,7 +310,7 @@ $normalize_popup_path = static function (string $path): string {
     }
     // Accept a full URL (or a path that carries a query string / fragment).
     $path = (string)(parse_url($path, PHP_URL_PATH) ?: $path);
-    // "/apply.php" and the clean "/apply" refer to the same page.
+    // "/apply" and the clean "/apply" refer to the same page.
     $path = preg_replace('/\.php$/i', '', $path) ?? $path;
     // Force a single leading slash, collapse repeats and drop a trailing slash.
     $path = '/' . ltrim(str_replace('\\', '/', $path), '/');

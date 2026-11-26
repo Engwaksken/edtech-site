@@ -25,7 +25,7 @@ $conn->query("SET time_zone = '+03:00'");
 $venture_id = (int)($venture_id ?? ($_SESSION['venture_id'] ?? 0));
 
 if ($venture_id <= 0) {
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 

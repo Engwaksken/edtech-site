@@ -10,7 +10,7 @@ $conn->set_charset('utf8mb4');
 
 function redirect_team(int $startupId = 0): void
 {
-    $url = '../venture-team.php';
+    $url = '../venture-team';
 
     if ($startupId > 0) {
         $url .= '?venture_id=' . $startupId;

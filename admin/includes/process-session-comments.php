@@ -29,8 +29,8 @@ $is_venture_context = !empty($_SESSION['venture_id']);
 function sc_redirect(bool $is_admin_context, string $qs = ''): void
 {
     $target = $is_admin_context
-        ? '../mentor-sessions.php'
-        : '../../sessions.php';
+        ? '../mentor-sessions'
+        : '../../sessions';
     header('Location: ' . $target . ($qs !== '' ? '?' . $qs : ''));
     exit;
 }

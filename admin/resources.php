@@ -393,7 +393,7 @@ if ($requests) {
 <header class="admin-topbar">
     <div class="topbar-left">
         <div class="topbar-breadcrumb">
-            <a href="index.php">Dashboard</a> &gt; <strong>Resources</strong>
+            <a href="./">Dashboard</a> &gt; <strong>Resources</strong>
         </div>
     </div>
     <div class="topbar-right">
@@ -1049,8 +1049,8 @@ function buildResRow(r, q) {
     const viewBtn = !r.file_ok
         ? `<button class="btn btn-sm btn-secondary" disabled title="File missing"><i class="fa fa-eye-slash"></i></button>`
         : canPreview
-            ? `<a href="resource-file.php?id=${r.id}&mode=view" target="_blank" rel="noopener" class="btn btn-sm btn-teal" title="Preview"><i class="fa fa-eye"></i></a>`
-            : `<a href="resource-file.php?id=${r.id}&mode=download" class="btn btn-sm btn-secondary" title="Preview unavailable - download file"><i class="fa fa-download"></i></a>`;
+            ? `<a href="resource-file?id=${r.id}&mode=view" target="_blank" rel="noopener" class="btn btn-sm btn-teal" title="Preview"><i class="fa fa-eye"></i></a>`
+            : `<a href="resource-file?id=${r.id}&mode=download" class="btn btn-sm btn-secondary" title="Preview unavailable - download file"><i class="fa fa-download"></i></a>`;
 
     const rowDataJson = escAttr(JSON.stringify(r.row_data));
 

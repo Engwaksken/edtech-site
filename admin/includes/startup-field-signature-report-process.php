@@ -23,7 +23,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 
 $conn->set_charset('utf8mb4');
 
-function redirect_with_message(string $message, string $type = 'danger', string $location = '../startup-milestones-dashboard.php?active_tab=reports'): void
+function redirect_with_message(string $message, string $type = 'danger', string $location = '../startup-milestones-dashboard?active_tab=reports'): void
 {
     if (function_exists('send_notification') && isset($_SESSION['user_id'])) {
         send_notification((int)$_SESSION['user_id'], $message, $type);
@@ -94,7 +94,7 @@ function signature_upload_path(int $visitId, string $extension): array
 $userId = (int)($_SESSION['user_id'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['upload_report_signature'])) {
-    header('Location: ../startup-milestones-dashboard.php?active_tab=reports');
+    header('Location: ../startup-milestones-dashboard?active_tab=reports');
     exit();
 }
 
@@ -103,7 +103,7 @@ $signatureType = clean_text(post_string('signature_type', 'field_team')) ?? 'fie
 $approvalStatus = clean_text(post_string('report_approval_status', 'Signed')) ?? 'Signed';
 $approvalNotes = clean_text(post_string('report_approval_notes', ''));
 
-$location = '../startup-milestones-dashboard.php?active_tab=reports';
+$location = '../startup-milestones-dashboard?active_tab=reports';
 
 if ($visitId <= 0 || !visit_exists($conn, $visitId)) {
     redirect_with_message('Invalid field report selected.', 'danger', $location);

@@ -592,7 +592,7 @@ $status_badge = [
             <button type="submit" class="btn btn-dark">
                 <i class="fas fa-filter"></i> Filter
             </button>
-            <a href="milestones.php" class="btn btn-gray">
+            <a href="milestones" class="btn btn-gray">
                 <i class="fas fa-times"></i> Clear
             </a>
         </div>
@@ -766,7 +766,7 @@ $status_badge = [
                                 <td>
                                     <div class="actions">
                                         <a
-                                            href="milestone-details.php?id=<?php echo (int)$milestone['milestone_id']; ?>"
+                                            href="milestone-details?id=<?php echo (int)$milestone['milestone_id']; ?>"
                                             class="btn btn-sm btn-soft"
                                             title="View details"
                                         >

@@ -172,7 +172,7 @@ $survey_id = (int)$survey['id'];
 $venture_id = !empty($_SESSION['venture_id']) ? (int)$_SESSION['venture_id'] : null;
 
 if ((int)($survey['require_venture_login'] ?? 0) === 1 && !$venture_id) {
-    ps_redirect('login.php?redirect=' . urlencode('survey.php?t=' . $token));
+    ps_redirect('login?redirect=' . urlencode('survey?t=' . $token));
 }
 
 /* -----------------------------------------------------------

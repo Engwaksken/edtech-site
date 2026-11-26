@@ -65,7 +65,7 @@ $site_name = function_exists('get_setting')
 <header class="admin-topbar">
   <div class="topbar-left">
     <div class="topbar-breadcrumb">
-      <a href="index.php">Dashboard</a> > <strong>Cohorts</strong>
+      <a href="./">Dashboard</a> > <strong>Cohorts</strong>
     </div>
   </div>
   <div class="topbar-right">
@@ -191,7 +191,7 @@ $site_name = function_exists('get_setting')
 
   <td>
     <div class="tbl-actions">
-      <a href="startups.php?cohort_id=<?= (int)$c['id'] ?>"
+      <a href="startups?cohort_id=<?= (int)$c['id'] ?>"
          class="btn btn-sm btn-teal" title="View startups">
         <i class="fa fa-rocket"></i>
       </a>

@@ -974,7 +974,7 @@ if ($cohorts_bg_type === 'color') {
 
                     <div class="cohort-header-right">
                        
-                        <a href="<?= h(asset_url('cohorts.php#cohort-' . $cohort_id)) ?>" class="btn btn-outline-dark btn-sm">
+                        <a href="<?= h(asset_url('cohorts#cohort-' . $cohort_id)) ?>" class="btn btn-outline-dark btn-sm">
                             View All Ventures <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
@@ -987,7 +987,7 @@ if ($cohorts_bg_type === 'color') {
                             $startup_name = (string)($startup['name'] ?? 'Startup');
                             $startup_logo = trim((string)($startup['logo'] ?? ''));
                             $startup_slug = trim((string)($startup['slug'] ?? ''));
-                            $startup_link = $startup_slug !== '' ? asset_url('venture.php?slug=' . rawurlencode($startup_slug)) : '#';
+                            $startup_link = $startup_slug !== '' ? asset_url('venture?slug=' . rawurlencode($startup_slug)) : '#';
                             $startup_initial = strtoupper(substr($startup_name, 0, 1));
                             ?>
 
@@ -1133,7 +1133,7 @@ if ($partners_bg_type === 'color') {
     <div class="container">
         <div class="hive-content">
             <p>Key information <br>about the Mastercard EdTech Fellowship <br>and the application process.</p>
-            <a href="<?= h(asset_url('faqs.php')) ?>" class="btn btn-secondary">
+            <a href="<?= h(asset_url('faqs')) ?>" class="btn btn-secondary">
                 <i class="fa fa-question-circle"></i> Frequently Asked Questions
             </a>
         </div>

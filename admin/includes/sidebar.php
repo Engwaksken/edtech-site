@@ -666,7 +666,8 @@ if (!function_exists('sidebar_is_active_url')) {
         string $currentPage
     ): bool {
         $pagePath = parse_url($pageUrl, PHP_URL_PATH);
-        $pageFile = basename((string)$pagePath);
+        $pageFile = preg_replace('/\.php$/i', '', basename((string)$pagePath));
+        $currentPage = preg_replace('/\.php$/i', '', $currentPage);
 
         if ($pageFile === '' || $currentPage === '') {
             return false;
@@ -674,6 +675,23 @@ if (!function_exists('sidebar_is_active_url')) {
 
         return strtolower($pageFile)
             === strtolower($currentPage);
+    }
+}
+
+
+if (!function_exists('sidebar_clean_url')) {
+    /** admin_pages.page_url may still hold "users.php"; link to "users". */
+    function sidebar_clean_url(string $pageUrl): string
+    {
+        if (str_contains($pageUrl, '://')) {
+            return $pageUrl;
+        }
+        $cut  = strcspn($pageUrl, '?#');
+        $path = substr($pageUrl, 0, $cut);
+        $rest = substr($pageUrl, $cut);
+        $path = (string)preg_replace('#(^|/)index\.php$#i', '$1', $path);
+        $path = (string)preg_replace('/\.php$/i', '', $path);
+        return ($path === '' ? './' : $path) . $rest;
     }
 }
 
@@ -890,7 +908,7 @@ $display_logo = sidebar_logo_exists($site_logo);
                         >
 
                             <a
-                                href="<?= h($pageUrl) ?>"
+                                href="<?= h(sidebar_clean_url($pageUrl)) ?>"
                                 <?= $isActive ? 'aria-current="page"' : '' ?>
                             >
 
@@ -944,7 +962,7 @@ $display_logo = sidebar_logo_exists($site_logo);
 
             <li class="nav-item">
 
-                <form method="POST" action="logout.php">
+                <form method="POST" action="logout">
                 <button type="submit"
                     class="logout-link"
                 >
@@ -1048,11 +1066,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Keep a consistent, discoverable sign-out action in every admin topbar.
     var topbar = document.querySelector('.admin-topbar');
     var topbarRight = topbar && topbar.querySelector('.topbar-right');
-    var hasTopbarLogout = topbar && topbar.querySelector('form[action*="logout.php"]');
+    var hasTopbarLogout = topbar && topbar.querySelector('form[action*="logout"]');
     if (topbarRight && !hasTopbarLogout) {
         var logoutForm = document.createElement('form');
         logoutForm.method = 'POST';
-        logoutForm.action = 'logout.php';
+        logoutForm.action = 'logout';
         logoutForm.className = 'inline-action-form';
         logoutForm.innerHTML = '<button type="submit" class="btn btn-secondary btn-sm topbar-logout" title="Logout" aria-label="Logout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i></button>';
         topbarRight.appendChild(logoutForm);

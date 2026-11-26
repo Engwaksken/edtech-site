@@ -620,7 +620,7 @@ function pp_resolve_folder_path(
 
 
 function pp_document_folder_redirect(?int $folder_id = null): void {
-    $page = 'documents.php';
+    $page = 'documents';
     if ($folder_id !== null && $folder_id > 0) {
         $page .= '?folder_id=' . urlencode((string)$folder_id);
     }
@@ -735,7 +735,7 @@ function pp_normalize_mysql_datetime(?string $value): ?string {
 }
 
 
-function pp_admin_url(string $path = 'admin/messages.php'): string {
+function pp_admin_url(string $path = 'admin/messages'): string {
     if (defined('SITE_URL') && trim((string)SITE_URL) !== '') {
         $base = rtrim((string)SITE_URL, '/');
     } else {
@@ -999,7 +999,7 @@ function pp_notify_mentor_session_update(
 
     $content .= "
         <p>
-            <a class='btn' href='" . pp_h(pp_admin_url('admin/mentor-sessions.php')) . "' target='_blank' rel='noopener'>
+            <a class='btn' href='" . pp_h(pp_admin_url('admin/mentor-sessions')) . "' target='_blank' rel='noopener'>
                 View Session Details
             </a>
         </p>
@@ -1065,7 +1065,7 @@ function pp_notify_admins_feedback_submitted(
         return;
     }
 
-    $review_url = pp_admin_url('admin/mentor-sessions.php?session_id=' . $session_id . '#feedback');
+    $review_url = pp_admin_url('admin/mentor-sessions?session_id=' . $session_id . '#feedback');
 
     $content = "
         <h3>Venture Mentorship Session Report submitted for review</h3>
@@ -1752,7 +1752,7 @@ if (
         );
 
         vp_redir(
-            'meal-data.php?tab='
+            'meal-data?tab='
             . urlencode($tab)
         );
     }
@@ -1788,7 +1788,7 @@ if (
         );
 
         vp_redir(
-            'meal-data.php?tab='
+            'meal-data?tab='
             . urlencode($tab)
         );
     }
@@ -1917,7 +1917,7 @@ if ($action === 'version_history') {
 
 // -- All remaining actions require POST -----------------------
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../dashboard.php'); exit;
+    header('Location: ../dashboard'); exit;
 }
 
 // --------------------------------------------------------------
@@ -2209,12 +2209,12 @@ if ($action === 'request_doc_change') {
 
     if ($document_id <= 0) {
         vp_flash('Invalid document.', 'error');
-        vp_redir('documents.php');
+        vp_redir('documents');
     }
 
     if ($reason === '') {
         vp_flash('Please provide a reason for changing this approved document.', 'error');
-        vp_redir('documents.php');
+        vp_redir('documents');
     }
 
     $stmt = $conn->prepare("
@@ -2232,17 +2232,17 @@ if ($action === 'request_doc_change') {
 
     if (!$doc) {
         vp_flash('Document not found.', 'error');
-        vp_redir('documents.php');
+        vp_redir('documents');
     }
 
     if (($doc['approval_status'] ?? 'pending') !== 'approved') {
         vp_flash('This document is not approved yet. You can upload a new version directly.', 'info');
-        vp_redir('documents.php');
+        vp_redir('documents');
     }
 
     if (($doc['change_request_status'] ?? 'none') === 'requested') {
         vp_flash('You already have a pending change request for this document.', 'info');
-        vp_redir('documents.php');
+        vp_redir('documents');
     }
 
     $stmt = $conn->prepare("
@@ -2281,7 +2281,7 @@ if ($action === 'request_doc_change') {
     }
 
     $stmt->close();
-    vp_redir('documents.php');
+    vp_redir('documents');
 }
 
 
@@ -2581,12 +2581,12 @@ if ($action === 'add_team_member') {
     $twitter    = trim($_POST['twitter']     ?? '');
     $is_founder = isset($_POST['is_founder']) && $_POST['is_founder'] === '1' ? 1 : 0;
 
-    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error');      vp_redir('team.php'); }
-    if ($full_name === '')        { vp_flash('Full name is required.', 'error');   vp_redir('team.php'); }
-    if ($role === '')             { vp_flash('Role / title is required.', 'error'); vp_redir('team.php'); }
+    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error');      vp_redir('team'); }
+    if ($full_name === '')        { vp_flash('Full name is required.', 'error');   vp_redir('team'); }
+    if ($role === '')             { vp_flash('Role / title is required.', 'error'); vp_redir('team'); }
     if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         vp_flash('Please enter a valid email address.', 'error');
-        vp_redir('team.php');
+        vp_redir('team');
     }
 
     $cstmt = $conn->prepare("SELECT COUNT(*) AS c FROM venture_team WHERE venture_id = ?");
@@ -2597,7 +2597,7 @@ if ($action === 'add_team_member') {
 
     if ($count >= 4) {
         vp_flash('Your team is full (max 4 members). Remove a member to add a new one.', 'error');
-        vp_redir('team.php');
+        vp_redir('team');
     }
 
     if ($linkedin !== '' && !str_starts_with($linkedin, 'http')) {
@@ -2608,7 +2608,7 @@ if ($action === 'add_team_member') {
     $photo     = upload_photo('photo', 'ventures/team', $photo_err);
     if ($photo_err !== '' && !empty($_FILES['photo']['name'])) {
         vp_flash($photo_err, 'error');
-        vp_redir('team.php');
+        vp_redir('team');
     }
 
     $sstmt = $conn->prepare("SELECT MAX(sort_order) AS m FROM venture_team WHERE venture_id = ?");
@@ -2634,7 +2634,7 @@ if ($action === 'add_team_member') {
         vp_flash('Failed to add member: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('team.php');
+    vp_redir('team');
 }
 
 
@@ -2655,12 +2655,12 @@ if ($action === 'edit_team_member') {
     $twitter    = trim($_POST['twitter']    ?? '');
     $is_founder = isset($_POST['is_founder']) && $_POST['is_founder'] === '1' ? 1 : 0;
 
-    if ($id <= 0)      { vp_flash('Invalid team member.', 'error'); vp_redir('team.php'); }
-    if ($full_name === '') { vp_flash('Full name is required.', 'error');    vp_redir('team.php'); }
-    if ($role === '')      { vp_flash('Role / title is required.', 'error'); vp_redir('team.php'); }
+    if ($id <= 0)      { vp_flash('Invalid team member.', 'error'); vp_redir('team'); }
+    if ($full_name === '') { vp_flash('Full name is required.', 'error');    vp_redir('team'); }
+    if ($role === '')      { vp_flash('Role / title is required.', 'error'); vp_redir('team'); }
     if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         vp_flash('Please enter a valid email address.', 'error');
-        vp_redir('team.php');
+        vp_redir('team');
     }
 
     $own = $conn->prepare("SELECT id, photo FROM venture_team WHERE id = ? AND venture_id = ? LIMIT 1");
@@ -2668,7 +2668,7 @@ if ($action === 'edit_team_member') {
     $own->execute();
     $current = $own->get_result()->fetch_assoc();
     $own->close();
-    if (!$current) { vp_flash('Team member not found.', 'error'); vp_redir('team.php'); }
+    if (!$current) { vp_flash('Team member not found.', 'error'); vp_redir('team'); }
 
     if ($linkedin !== '' && !str_starts_with($linkedin, 'http')) {
         $linkedin = 'https://linkedin.com/in/' . ltrim($linkedin, '/');
@@ -2680,7 +2680,7 @@ if ($action === 'edit_team_member') {
         $new_photo = upload_photo('photo', 'ventures/team', $photo_err);
         if ($photo_err !== '') {
             vp_flash($photo_err, 'error');
-            vp_redir('team.php');
+            vp_redir('team');
         }
         if ($new_photo !== '') {
             delete_file($photo);
@@ -2714,7 +2714,7 @@ if ($action === 'edit_team_member') {
         vp_flash('Update failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('team.php');
+    vp_redir('team');
 }
 
 
@@ -2727,14 +2727,14 @@ if ($action === 'remove_team_member') {
     );
 
     $id = (int)($_POST['id'] ?? 0);
-    if ($id <= 0) { vp_flash('Invalid team member.', 'error'); vp_redir('team.php'); }
+    if ($id <= 0) { vp_flash('Invalid team member.', 'error'); vp_redir('team'); }
 
     $own = $conn->prepare("SELECT id, photo, full_name FROM venture_team WHERE id = ? AND venture_id = ? LIMIT 1");
     $own->bind_param('ii', $id, $venture_id);
     $own->execute();
     $current = $own->get_result()->fetch_assoc();
     $own->close();
-    if (!$current) { vp_flash('Team member not found or permission denied.', 'error'); vp_redir('team.php'); }
+    if (!$current) { vp_flash('Team member not found or permission denied.', 'error'); vp_redir('team'); }
 
     delete_file($current['photo'] ?? '');
 
@@ -2746,7 +2746,7 @@ if ($action === 'remove_team_member') {
         vp_flash('Remove failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('team.php');
+    vp_redir('team');
 }
 
 
@@ -2784,8 +2784,8 @@ if ($action === 'change_password') {
     $new_pw  = $_POST['new_password']     ?? '';
     $confirm = $_POST['confirm_password'] ?? '';
 
-    if ($new_pw !== $confirm)   { vp_flash('Passwords do not match.', 'error');                 vp_redir('profile.php'); }
-    if (strlen($new_pw) < 8)    { vp_flash('Password must be at least 8 characters.', 'error'); vp_redir('profile.php'); }
+    if ($new_pw !== $confirm)   { vp_flash('Passwords do not match.', 'error');                 vp_redir('profile'); }
+    if (strlen($new_pw) < 8)    { vp_flash('Password must be at least 8 characters.', 'error'); vp_redir('profile'); }
 
     $stmt = $conn->prepare("SELECT password_hash FROM venture_portal_access WHERE venture_id = ? LIMIT 1");
     $stmt->bind_param('i', $venture_id);
@@ -2795,7 +2795,7 @@ if ($action === 'change_password') {
 
     if (!$row || !password_verify($current, $row['password_hash'])) {
         vp_flash('Current password is incorrect.', 'error');
-        vp_redir('profile.php');
+        vp_redir('profile');
     }
 
     $hash = password_hash($new_pw, PASSWORD_DEFAULT);
@@ -2807,7 +2807,7 @@ if ($action === 'change_password') {
         vp_flash('Failed to change password: ' . $upd->error, 'error');
     }
     $upd->close();
-    vp_redir('profile.php');
+    vp_redir('profile');
 }
 
 
@@ -2820,7 +2820,7 @@ if ($action === 'send_message') {
 
     if ($subject === '' || $body === '') {
         vp_flash('Subject and message body are required.', 'error');
-        vp_redir('../messages.php');
+        vp_redir('../messages');
     }
 
     $sender = $_SESSION['venture_founder'] ?? 'Founder';
@@ -2845,7 +2845,7 @@ if ($action === 'send_message') {
         vp_flash('Failed to send message: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('../messages.php');
+    vp_redir('../messages');
 }
 
 
@@ -2854,7 +2854,7 @@ if ($action === 'send_message') {
 // --------------------------------------------------------------
 if ($action === 'register_event') {
     $event_id = (int)($_POST['event_id'] ?? 0);
-    if ($event_id <= 0) { vp_flash('Invalid event.', 'error'); vp_redir('events.php'); }
+    if ($event_id <= 0) { vp_flash('Invalid event.', 'error'); vp_redir('events'); }
 
     $evstmt = $conn->prepare("
         SELECT * FROM events
@@ -2869,7 +2869,7 @@ if ($action === 'register_event') {
 
     if (!$ev) {
         vp_flash('This event is not available for registration.', 'error');
-        vp_redir('events.php');
+        vp_redir('events');
     }
 
     if ((int)$ev['capacity'] > 0) {
@@ -2881,7 +2881,7 @@ if ($action === 'register_event') {
 
         if ($reg_ct >= (int)$ev['capacity']) {
             vp_flash('Sorry, this event is fully booked.', 'error');
-            vp_redir('events.php');
+            vp_redir('events');
         }
     }
 
@@ -2894,7 +2894,7 @@ if ($action === 'register_event') {
     $dup->execute();
     if ($dup->get_result()->num_rows > 0) {
         vp_flash('You are already registered for this event.', 'info');
-        vp_redir('events.php');
+        vp_redir('events');
     }
     $dup->close();
 
@@ -2910,7 +2910,7 @@ if ($action === 'register_event') {
         vp_flash('Registration failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('events.php');
+    vp_redir('events');
 }
 
 
@@ -2938,32 +2938,32 @@ if ($action === 'request_session') {
 
     if ($ven_id !== $venture_id) {
         vp_flash('Permission denied.', 'error');
-        vp_redir('mentors.php');
+        vp_redir('mentors');
     }
 
     if ($mentor_id <= 0) {
         vp_flash('Invalid mentor selection.', 'error');
-        vp_redir('mentors.php');
+        vp_redir('mentors');
     }
 
     if ($title === '') {
         vp_flash('Session title is required.', 'error');
-        vp_redir('mentors.php');
+        vp_redir('mentors');
     }
 
     if ($duration < 15 || $duration > 480) {
         vp_flash('Session duration must be between 15 minutes and 8 hours.', 'error');
-        vp_redir('mentors.php');
+        vp_redir('mentors');
     }
 
     if (trim((string)($_POST['preferred_at'] ?? '')) !== '' && $pref_at === null) {
         vp_flash('Please choose a valid preferred date and time.', 'error');
-        vp_redir('mentors.php');
+        vp_redir('mentors');
     }
 
     if ($pref_at !== null && strtotime($pref_at) < time()) {
         vp_flash('Preferred date and time cannot be in the past.', 'error');
-        vp_redir('mentors.php');
+        vp_redir('mentors');
     }
 
     $cohort_id = (int)($VENTURE['cohort_id'] ?? 0);
@@ -2977,7 +2977,7 @@ if ($action === 'request_session') {
 
     if (!$chk) {
         vp_flash('Could not verify mentor assignment: ' . $conn->error, 'error');
-        vp_redir('mentors.php');
+        vp_redir('mentors');
     }
 
     $chk->bind_param('iii', $mentor_id, $venture_id, $cohort_id);
@@ -2987,7 +2987,7 @@ if ($action === 'request_session') {
 
     if (!$assigned) {
         vp_flash('This mentor is not assigned to your venture.', 'error');
-        vp_redir('mentors.php');
+        vp_redir('mentors');
     }
 
     $pending = $conn->prepare("
@@ -3005,7 +3005,7 @@ if ($action === 'request_session') {
 
     if (!$pending) {
         vp_flash('Could not check pending requests: ' . $conn->error, 'error');
-        vp_redir('mentors.php');
+        vp_redir('mentors');
     }
 
     $pending->bind_param('iii', $mentor_id, $venture_id, $venture_id);
@@ -3015,7 +3015,7 @@ if ($action === 'request_session') {
 
     if ($has_pending) {
         vp_flash('You already have a pending session request with this mentor. Please wait for it to be confirmed or cancelled before sending another request.', 'info');
-        vp_redir('sessions.php?status=requested');
+        vp_redir('sessions?status=requested');
     }
 
     if ($pref_at !== null) {
@@ -3035,7 +3035,7 @@ if ($action === 'request_session') {
 
         if (!$mentor_overlap) {
             vp_flash('Could not check mentor availability: ' . $conn->error, 'error');
-            vp_redir('mentors.php');
+            vp_redir('mentors');
         }
 
         $mentor_overlap->bind_param('iss', $mentor_id, $new_end, $new_start);
@@ -3045,7 +3045,7 @@ if ($action === 'request_session') {
 
         if ($mentor_is_booked) {
             vp_flash('This mentor already has a session during that time. Please choose another preferred time.', 'error');
-            vp_redir('mentors.php');
+            vp_redir('mentors');
         }
 
         $venture_overlap = $conn->prepare("
@@ -3065,7 +3065,7 @@ if ($action === 'request_session') {
 
         if (!$venture_overlap) {
             vp_flash('Could not check your existing bookings: ' . $conn->error, 'error');
-            vp_redir('mentors.php');
+            vp_redir('mentors');
         }
 
         $venture_overlap->bind_param('iiss', $venture_id, $venture_id, $new_end, $new_start);
@@ -3075,7 +3075,7 @@ if ($action === 'request_session') {
 
         if ($venture_is_booked) {
             vp_flash('You already have another session booked during that time. Please choose another preferred time.', 'error');
-            vp_redir('sessions.php');
+            vp_redir('sessions');
         }
     }
 
@@ -3159,7 +3159,7 @@ if ($action === 'request_session') {
         vp_flash('Request failed: ' . $e->getMessage(), 'error');
     }
 
-    vp_redir('sessions.php');
+    vp_redir('sessions');
 }
 
 // --------------------------------------------------------------
@@ -3172,12 +3172,12 @@ if ($action === 'rate_session') {
 
     if ($session_id <= 0 || $rating < 1) {
         vp_flash('Invalid rating.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
 
     if (!vp_owns_session($conn, $session_id, $venture_id)) {
         vp_flash('Session not found.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
 
     $own = $conn->prepare("SELECT id FROM mentor_sessions WHERE id = ? AND status = 'completed' LIMIT 1");
@@ -3185,7 +3185,7 @@ if ($action === 'rate_session') {
     $own->execute();
     if (!$own->get_result()->num_rows) {
         vp_flash('Session not found or not yet completed.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
     $own->close();
 
@@ -3203,7 +3203,7 @@ if ($action === 'rate_session') {
         vp_flash('Failed to save rating: ' . $upd->error, 'error');
     }
     $upd->close();
-    vp_redir('sessions.php?status=completed');
+    vp_redir('sessions?status=completed');
 }
 
 
@@ -3216,8 +3216,8 @@ if ($action === 'send_mentor_message') {
     $subject             = trim($_POST['subject'] ?? '');
     $body                = trim($_POST['body']    ?? '');
 
-    if ($ven_id !== $venture_id)     { vp_flash('Permission denied.', 'error');             vp_redir('../messages.php'); }
-    if ($subject === '' || $body === '') { vp_flash('Subject and message are required.', 'error'); vp_redir('../messages.php'); }
+    if ($ven_id !== $venture_id)     { vp_flash('Permission denied.', 'error');             vp_redir('../messages'); }
+    if ($subject === '' || $body === '') { vp_flash('Subject and message are required.', 'error'); vp_redir('../messages'); }
 
     $thread_id = bin2hex(random_bytes(16));
 
@@ -3249,7 +3249,7 @@ if ($action === 'send_mentor_message') {
         vp_flash('Failed to send message: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('../messages.php?thread=' . urlencode($thread_id));
+    vp_redir('../messages?thread=' . urlencode($thread_id));
 }
 
 
@@ -3263,11 +3263,11 @@ if ($action === 'reply_mentor_message') {
 
     if ($ven_id !== $venture_id || $thread_id === '') {
         vp_flash('Permission denied.', 'error');
-        vp_redir('../messages.php');
+        vp_redir('../messages');
     }
     if ($body === '') {
         vp_flash('Message body cannot be empty.', 'error');
-        vp_redir('../messages.php?thread=' . urlencode($thread_id));
+        vp_redir('../messages?thread=' . urlencode($thread_id));
     }
 
     $ostmt = $conn->prepare("
@@ -3284,7 +3284,7 @@ if ($action === 'reply_mentor_message') {
 
     if (!$orig) {
         vp_flash('Thread not found.', 'error');
-        vp_redir('../messages.php');
+        vp_redir('../messages');
     }
 
     $rt = $orig['sender_type'] !== 'venture' ? $orig['sender_type'] : $orig['recipient_type'];
@@ -3333,7 +3333,7 @@ if ($action === 'reply_mentor_message') {
         vp_flash('Failed to send reply: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('../messages.php?thread=' . urlencode($thread_id));
+    vp_redir('../messages?thread=' . urlencode($thread_id));
 }
 
 
@@ -3347,20 +3347,20 @@ if ($action === 'add_session_comment') {
 
     if ($ven_id !== $venture_id) {
         vp_flash('Permission denied.', 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
     if ($session_id <= 0 || $comment_text === '') {
         vp_flash('Comment cannot be empty.', 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
     if (mb_strlen($comment_text) > 4000) {
         vp_flash('Comment is too long (max 4000 characters).', 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
 
     if (!vp_owns_session($conn, $session_id, $venture_id)) {
         vp_flash('Session not found.', 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
 
     $own = $conn->prepare("
@@ -3376,7 +3376,7 @@ if ($action === 'add_session_comment') {
 
     if (!$sess) {
         vp_flash('Session not found.', 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
 
     $conn->query("
@@ -3397,7 +3397,7 @@ if ($action === 'add_session_comment') {
         INSERT INTO session_comments (session_id, author_type, author_name, comment_text)
         VALUES (?, 'venture', ?, ?)
     ");
-    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('sessions.php'); }
+    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('sessions'); }
     $stmt->bind_param('iss', $session_id, $author_name, $comment_text);
     $ok  = $stmt->execute();
     $err = $stmt->error;
@@ -3419,7 +3419,7 @@ if ($action === 'add_session_comment') {
         vp_flash('Failed to add comment: ' . $err, 'error');
     }
 
-    vp_redir('sessions.php');
+    vp_redir('sessions');
 }
 
 
@@ -3431,16 +3431,16 @@ if ($action === 'rate_mentor') {
 
     if ($ven_id !== $venture_id) {
         vp_flash('Permission denied.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
     if ($session_id <= 0 || $mentor_rating < 1) {
         vp_flash('Invalid rating.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
 
     if (!vp_owns_session($conn, $session_id, $venture_id)) {
         vp_flash('Session not found.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
 
     $own = $conn->prepare("SELECT id FROM mentor_sessions WHERE id = ? AND status = 'completed' LIMIT 1");
@@ -3448,7 +3448,7 @@ if ($action === 'rate_mentor') {
     $own->execute();
     if (!$own->get_result()->num_rows) {
         vp_flash('Session not found or not yet completed.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
     $own->close();
 
@@ -3459,7 +3459,7 @@ if ($action === 'rate_mentor') {
          WHERE id = ?
          LIMIT 1
     ");
-    if (!$upd) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('sessions.php?status=completed'); }
+    if (!$upd) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('sessions?status=completed'); }
     $upd->bind_param('isi', $mentor_rating, $mentor_feedback, $session_id);
     if ($upd->execute()) {
         vp_flash('Thank you for rating your mentor!');
@@ -3468,7 +3468,7 @@ if ($action === 'rate_mentor') {
     }
     $upd->close();
 
-    vp_redir('sessions.php?status=completed');
+    vp_redir('sessions?status=completed');
 }
 
 
@@ -3482,16 +3482,16 @@ if ($action === 'save_session_feedback') {
 
     if ($ven_id !== $venture_id) {
         vp_flash('Permission denied.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
     if ($session_id <= 0) {
         vp_flash('Invalid session.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
 
     if (!vp_owns_session($conn, $session_id, $venture_id)) {
         vp_flash('Session not found.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
 
     $sess_stmt = $conn->prepare("
@@ -3507,12 +3507,12 @@ if ($action === 'save_session_feedback') {
 
     if (!$sess) {
         vp_flash('Session not found.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
 
     if ((string)$sess['status'] !== 'completed') {
         vp_flash('Session reports can only be filed for completed sessions.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
 
     fb_ensure_table($conn);
@@ -3525,7 +3525,7 @@ if ($action === 'save_session_feedback') {
 
     if ($existing && in_array((string)$existing['status'], ['submitted', 'reviewed'], true)) {
         vp_flash('This session report has already been submitted and can no longer be edited.', 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
 
     // --- Simple text / select fields -------------------------------------
@@ -3648,7 +3648,7 @@ if ($action === 'save_session_feedback') {
 
     if (!$stmt) {
         vp_flash('DB error: ' . $conn->error, 'error');
-        vp_redir('sessions.php?status=completed');
+        vp_redir('sessions?status=completed');
     }
 
     $submitted_at = $status === 'submitted' ? date('Y-m-d H:i:s') : null;
@@ -3717,7 +3717,7 @@ if ($action === 'save_session_feedback') {
         vp_flash('Failed to save session report: ' . $err, 'error');
     }
 
-    vp_redir('sessions.php?status=completed');
+    vp_redir('sessions?status=completed');
 }
 
 
@@ -3730,20 +3730,20 @@ if ($action === 'cancel_session') {
 
     if ($session_id <= 0) {
         vp_flash('Invalid session.', 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
     if ($cancel_reason === '') {
         vp_flash('Please provide a reason for cancelling this session.', 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
     if (mb_strlen($cancel_reason) > 1000) {
         vp_flash('Reason is too long (max 1000 characters).', 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
 
     if (!vp_owns_session($conn, $session_id, $venture_id)) {
         vp_flash('Session not found.', 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
 
     $own = $conn->prepare("
@@ -3759,13 +3759,13 @@ if ($action === 'cancel_session') {
 
     if (!$row) {
         vp_flash('Session not found.', 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
 
     $uncancellable = ['completed', 'cancelled', 'no_show'];
     if (in_array($row['status'], $uncancellable, true)) {
         vp_flash('This session cannot be cancelled.', 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
 
     if (pp_column_exists($conn, 'mentor_sessions', 'cancelled_by')) {
@@ -3791,7 +3791,7 @@ if ($action === 'cancel_session') {
 
     if (!$upd) {
         vp_flash('Cancellation failed: ' . $conn->error, 'error');
-        vp_redir('sessions.php');
+        vp_redir('sessions');
     }
 
     $upd->bind_param('si', $cancel_reason, $session_id);
@@ -3815,7 +3815,7 @@ if ($action === 'cancel_session') {
         vp_flash('Cancellation failed: ' . $err, 'error');
     }
 
-    vp_redir('sessions.php');
+    vp_redir('sessions');
 }
 
 
@@ -3849,35 +3849,35 @@ if ($action === 'upload_meal_csv') {
 
     if ($ven_id !== $venture_id) {
         vp_flash('Permission denied.', 'error');
-        vp_redir('meal-data.php');
+        vp_redir('meal-data');
     }
 
     $allowed_types = ['participants', 'teachers', 'schools', 'other_users', 'employment', 'finance', 'partnerships', 'revenue'];
     if (!in_array($type, $allowed_types, true)) {
         vp_flash('Invalid data type.', 'error');
-        vp_redir('meal-data.php');
+        vp_redir('meal-data');
     }
 
     if (empty($_FILES['csv_file']['name'])) {
         vp_flash('Please select a CSV or Excel file.', 'error');
-        vp_redir('meal-data.php?tab=' . urlencode($type));
+        vp_redir('meal-data?tab=' . urlencode($type));
     }
 
     if ($_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
         vp_flash('File upload failed. Error code: ' . (int)$_FILES['csv_file']['error'], 'error');
-        vp_redir('meal-data.php?tab=' . urlencode($type));
+        vp_redir('meal-data?tab=' . urlencode($type));
     }
 
     $ext = strtolower(pathinfo($_FILES['csv_file']['name'], PATHINFO_EXTENSION));
     $allowed_upload_exts = ['csv', 'xlsx', 'xls'];
     if (!in_array($ext, $allowed_upload_exts, true)) {
         vp_flash('Only CSV or Excel (.xlsx/.xls) files are allowed.', 'error');
-        vp_redir('meal-data.php?tab=' . urlencode($type));
+        vp_redir('meal-data?tab=' . urlencode($type));
     }
 
     if ((int)$_FILES['csv_file']['size'] > 20 * 1024 * 1024) {
         vp_flash('File must be under 20 MB.', 'error');
-        vp_redir('meal-data.php?tab=' . urlencode($type));
+        vp_redir('meal-data?tab=' . urlencode($type));
     }
 
     // Table existence is already guaranteed near the top of this file via
@@ -3889,14 +3889,14 @@ if ($action === 'upload_meal_csv') {
         $fh = fopen($_FILES['csv_file']['tmp_name'], 'r');
         if (!$fh) {
             vp_flash('Could not read uploaded CSV file.', 'error');
-            vp_redir('meal-data.php?tab=' . urlencode($type));
+            vp_redir('meal-data?tab=' . urlencode($type));
         }
 
         $headerRow = fgetcsv($fh);
         if (!$headerRow) {
             fclose($fh);
             vp_flash('Empty or invalid CSV.', 'error');
-            vp_redir('meal-data.php?tab=' . urlencode($type));
+            vp_redir('meal-data?tab=' . urlencode($type));
         }
 
         while (($row = fgetcsv($fh)) !== false) {
@@ -3919,7 +3919,7 @@ if ($action === 'upload_meal_csv') {
 
         if (!$spreadsheet_loaded || !class_exists('PhpOffice\\PhpSpreadsheet\\IOFactory')) {
             vp_flash('Excel upload support is not installed on the server (composer require phpoffice/phpspreadsheet). Please save your file as CSV and upload that instead.', 'error');
-            vp_redir('meal-data.php?tab=' . urlencode($type));
+            vp_redir('meal-data?tab=' . urlencode($type));
         }
 
         try {
@@ -3930,12 +3930,12 @@ if ($action === 'upload_meal_csv') {
             $sheetData   = $dataSheet->toArray(null, true, true, false);
         } catch (Throwable $e) {
             vp_flash('Could not read the uploaded Excel file: ' . $e->getMessage(), 'error');
-            vp_redir('meal-data.php?tab=' . urlencode($type));
+            vp_redir('meal-data?tab=' . urlencode($type));
         }
 
         if (empty($sheetData)) {
             vp_flash('Empty or invalid Excel file.', 'error');
-            vp_redir('meal-data.php?tab=' . urlencode($type));
+            vp_redir('meal-data?tab=' . urlencode($type));
         }
 
         $headerRow = $sheetData[0] ?? [];
@@ -3958,7 +3958,7 @@ if ($action === 'upload_meal_csv') {
             . '. Click "Download Template", fill it in and upload that file.',
             'error'
         );
-        vp_redir('meal-data.php?tab=' . urlencode($type));
+        vp_redir('meal-data?tab=' . urlencode($type));
     }
 
 
@@ -4472,7 +4472,7 @@ if ($action === 'upload_meal_csv') {
     }
 
     vp_flash($msg, $inserted > 0 ? 'success' : 'error');
-    vp_redir('meal-data.php?tab=' . urlencode($type));
+    vp_redir('meal-data?tab=' . urlencode($type));
 }
 
 
@@ -4481,10 +4481,10 @@ if ($action === 'upload_meal_csv') {
 // ==============================================================
 if ($action === 'add_meal_beneficiary') {
     $ven_id = (int)($_POST['venture_id'] ?? 0);
-    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data.php'); }
+    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data'); }
 
     $user_number = trim($_POST['user_number'] ?? '');
-    if ($user_number === '') { vp_flash('Learner number is required.', 'error'); vp_redir('meal-data.php'); }
+    if ($user_number === '') { vp_flash('Learner number is required.', 'error'); vp_redir('meal-data'); }
 
     $dup = $conn->prepare("SELECT id FROM venture_participants WHERE venture_id = ? AND user_number = ? LIMIT 1");
     $dup->bind_param('is', $venture_id, $user_number);
@@ -4494,7 +4494,7 @@ if ($action === 'add_meal_beneficiary') {
 
     if ($dup_exists) {
         vp_flash('A learner with that Learner Number already exists.', 'error');
-        vp_redir('meal-data.php?tab=participants');
+        vp_redir('meal-data?tab=participants');
     }
 
     $entry_date  = trim($_POST['entry_date'] ?? date('Y-m-d'));
@@ -4524,7 +4524,7 @@ if ($action === 'add_meal_beneficiary') {
              working_at_entry, prior_mcf, transformation_objective, in_work_status)
         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     ");
-    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data.php?tab=participants'); }
+    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data?tab=participants'); }
     $stmt->bind_param('isssssssssssssssss',
         $venture_id, $entry_date, $user_number, $full_name, $user_status, $gender,
         $location, $loc_type, $age_cat, $refugee, $settlement,
@@ -4536,7 +4536,7 @@ if ($action === 'add_meal_beneficiary') {
         vp_flash('Save failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('meal-data.php?tab=participants');
+    vp_redir('meal-data?tab=participants');
 }
 
 
@@ -4566,7 +4566,7 @@ if ($action === 'edit_meal_beneficiary') {
         );
 
         vp_redir(
-            'meal-data.php?tab=participants'
+            'meal-data?tab=participants'
         );
     }
 
@@ -4713,7 +4713,7 @@ if ($action === 'edit_meal_beneficiary') {
         );
 
         vp_redir(
-            'meal-data.php?tab=participants'
+            'meal-data?tab=participants'
         );
     }
 
@@ -4766,7 +4766,7 @@ if ($action === 'edit_meal_beneficiary') {
             );
 
             vp_redir(
-                'meal-data.php?tab=participants'
+                'meal-data?tab=participants'
             );
         }
     }
@@ -4818,7 +4818,7 @@ if ($action === 'edit_meal_beneficiary') {
         );
 
         vp_redir(
-            'meal-data.php?tab=participants'
+            'meal-data?tab=participants'
         );
     }
 
@@ -4860,7 +4860,7 @@ if ($action === 'edit_meal_beneficiary') {
     $stmt->close();
 
     vp_redir(
-        'meal-data.php?tab=participants'
+        'meal-data?tab=participants'
     );
 }
 
@@ -4870,7 +4870,7 @@ if ($action === 'edit_meal_beneficiary') {
 // ==============================================================
 if ($action === 'add_meal_teacher') {
     $ven_id = (int)($_POST['venture_id'] ?? 0);
-    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data.php'); }
+    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data'); }
 
     $entry_date     = trim($_POST['entry_date'] ?? date('Y-m-d'));
     $teacher_name   = trim($_POST['teacher_name'] ?? '');
@@ -4899,7 +4899,7 @@ if ($action === 'add_meal_teacher') {
              refugee_status, host_community, location_type, pwd_status)
         VALUES (?,?,?,?,?,?,?,?,?)
     ");
-    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data.php?tab=teachers'); }
+    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data?tab=teachers'); }
     $stmt->bind_param('issssssss',
         $venture_id, $entry_date, $teacher_name, $gender, $age_category,
         $refugee_status, $host_community, $location_type, $pwd_status
@@ -4910,7 +4910,7 @@ if ($action === 'add_meal_teacher') {
         vp_flash('Save failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('meal-data.php?tab=teachers');
+    vp_redir('meal-data?tab=teachers');
 }
 
 
@@ -4919,12 +4919,12 @@ if ($action === 'add_meal_teacher') {
 // ==============================================================
 if ($action === 'add_meal_school') {
     $ven_id = (int)($_POST['venture_id'] ?? 0);
-    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data.php'); }
+    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data'); }
 
     $school_name = trim($_POST['school_name'] ?? '');
     if ($school_name === '') {
         vp_flash('School / institution name is required.', 'error');
-        vp_redir('meal-data.php?tab=schools');
+        vp_redir('meal-data?tab=schools');
     }
 
     $entry_date     = trim($_POST['entry_date'] ?? date('Y-m-d'));
@@ -4945,7 +4945,7 @@ if ($action === 'add_meal_school') {
             (venture_id, entry_date, school_name, location_type, ownership_type, school_level)
         VALUES (?,?,?,?,?,?)
     ");
-    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data.php?tab=schools'); }
+    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data?tab=schools'); }
     $stmt->bind_param('isssss',
         $venture_id, $entry_date, $school_name, $location_type, $ownership_type, $school_level
     );
@@ -4955,7 +4955,7 @@ if ($action === 'add_meal_school') {
         vp_flash('Save failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('meal-data.php?tab=schools');
+    vp_redir('meal-data?tab=schools');
 }
 
 
@@ -4964,7 +4964,7 @@ if ($action === 'add_meal_school') {
 // ==============================================================
 if ($action === 'add_meal_other_user') {
     $ven_id = (int)($_POST['venture_id'] ?? 0);
-    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data.php'); }
+    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data'); }
 
     $entry_date        = trim($_POST['entry_date'] ?? date('Y-m-d'));
     $full_name         = trim($_POST['full_name'] ?? '');
@@ -4998,7 +4998,7 @@ if ($action === 'add_meal_other_user') {
              education_level, occupation_status)
         VALUES (?,?,?,?,?,?,?,?,?,?,?)
     ");
-    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data.php?tab=other_users'); }
+    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data?tab=other_users'); }
     $stmt->bind_param('issssssssss',
         $venture_id, $entry_date, $full_name, $gender, $age_category,
         $refugee_status, $host_community, $location_type, $pwd_status,
@@ -5010,7 +5010,7 @@ if ($action === 'add_meal_other_user') {
         vp_flash('Save failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('meal-data.php?tab=other_users');
+    vp_redir('meal-data?tab=other_users');
 }
 
 
@@ -5019,13 +5019,13 @@ if ($action === 'add_meal_other_user') {
 // ==============================================================
 if ($action === 'add_meal_employment') {
     $ven_id = (int)($_POST['venture_id'] ?? 0);
-    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data.php'); }
+    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data'); }
 
     $full_name = trim($_POST['full_name'] ?? '');
     $job_title = trim($_POST['job_title'] ?? '');
     if ($full_name === '' || $job_title === '') {
         vp_flash('Name and job title are required.', 'error');
-        vp_redir('meal-data.php?tab=employment');
+        vp_redir('meal-data?tab=employment');
     }
 
     $placement = trim($_POST['placement_date'] ?? date('Y-m-d'));
@@ -5041,7 +5041,7 @@ if ($action === 'add_meal_employment') {
              pwd_status, employment_type, job_title, status)
         VALUES (?,?,?,?,?,?,?,?,?)
     ");
-    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data.php?tab=employment'); }
+    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data?tab=employment'); }
     $stmt->bind_param('issssssss',
         $venture_id, $placement, $full_name, $gender, $age,
         $pwd, $emp_type, $job_title, $status
@@ -5052,7 +5052,7 @@ if ($action === 'add_meal_employment') {
         vp_flash('Save failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('meal-data.php?tab=employment');
+    vp_redir('meal-data?tab=employment');
 }
 
 
@@ -5061,7 +5061,7 @@ if ($action === 'add_meal_employment') {
 // ==============================================================
 if ($action === 'add_meal_finance') {
     $ven_id = (int)($_POST['venture_id'] ?? 0);
-    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data.php'); }
+    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data'); }
 
     $date        = trim($_POST['date_mobilised'] ?? date('Y-m-d'));
     $amount      = (float)trim($_POST['finance_usd'] ?? 0);
@@ -5070,14 +5070,14 @@ if ($action === 'add_meal_finance') {
 
     if ($amount <= 0 || $fund_form === '' || $fund_source === '') {
         vp_flash('Amount, funding form, and source are required.', 'error');
-        vp_redir('meal-data.php?tab=finance');
+        vp_redir('meal-data?tab=finance');
     }
 
     $stmt = $conn->prepare("
         INSERT INTO meal_finance (venture_id, date_mobilised, finance_usd, funding_form, funding_source)
         VALUES (?,?,?,?,?)
     ");
-    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data.php?tab=finance'); }
+    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data?tab=finance'); }
     $stmt->bind_param('isdss', $venture_id, $date, $amount, $fund_form, $fund_source);
     if ($stmt->execute()) {
         vp_flash('Finance record saved.');
@@ -5085,7 +5085,7 @@ if ($action === 'add_meal_finance') {
         vp_flash('Save failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('meal-data.php?tab=finance');
+    vp_redir('meal-data?tab=finance');
 }
 
 
@@ -5094,12 +5094,12 @@ if ($action === 'add_meal_finance') {
 // ==============================================================
 if ($action === 'add_meal_partnership') {
     $ven_id = (int)($_POST['venture_id'] ?? 0);
-    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data.php'); }
+    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data'); }
 
     $partner_name = trim($_POST['partner_name'] ?? '');
     if ($partner_name === '') {
         vp_flash('Partner name is required.', 'error');
-        vp_redir('meal-data.php?tab=partnerships');
+        vp_redir('meal-data?tab=partnerships');
     }
 
     $date   = trim($_POST['partner_date'] ?? date('Y-m-d'));
@@ -5110,7 +5110,7 @@ if ($action === 'add_meal_partnership') {
         INSERT INTO meal_partnerships (venture_id, partner_date, partner_name, partnership_type, partnership_status)
         VALUES (?,?,?,?,?)
     ");
-    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data.php?tab=partnerships'); }
+    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data?tab=partnerships'); }
     $stmt->bind_param('issss', $venture_id, $date, $partner_name, $p_type, $p_stat);
     if ($stmt->execute()) {
         vp_flash('Partnership record saved.');
@@ -5118,7 +5118,7 @@ if ($action === 'add_meal_partnership') {
         vp_flash('Save failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('meal-data.php?tab=partnerships');
+    vp_redir('meal-data?tab=partnerships');
 }
 
 
@@ -5127,7 +5127,7 @@ if ($action === 'add_meal_partnership') {
 // ==============================================================
 if ($action === 'add_meal_revenue') {
     $ven_id = (int)($_POST['venture_id'] ?? 0);
-    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data.php'); }
+    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data'); }
 
     $rev_date   = trim($_POST['revenue_date'] ?? date('Y-m-d'));
     $rev_amount = (float)trim($_POST['gross_revenue_ugx'] ?? 0);
@@ -5135,14 +5135,14 @@ if ($action === 'add_meal_revenue') {
 
     if ($rev_amount < 0) {
         vp_flash('Revenue amount must be zero or positive.', 'error');
-        vp_redir('meal-data.php?tab=revenue');
+        vp_redir('meal-data?tab=revenue');
     }
 
     $stmt = $conn->prepare("
         INSERT INTO meal_revenue (venture_id, revenue_date, gross_revenue_ugx, revenue_stream)
         VALUES (?,?,?,?)
     ");
-    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data.php?tab=revenue'); }
+    if (!$stmt) { vp_flash('DB error: ' . $conn->error, 'error'); vp_redir('meal-data?tab=revenue'); }
     $stmt->bind_param('isds', $venture_id, $rev_date, $rev_amount, $rev_stream);
     if ($stmt->execute()) {
         vp_flash('Revenue record saved.');
@@ -5150,7 +5150,7 @@ if ($action === 'add_meal_revenue') {
         vp_flash('Save failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('meal-data.php?tab=revenue');
+    vp_redir('meal-data?tab=revenue');
 }
 
 
@@ -5162,7 +5162,7 @@ if ($action === 'delete_meal_row') {
     $id     = (int)($_POST['id'] ?? 0);
     $ven_id = (int)($_POST['venture_id'] ?? 0);
 
-    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data.php'); }
+    if ($ven_id !== $venture_id) { vp_flash('Permission denied.', 'error'); vp_redir('meal-data'); }
 
     $table_map = [
         'participants' => 'venture_participants',
@@ -5177,13 +5177,13 @@ if ($action === 'delete_meal_row') {
 
     if (!isset($table_map[$type]) || $id <= 0) {
         vp_flash('Invalid request.', 'error');
-        vp_redir('meal-data.php');
+        vp_redir('meal-data');
     }
 
     $table = $table_map[$type];
     if (!meal_owns($conn, $table, $id, $venture_id)) {
         vp_flash('Record not found.', 'error');
-        vp_redir('meal-data.php?tab=' . $type);
+        vp_redir('meal-data?tab=' . $type);
     }
 
     $stmt = $conn->prepare("DELETE FROM `{$table}` WHERE id = ? AND venture_id = ? LIMIT 1");
@@ -5194,7 +5194,7 @@ if ($action === 'delete_meal_row') {
         vp_flash('Delete failed: ' . $stmt->error, 'error');
     }
     $stmt->close();
-    vp_redir('meal-data.php?tab=' . $type);
+    vp_redir('meal-data?tab=' . $type);
 }
 
 
@@ -5207,5 +5207,5 @@ if ($action !== '') {
 } else {
     vp_flash('No action was supplied.', 'error');
 }
-header('Location: ../dashboard.php');
+header('Location: ../dashboard');
 exit;

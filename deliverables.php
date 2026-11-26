@@ -278,7 +278,7 @@ require_once __DIR__ . '/layout.php';
 
     <div class="vd-stats">
         <a
-            href="deliverables.php"
+            href="deliverables"
             class="vd-stat-link <?= $statusFilter === '' && $themeFilter === '' && $deadlineFilter === '' ? 'active' : '' ?>"
             aria-label="View all deliverables"
             title="View all deliverables"
@@ -423,7 +423,7 @@ require_once __DIR__ . '/layout.php';
             </button>
 
             <a
-                href="deliverables.php"
+                href="deliverables"
                 class="btn btn-outline btn-sm"
             >
                 Reset

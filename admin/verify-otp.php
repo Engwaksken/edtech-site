@@ -44,7 +44,7 @@ function admin_get_setting(mysqli $conn, string $key, string $default = ''): str
 $pending = $_SESSION['admin_otp_pending'] ?? null;
 if (!is_array($pending) || empty($pending['id']) || empty($_SESSION['admin_otp_hash'])) {
     $_SESSION['login_error'] = 'Your verification session has expired. Please sign in again.';
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 
@@ -52,7 +52,7 @@ $expiresAt = (int)($_SESSION['admin_otp_expires_at'] ?? 0);
 if ($expiresAt <= time()) {
     unset($_SESSION['admin_otp_pending'], $_SESSION['admin_otp_hash'], $_SESSION['admin_otp_expires_at'], $_SESSION['admin_otp_attempts']);
     $_SESSION['login_error'] = 'Your verification code has expired. Please sign in again.';
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 

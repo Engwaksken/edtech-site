@@ -106,7 +106,7 @@ function pr_download_file(string $filePath, string $downloadName): void
 {
     if (!is_file($filePath)) {
         pr_flash_redirect(
-            '../venture_resources.php',
+            '../venture_resources',
             'Resource file not found on server. Please contact admin to re-upload this file.',
             'error'
         );
@@ -171,25 +171,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'request_access') {
     $resource_id = (int)($_POST['resource_id'] ?? 0);
 
     if (empty($_SESSION['venture_id'])) {
-        $redirect = 'venture_resources.php';
+        $redirect = 'venture_resources';
 
         if ($resource_id > 0) {
             $redirect .= '?request_resource_id=' . $resource_id;
         }
 
-        pr_redirect(pr_base_url() . '/login.php?redirect=' . urlencode($redirect));
+        pr_redirect(pr_base_url() . '/login?redirect=' . urlencode($redirect));
     }
 
     $venture_id = (int)$_SESSION['venture_id'];
     $reason = trim((string)($_POST['reason'] ?? ''));
 
     if ($resource_id <= 0) {
-        pr_flash_redirect('../venture_resources.php', 'Invalid resource selected.', 'error');
+        pr_flash_redirect('../venture_resources', 'Invalid resource selected.', 'error');
     }
 
     if ($reason === '') {
         pr_flash_redirect(
-            '../venture_resources.php?request_resource_id=' . $resource_id,
+            '../venture_resources?request_resource_id=' . $resource_id,
             'Please provide a reason for requesting this resource.',
             'error'
         );
@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'request_access') {
     $stmt->close();
 
     if (!$venture) {
-        pr_flash_redirect('../login.php', 'Venture account not found. Please login again.', 'error');
+        pr_flash_redirect('../login', 'Venture account not found. Please login again.', 'error');
     }
 
     $requester_name = (string)$venture['name'];
@@ -216,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'request_access') {
     $stmt->close();
 
     if (!$resource) {
-        pr_flash_redirect('../venture_resources.php', 'Resource not found or inactive.', 'error');
+        pr_flash_redirect('../venture_resources', 'Resource not found or inactive.', 'error');
     }
 
     if (($resource['access_level'] ?? '') === 'public') {
@@ -236,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'request_access') {
     $stmt->close();
 
     if ($existing && (string)$existing['status'] === 'approved') {
-        pr_flash_redirect('../venture_resources.php', 'Your request for this resource is already approved. You can view or download it now.', 'success');
+        pr_flash_redirect('../venture_resources', 'Your request for this resource is already approved. You can view or download it now.', 'success');
     }
 
     if ($existing) {
@@ -252,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'request_access') {
 
         $stmt = $conn->prepare("UPDATE resource_requests SET {$set} WHERE id = ? LIMIT 1");
         if (!$stmt) {
-            pr_flash_redirect('../venture_resources.php', 'Failed to prepare resend request: ' . $conn->error, 'error');
+            pr_flash_redirect('../venture_resources', 'Failed to prepare resend request: ' . $conn->error, 'error');
         }
 
         $stmt->bind_param('ssssi', $requester_name, $requester_email, $requester_org, $reason, $existing_id);
@@ -260,13 +260,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'request_access') {
         if (!$stmt->execute()) {
             $error = $stmt->error;
             $stmt->close();
-            pr_flash_redirect('../venture_resources.php?request_resource_id=' . $resource_id, 'Failed to resend request: ' . $error, 'error');
+            pr_flash_redirect('../venture_resources?request_resource_id=' . $resource_id, 'Failed to resend request: ' . $error, 'error');
         }
 
         $stmt->close();
 
         pr_flash_redirect(
-            '../venture_resources.php',
+            '../venture_resources',
             'Your resource access request has been resent successfully and is pending approval.',
             'success'
         );
@@ -278,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'request_access') {
         $stmt = $conn->prepare("\n            INSERT INTO resource_requests\n            (resource_id, venture_id, requester_name, requester_email, requester_org, reason, status, created_at, updated_at)\n            VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())\n        ");
 
         if (!$stmt) {
-            pr_flash_redirect('../venture_resources.php', 'Failed to prepare request: ' . $conn->error, 'error');
+            pr_flash_redirect('../venture_resources', 'Failed to prepare request: ' . $conn->error, 'error');
         }
 
         $stmt->bind_param('iisssss', $resource_id, $venture_id, $requester_name, $requester_email, $requester_org, $reason, $status);
@@ -286,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'request_access') {
         $stmt = $conn->prepare("\n            INSERT INTO resource_requests\n            (resource_id, requester_name, requester_email, requester_org, reason, status, created_at, updated_at)\n            VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())\n        ");
 
         if (!$stmt) {
-            pr_flash_redirect('../venture_resources.php', 'Failed to prepare request: ' . $conn->error, 'error');
+            pr_flash_redirect('../venture_resources', 'Failed to prepare request: ' . $conn->error, 'error');
         }
 
         $stmt->bind_param('isssss', $resource_id, $requester_name, $requester_email, $requester_org, $reason, $status);
@@ -295,12 +295,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'request_access') {
     if (!$stmt->execute()) {
         $error = $stmt->error;
         $stmt->close();
-        pr_flash_redirect('../venture_resources.php?request_resource_id=' . $resource_id, 'Failed to submit request: ' . $error, 'error');
+        pr_flash_redirect('../venture_resources?request_resource_id=' . $resource_id, 'Failed to submit request: ' . $error, 'error');
     }
 
     $stmt->close();
 
-    pr_flash_redirect('../venture_resources.php', 'Your resource access request has been submitted successfully.', 'success');
+    pr_flash_redirect('../venture_resources', 'Your resource access request has been submitted successfully.', 'success');
 }
 
 /* =========================================================
@@ -312,7 +312,7 @@ if ($action === 'download') {
     $token = trim((string)($_GET['token'] ?? ''));
 
     if ($resource_id <= 0) {
-        pr_flash_redirect('../venture_resources.php', 'Invalid resource selected.', 'error');
+        pr_flash_redirect('../venture_resources', 'Invalid resource selected.', 'error');
     }
 
     $stmt = $conn->prepare("\n        SELECT *\n        FROM resources\n        WHERE id = ?\n          AND status = 'active'\n        LIMIT 1\n    ");
@@ -322,7 +322,7 @@ if ($action === 'download') {
     $stmt->close();
 
     if (!$resource) {
-        pr_flash_redirect('../venture_resources.php', 'Resource not found or inactive.', 'error');
+        pr_flash_redirect('../venture_resources', 'Resource not found or inactive.', 'error');
     }
 
     $access_level = (string)($resource['access_level'] ?? 'request_required');
@@ -369,19 +369,19 @@ if ($action === 'download') {
     }
 
     if (!$can_download) {
-        pr_flash_redirect('../venture_resources.php', 'You do not have permission to download this resource.', 'error');
+        pr_flash_redirect('../venture_resources', 'You do not have permission to download this resource.', 'error');
     }
 
     $file_path = trim((string)($resource['file_path'] ?? ''));
 
     if ($file_path === '') {
-        pr_flash_redirect('../venture_resources.php', 'Resource file path is missing.', 'error');
+        pr_flash_redirect('../venture_resources', 'Resource file path is missing.', 'error');
     }
 
     $absolute_path = pr_resolve_file_path($file_path);
 
     if ($absolute_path === '') {
-        pr_flash_redirect('../venture_resources.php', 'Resource file not found on server. Please contact admin to re-upload this file.', 'error');
+        pr_flash_redirect('../venture_resources', 'Resource file not found on server. Please contact admin to re-upload this file.', 'error');
     }
 
     $stmt = $conn->prepare("UPDATE resources SET download_count = COALESCE(download_count, 0) + 1 WHERE id = ?");
@@ -412,13 +412,13 @@ if (!empty($_GET['download']) && $has_download_token) {
     $stmt->close();
 
     if (!$dl) {
-        pr_flash_redirect('../venture_resources.php', 'Invalid download link.', 'error');
+        pr_flash_redirect('../venture_resources', 'Invalid download link.', 'error');
     }
 
     $absolute_path = pr_resolve_file_path((string)$dl['file_path']);
 
     if ($absolute_path === '') {
-        pr_flash_redirect('../venture_resources.php', 'Resource file not found on server. Please contact admin to re-upload this file.', 'error');
+        pr_flash_redirect('../venture_resources', 'Resource file not found on server. Please contact admin to re-upload this file.', 'error');
     }
 
     $resource_id = (int)$dl['resource_id'];

@@ -10,7 +10,7 @@ $conn->set_charset('utf8mb4');
 
 function redirect_faqs(): void
 {
-    header('Location: ../faqs.php');
+    header('Location: ../faqs');
     exit;
 }
 
@@ -33,7 +33,7 @@ if ($action === 'save') {
     if ($question === '') {
         flash('faqs', 'Question is required.', 'error');
 
-        header('Location: ../faqs.php' . ($id > 0 ? '?edit=' . $id : ''));
+        header('Location: ../faqs' . ($id > 0 ? '?edit=' . $id : ''));
         exit;
     }
 

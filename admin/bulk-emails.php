@@ -155,7 +155,7 @@ $site_name = function_exists('get_setting')
     <header class="admin-topbar">
         <div class="topbar-left">
             <div class="topbar-breadcrumb">
-                <a href="index.php">Dashboard</a> &rsaquo; <strong>Bulk Emails</strong>
+                <a href="./">Dashboard</a> &rsaquo; <strong>Bulk Emails</strong>
             </div>
         </div>
         <div class="topbar-right">

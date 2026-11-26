@@ -89,7 +89,7 @@ $statuses        = ['pending' => 'Pending', 'approved' => 'Approved', 'rejected'
 
 <header class="admin-topbar">
   <div class="topbar-left">
-    <div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> > <strong>Investor Directory</strong></div>
+    <div class="topbar-breadcrumb"><a href="./">Dashboard</a> > <strong>Investor Directory</strong></div>
   </div>
   <div class="topbar-right">
     <a href="<?= SITE_URL ?>" target="_blank" class="btn btn-secondary btn-sm"><i class="fa fa-eye"></i> View Site</a>
@@ -106,7 +106,7 @@ $statuses        = ['pending' => 'Pending', 'approved' => 'Approved', 'rejected'
     <p class="page-subtitle">Profiles, moderation & venture matchmaking &nbsp;.&nbsp; <?= number_format($total) ?> investors</p>
   </div>
   <div class="page-actions">
-    <a href="investor-matches.php" class="btn btn-secondary"><i class="fa fa-magic"></i> Matchmaking</a>
+    <a href="investor-matches" class="btn btn-secondary"><i class="fa fa-magic"></i> Matchmaking</a>
     <button type="button" class="btn btn-primary" onclick="openInvestorModal()"><i class="fa fa-plus"></i> Add Investor</button>
   </div>
 </div>
@@ -135,7 +135,7 @@ $statuses        = ['pending' => 'Pending', 'approved' => 'Approved', 'rejected'
     </select>
     <button type="submit" class="btn btn-secondary btn-sm"><i class="fa fa-search"></i></button>
     <?php if ($search||$filter_status||$filter_type||$filter_stage): ?>
-      <a href="investors.php" class="btn btn-sm legacy-style-2af7847e65"><i class="fa fa-times"></i> Clear</a>
+      <a href="investors" class="btn btn-sm legacy-style-2af7847e65"><i class="fa fa-times"></i> Clear</a>
     <?php endif; ?>
   </form>
 </div>
@@ -224,7 +224,7 @@ $statuses        = ['pending' => 'Pending', 'approved' => 'Approved', 'rejected'
               onclick='editInvestor(<?= json_encode($inv, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT) ?>)'>
         <i class="fa fa-edit"></i>
       </button>
-      <a href="investor-matches.php?investor_id=<?= (int)$inv['id'] ?>" class="btn btn-sm btn-teal" title="View matches">
+      <a href="investor-matches?investor_id=<?= (int)$inv['id'] ?>" class="btn btn-sm btn-teal" title="View matches">
         <i class="fa fa-magic"></i>
       </a>
       <form method="POST" action="includes/process-investors.php"

@@ -27,11 +27,11 @@ function vp_safe_redirect(string $redirect): string
     $redirect = trim($redirect);
 
     if ($redirect === '') {
-        return 'dashboard.php';
+        return 'dashboard';
     }
 
     if (preg_match('#^https?://#i', $redirect)) {
-        return 'dashboard.php';
+        return 'dashboard';
     }
 
     $redirect = ltrim($redirect, '/');
@@ -42,7 +42,7 @@ function vp_safe_redirect(string $redirect): string
         str_starts_with($redirect, '//') ||
         preg_match('/[\r\n]/', $redirect)
     ) {
-        return 'dashboard.php';
+        return 'dashboard';
     }
 
     return $redirect;
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $email    = trim((string)($_POST['email'] ?? ''));
 site_require_csrf();
 $password = (string)($_POST['password'] ?? '');
-$redirect = vp_safe_redirect((string)($_POST['redirect'] ?? 'dashboard.php'));
+$redirect = vp_safe_redirect((string)($_POST['redirect'] ?? 'dashboard'));
 $remember = isset($_POST['remember']) ? 1 : 0;
 
 $_SESSION['login_old_email'] = $email;

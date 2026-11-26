@@ -1,27 +1,21 @@
 <?php
 ob_start();
-session_start();
-// require_once 'includes/config.php';
-require_once 'includes/header.php';
 
-$page_title    = 'Risk Rating - New Section Entry';
-$allowed_roles = ['Administrator', 'MEAL Lead', 'Programs Lead', 'Reviewer', 'Project Officer'];
+// Shared site config + admin login (redirects to login when signed out).
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/includes/auth.php';
 
-if (
-    empty($_SESSION['user_id']) ||
-    empty($_SESSION['role']) ||
-    !in_array($_SESSION['role'], $allowed_roles, true)
-) {
-    $_SESSION['error'] = "Access denied.";
-    header("Location: dashboard.php");
-    exit();
-}
+$page_title = 'Risk Rating - New Section Entry';
+
+check_role(['Administrator', 'MEAL Lead', 'Programs Lead', 'Reviewer', 'Project Officer']);
 
 // -- Helpers -------------------------------------------------------------------
 
-function h($value): string
-{
-    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+if (!function_exists('h')) {
+    function h($value): string
+    {
+        return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+    }
 }
 
 function post_str(string $key): ?string
@@ -41,7 +35,7 @@ function post_int(string $key): ?int
 // -- AJAX: INSERT --------------------------------------------------------------
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (post_str('action') === 'insert')) {
-    if (empty($_SESSION['user_id'])) {
+    if (empty($_SESSION['admin_id'])) {
         http_response_code(401);
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'message' => 'Unauthorised.']);
@@ -120,7 +114,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (post_str('action') === 'insert')) 
 
 // -- Page-level flash messages -------------------------------------------------
 
-$current_user_id = (int)($_SESSION['user_id'] ?? 0);
+// Page chrome is loaded only after the JSON (AJAX) handler above has exited.
+require_once 'includes/header.php';
+
+$current_user_id = (int)($_SESSION['admin_id'] ?? 0);
 $success_msg     = $_SESSION['success'] ?? '';
 $error_msg       = $_SESSION['error'] ?? '';
 unset($_SESSION['success'], $_SESSION['error']);

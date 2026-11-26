@@ -128,7 +128,7 @@ $activeIsPdf = $active ? loa_template_is_pdf((string)($active['mime_type'] ?? ''
     <header class="admin-topbar">
         <div class="topbar-left">
             <div class="topbar-breadcrumb">
-                <a href="index.php">Dashboard</a>
+                <a href="./">Dashboard</a>
                 &gt;
                 <strong>LoA Template</strong>
             </div>

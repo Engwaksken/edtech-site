@@ -741,7 +741,7 @@ if (isset($report_types[$tab]) && $mentor_reports_has_type) {
 <?php include 'includes/sidebar.php'; ?>
 <div class="admin-main" id="adminMain">
 <header class="admin-topbar">
-  <div class="topbar-left"><div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> &rsaquo; <strong>Mentor Reports</strong></div></div>
+  <div class="topbar-left"><div class="topbar-breadcrumb"><a href="./">Dashboard</a> &rsaquo; <strong>Mentor Reports</strong></div></div>
   <div class="topbar-right"><div class="admin-avatar"><div class="avatar-circle"><?= strtoupper(substr($ADMIN['full_name'] ?? 'A', 0, 1)) ?></div></div></div>
 </header>
 <div class="admin-content">

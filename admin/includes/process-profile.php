@@ -23,7 +23,7 @@ function profile_redirect(string $msg, string $type = 'success'): void
         'type' => $type
     ];
 
-    header('Location: ../profile.php');
+    header('Location: ../profile');
     exit;
 }
 

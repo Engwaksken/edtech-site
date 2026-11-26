@@ -24,7 +24,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 
 $conn->set_charset('utf8mb4');
 
-function redirect_with_message(string $message, string $type = 'danger', string $location = '../startup-field-visits.php'): void
+function redirect_with_message(string $message, string $type = 'danger', string $location = '../startup-field-visits'): void
 {
     if (function_exists('send_notification') && isset($_SESSION['user_id'])) {
         send_notification((int)$_SESSION['user_id'], $message, $type);
@@ -154,7 +154,7 @@ function safe_report_upload_path(int $visitId, string $extension): array
 $userId = (int)($_SESSION['user_id'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../startup-field-visits.php');
+    header('Location: ../startup-field-visits');
     exit();
 }
 
@@ -168,7 +168,7 @@ if (isset($_POST['generate_visit_form'])) {
     $milestone = get_startup_milestone($conn, $milestoneId);
 
     if (!$milestone) {
-        redirect_with_message('Invalid startup milestone selected.', 'danger', '../startup-milestones.php');
+        redirect_with_message('Invalid startup milestone selected.', 'danger', '../startup-milestones');
     }
 
     $visitCode = generate_visit_code($conn);
@@ -180,7 +180,7 @@ if (isset($_POST['generate_visit_form'])) {
     $contactPhone = post_nullable_string('contact_phone');
 
     if (!is_valid_date($plannedDate)) {
-        redirect_with_message('Invalid planned visit date.', 'danger', '../startup-milestones.php');
+        redirect_with_message('Invalid planned visit date.', 'danger', '../startup-milestones');
     }
 
     $stmt = $conn->prepare("
@@ -201,7 +201,7 @@ if (isset($_POST['generate_visit_form'])) {
     ");
 
     if (!$stmt) {
-        redirect_with_message('Failed to prepare field visit form query: ' . $conn->error, 'danger', '../startup-milestones.php');
+        redirect_with_message('Failed to prepare field visit form query: ' . $conn->error, 'danger', '../startup-milestones');
     }
 
     $applicationId = (int)$milestone['application_id'];
@@ -230,13 +230,13 @@ if (isset($_POST['generate_visit_form'])) {
             log_action($userId, 'Generate Startup Field Visit Form', 'startup_field_visits', $visitId, "Generated field visit form {$visitCode}");
         }
 
-        redirect_with_message('Field visit form generated successfully.', 'success', '../startup-field-visits.php?visit_id=' . $visitId);
+        redirect_with_message('Field visit form generated successfully.', 'success', '../startup-field-visits?visit_id=' . $visitId);
     }
 
     $error = $stmt->error ?: $conn->error;
     $stmt->close();
 
-    redirect_with_message('Error generating field visit form: ' . $error, 'danger', '../startup-milestones.php');
+    redirect_with_message('Error generating field visit form: ' . $error, 'danger', '../startup-milestones');
 }
 
 /*
@@ -256,18 +256,18 @@ if (isset($_POST['submit_field_visit'])) {
     }
 
     if (!is_valid_date($actualVisitDate)) {
-        redirect_with_message('Invalid actual visit date.', 'danger', '../startup-field-visits.php?visit_id=' . $visitId);
+        redirect_with_message('Invalid actual visit date.', 'danger', '../startup-field-visits?visit_id=' . $visitId);
     }
 
     $allowedBusinessStatuses = ['Not Visited', 'Visited', 'Could Not Locate', 'Closed', 'Needs Follow Up'];
     $allowedRecommendations = ['Strongly Recommend', 'Recommend', 'Needs Support', 'Do Not Recommend', 'Pending'];
 
     if (!in_array($businessStatus, $allowedBusinessStatuses, true)) {
-        redirect_with_message('Invalid business status.', 'danger', '../startup-field-visits.php?visit_id=' . $visitId);
+        redirect_with_message('Invalid business status.', 'danger', '../startup-field-visits?visit_id=' . $visitId);
     }
 
     if (!in_array($recommendation, $allowedRecommendations, true)) {
-        redirect_with_message('Invalid field recommendation.', 'danger', '../startup-field-visits.php?visit_id=' . $visitId);
+        redirect_with_message('Invalid field recommendation.', 'danger', '../startup-field-visits?visit_id=' . $visitId);
     }
 
     $scores = [
@@ -283,7 +283,7 @@ if (isset($_POST['submit_field_visit'])) {
 
     foreach ($scores as $label => $score) {
         if ($score < 0 || $score > 10) {
-            redirect_with_message('All field scores must be between 0 and 10.', 'danger', '../startup-field-visits.php?visit_id=' . $visitId);
+            redirect_with_message('All field scores must be between 0 and 10.', 'danger', '../startup-field-visits?visit_id=' . $visitId);
         }
     }
 
@@ -306,24 +306,24 @@ if (isset($_POST['submit_field_visit'])) {
         $originalName = (string)($file['name'] ?? '');
 
         if ($fileSize <= 0) {
-            redirect_with_message('Uploaded report file is empty.', 'danger', '../startup-field-visits.php?visit_id=' . $visitId);
+            redirect_with_message('Uploaded report file is empty.', 'danger', '../startup-field-visits?visit_id=' . $visitId);
         }
 
         if ($fileSize > 15728640) {
-            redirect_with_message('Report file must be less than 15MB.', 'danger', '../startup-field-visits.php?visit_id=' . $visitId);
+            redirect_with_message('Report file must be less than 15MB.', 'danger', '../startup-field-visits?visit_id=' . $visitId);
         }
 
         $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
         $allowed = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'zip'];
 
         if (!in_array($extension, $allowed, true)) {
-            redirect_with_message('Report file type is not allowed.', 'danger', '../startup-field-visits.php?visit_id=' . $visitId);
+            redirect_with_message('Report file type is not allowed.', 'danger', '../startup-field-visits?visit_id=' . $visitId);
         }
 
         $paths = safe_report_upload_path($visitId, $extension);
 
         if (!move_uploaded_file($tmpPath, $paths['disk_path'])) {
-            redirect_with_message('Failed to upload report file.', 'danger', '../startup-field-visits.php?visit_id=' . $visitId);
+            redirect_with_message('Failed to upload report file.', 'danger', '../startup-field-visits?visit_id=' . $visitId);
         }
 
         $reportFile = $paths['web_path'];
@@ -368,7 +368,7 @@ if (isset($_POST['submit_field_visit'])) {
     ");
 
     if (!$stmt) {
-        redirect_with_message('Failed to prepare field visit submission: ' . $conn->error, 'danger', '../startup-field-visits.php?visit_id=' . $visitId);
+        redirect_with_message('Failed to prepare field visit submission: ' . $conn->error, 'danger', '../startup-field-visits?visit_id=' . $visitId);
     }
 
     $stmt->bind_param(
@@ -410,14 +410,14 @@ if (isset($_POST['submit_field_visit'])) {
             log_action($userId, 'Submit Startup Field Visit Report', 'startup_field_visits', $visitId, "Submitted field visit report");
         }
 
-        redirect_with_message('Field visit report submitted successfully.', 'success', '../startup-field-visits.php?visit_id=' . $visitId);
+        redirect_with_message('Field visit report submitted successfully.', 'success', '../startup-field-visits?visit_id=' . $visitId);
     }
 
     $error = $stmt->error ?: $conn->error;
     $stmt->close();
 
-    redirect_with_message('Error submitting field visit report: ' . $error, 'danger', '../startup-field-visits.php?visit_id=' . $visitId);
+    redirect_with_message('Error submitting field visit report: ' . $error, 'danger', '../startup-field-visits?visit_id=' . $visitId);
 }
 
-header('Location: ../startup-field-visits.php');
+header('Location: ../startup-field-visits');
 exit();

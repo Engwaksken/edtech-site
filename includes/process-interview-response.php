@@ -25,7 +25,7 @@ if ((int)$interview['allow_multiple'] === 0) {
     $ip   = $_SERVER['REMOTE_ADDR'] ?? '';
     $skey = 'iv_done_' . $interview_id;
     if (isset($_SESSION[$skey])) {
-        header('Location: ' . $site_url . '/interview.php?t=' . urlencode($token) . '&done=1');
+        header('Location: ' . $site_url . '/interview?t=' . urlencode($token) . '&done=1');
         exit;
     }
 }
@@ -197,12 +197,12 @@ try {
     // Mark session as done
     $_SESSION['iv_done_' . $interview_id] = true;
 
-    header('Location: ' . $site_url . '/interview.php?t=' . urlencode($token) . '&done=1');
+    header('Location: ' . $site_url . '/interview?t=' . urlencode($token) . '&done=1');
     exit;
 
 } catch (Throwable $e) {
     $conn->rollback();
     error_log('Interview response failed: ' . $e->getMessage());
-    header('Location: ' . $site_url . '/interview.php?t=' . urlencode($token) . '&error=1');
+    header('Location: ' . $site_url . '/interview?t=' . urlencode($token) . '&error=1');
     exit;
 }

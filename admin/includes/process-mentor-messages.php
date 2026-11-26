@@ -16,7 +16,7 @@ $IS_MENTOR = ms_is_mentor();
 
 function mmsg_redirect(): void
 {
-    header('Location: ../mentor-calendar.php');
+    header('Location: ../mentor-calendar');
     exit;
 }
 

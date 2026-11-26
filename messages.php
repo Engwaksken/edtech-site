@@ -706,6 +706,20 @@ if ($draft_id > 0) {
     }
 }
 
+/* ?compose=<mentor_id> (e.g. from the mentors list) opens a new message
+   pre-addressed to that mentor, if they are a selectable recipient. */
+$compose_mentor_id = 0;
+if (!$active_draft && isset($_GET['compose'])) {
+    $requested = (int)$_GET['compose'];
+    foreach ($mentor_rows as $mentor) {
+        if ((int)$mentor['id'] === $requested) {
+            $compose_mentor_id = $requested;
+            break;
+        }
+    }
+}
+$compose_open = $active_draft || $compose_mentor_id > 0;
+
 include __DIR__ . '/layout.php';
 ?>
 
@@ -1497,7 +1511,7 @@ unset($_SESSION['messages_flash']);
         <nav class="mail-nav">
 
             <a
-                href="messages.php?folder=inbox"
+                href="messages?folder=inbox"
                 class="mail-nav-link <?= $folder === 'inbox' ? 'active' : '' ?>"
             >
                 <i class="fas fa-inbox"></i>
@@ -1511,7 +1525,7 @@ unset($_SESSION['messages_flash']);
             </a>
 
             <a
-                href="messages.php?folder=sent"
+                href="messages?folder=sent"
                 class="mail-nav-link <?= $folder === 'sent' ? 'active' : '' ?>"
             >
                 <i class="fas fa-paper-plane"></i>
@@ -1523,7 +1537,7 @@ unset($_SESSION['messages_flash']);
             </a>
 
             <a
-                href="messages.php?folder=drafts"
+                href="messages?folder=drafts"
                 class="mail-nav-link <?= $folder === 'drafts' ? 'active' : '' ?>"
             >
                 <i class="fas fa-file-alt"></i>
@@ -1535,7 +1549,7 @@ unset($_SESSION['messages_flash']);
             </a>
 
             <a
-                href="messages.php?folder=all"
+                href="messages?folder=all"
                 class="mail-nav-link <?= $folder === 'all' ? 'active' : '' ?>"
             >
                 <i class="fas fa-envelope-open-text"></i>
@@ -1604,7 +1618,7 @@ unset($_SESSION['messages_flash']);
 
                     <?php if ($search !== ''): ?>
                         <a
-                            href="messages.php?folder=<?= msg_h($folder) ?>"
+                            href="messages?folder=<?= msg_h($folder) ?>"
                             class="mail-btn"
                             style="min-height:30px;padding:5px 9px;font-size:10px"
                         >
@@ -1627,7 +1641,7 @@ unset($_SESSION['messages_flash']);
                         <?php foreach ($draft_rows as $draft): ?>
 
                             <a
-                                href="messages.php?folder=drafts&amp;draft=<?= (int)$draft['id'] ?>"
+                                href="messages?folder=drafts&amp;draft=<?= (int)$draft['id'] ?>"
                                 class="mail-row <?= $draft_id === (int)$draft['id'] ? 'active' : '' ?>"
                             >
                                 <div class="mail-avatar">
@@ -1693,7 +1707,7 @@ unset($_SESSION['messages_flash']);
                             ?>
 
                             <a
-                                href="messages.php?folder=<?= msg_h($folder) ?>&amp;thread=<?= rawurlencode((string)$thread['thread_id']) ?>"
+                                href="messages?folder=<?= msg_h($folder) ?>&amp;thread=<?= rawurlencode((string)$thread['thread_id']) ?>"
                                 class="mail-row <?= $unread ? 'unread' : '' ?> <?= $is_active ? 'active' : '' ?>"
                             >
                                 <div class="mail-avatar">
@@ -1980,7 +1994,7 @@ unset($_SESSION['messages_flash']);
 
 <!-- Compose -->
 <div
-    class="mail-compose-overlay <?= $active_draft ? 'open' : '' ?>"
+    class="mail-compose-overlay <?= $compose_open ? 'open' : '' ?>"
     id="mailComposeOverlay"
 >
     <div
@@ -2040,7 +2054,7 @@ unset($_SESSION['messages_flash']);
                         <?php foreach ($mentor_rows as $mentor): ?>
                             <option
                                 value="<?= (int)$mentor['id'] ?>"
-                                <?= (int)($active_draft['recipient_mentor_id'] ?? -1) === (int)$mentor['id']
+                                <?= (int)($active_draft['recipient_mentor_id'] ?? ($compose_mentor_id ?: -1)) === (int)$mentor['id']
                                     ? 'selected'
                                     : '' ?>
                             >

@@ -125,7 +125,7 @@ function file_icon(string $path): string
  ----------------------------------------------------------------------- */
 $milestone_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($milestone_id <= 0) {
-    header('Location: milestones.php');
+    header('Location: milestones');
     exit();
 }
 
@@ -196,7 +196,7 @@ $milestone = $result ? $result->fetch_assoc() : null;
 $stmt->close();
 
 if (!$milestone) {
-    header('Location: milestones.php');
+    header('Location: milestones');
     exit();
 }
 
@@ -406,10 +406,10 @@ $entityIcon  = strtolower($entityType) === 'project' ? 'fa-project-diagram' : 'f
         </div>
 
         <div class="hero-actions">
-            <a href="milestones.php" class="btn btn-secondary">
+            <a href="milestones" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back
             </a>
-            <a href="milestones.php?edit=<?= (int)$milestone_id ?>" class="btn btn-dark">
+            <a href="milestones?edit=<?= (int)$milestone_id ?>" class="btn btn-dark">
                 <i class="fas fa-edit"></i> Edit Milestone
             </a>
         </div>

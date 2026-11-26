@@ -148,14 +148,14 @@ $site_name = function_exists('get_setting')
   <header class="admin-topbar">
     <div class="topbar-left">
       <div class="topbar-breadcrumb">
-        <a href="index.php">Dashboard</a> &rsaquo; <strong>Surveys</strong>
+        <a href="./">Dashboard</a> &rsaquo; <strong>Surveys</strong>
       </div>
     </div>
     <div class="topbar-right">
       <a href="<?= survey_h(survey_base_url()) ?>" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" title="View Site" aria-label="View Site">
         <i class="fa fa-eye" aria-hidden="true"></i>
       </a>
-      <form method="POST" action="logout.php" class="inline-action-form">
+      <form method="POST" action="logout" class="inline-action-form">
         <button type="submit" class="btn btn-secondary btn-sm topbar-logout" title="Logout" aria-label="Logout">
           <i class="fa fa-sign-out-alt" aria-hidden="true"></i>
         </button>
@@ -177,7 +177,7 @@ $site_name = function_exists('get_setting')
     </div>
 
     <div class="filter-bar">
-      <form method="get" action="surveys.php">
+      <form method="get" action="surveys">
         <input class="form-control filter-search" type="search" name="q" value="<?= survey_h($search) ?>" placeholder="Search survey title or description" aria-label="Search surveys">
         <select class="form-control" name="status" aria-label="Filter by status">
           <option value="">All statuses</option>
@@ -194,7 +194,7 @@ $site_name = function_exists('get_setting')
         </select>
         <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i> Apply</button>
         <?php if ($search !== '' || $status_filter !== '' || $period_filter !== ''): ?>
-          <a class="btn btn-secondary" href="surveys.php"><i class="fa fa-times"></i> Clear</a>
+          <a class="btn btn-secondary" href="surveys"><i class="fa fa-times"></i> Clear</a>
         <?php endif; ?>
       </form>
     </div>
@@ -219,7 +219,7 @@ $site_name = function_exists('get_setting')
           if ($surveys):
             while ($s = $surveys->fetch_assoc()):
               $has = true;
-              $link        = survey_base_url() . '/survey.php?t=' . urlencode($s['external_token']);
+              $link        = survey_base_url() . '/survey?t=' . urlencode($s['external_token']);
               $statusClass = 'status-' . survey_h($s['status']);
               $has_files   = (int)$s['file_questions_count'] > 0;
           ?>
@@ -267,12 +267,12 @@ $site_name = function_exists('get_setting')
               <!-- Actions -->
               <td>
                 <div class="tbl-actions">
-                  <a href="survey-builder.php?id=<?= (int)$s['id'] ?>"
+                  <a href="survey-builder?id=<?= (int)$s['id'] ?>"
                      class="btn btn-sm btn-primary" title="Open Builder" aria-label="Open Builder">
                     <i class="fa fa-tools" aria-hidden="true"></i>
                   </a>
 
-                  <a href="survey-responses.php?id=<?= (int)$s['id'] ?>"
+                  <a href="survey-responses?id=<?= (int)$s['id'] ?>"
                      class="btn btn-sm btn-teal" title="View Responses" aria-label="View Responses">
                     <i class="fa fa-chart-bar" aria-hidden="true"></i>
                   </a>

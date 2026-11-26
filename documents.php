@@ -538,7 +538,7 @@ $has_docs    = !empty($docs_arr);
 
   <h3>No session reports yet</h3>
   <p>Reports uploaded by you or your mentors after a mentoring session will appear here.</p>
-  <a href="sessions.php" class="btn btn-primary">Go to Sessions</a>
+  <a href="sessions" class="btn btn-primary">Go to Sessions</a>
 </div>
 <?php else: ?>
 <div class="doc-grid">
@@ -597,7 +597,7 @@ $has_docs    = !empty($docs_arr);
   <div class="doc-card-footer">
     <div class="visibility-badge vis-private">
       <i class="fa fa-link"></i>
-      <a href="sessions.php" style="color:var(--muted);text-decoration:none">View session</a>
+      <a href="sessions" style="color:var(--muted);text-decoration:none">View session</a>
     </div>
     <div style="display:flex;gap:6px">
       <a href="includes/portal-process.php?action=session_report_pdf&id=<?= (int)$rep['id'] ?>" class="btn btn-outline btn-sm" title="Download as PDF" target="_blank">

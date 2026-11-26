@@ -9,13 +9,13 @@ $global_topbar_site_url = defined('SITE_URL') ? rtrim((string)SITE_URL, '/') : '
 <header class="admin-topbar global-admin-topbar">
   <div class="topbar-left">
     <div class="topbar-breadcrumb">
-      <a href="index.php">Dashboard</a>
+      <a href="./">Dashboard</a>
       <span aria-hidden="true">›</span>
       <strong><?= h($global_topbar_title) ?></strong>
     </div>
   </div>
   <div class="topbar-right">
-    <a href="messages.php" class="topbar-btn" title="Messages" aria-label="Messages">
+    <a href="messages" class="topbar-btn" title="Messages" aria-label="Messages">
       <i class="fas fa-envelope" aria-hidden="true"></i>
     </a>
     <?php if ($global_topbar_site_url !== ''): ?>

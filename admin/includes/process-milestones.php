@@ -38,7 +38,7 @@ function ms_post(string $key, string $default = ''): string
 
 function ms_entry_url(int $id = 0): string
 {
-    return '../milestones.php?tab=entry' . ($id > 0 ? '&edit=' . $id : '');
+    return '../milestones?tab=entry' . ($id > 0 ? '&edit=' . $id : '');
 }
 
 function ms_date(?string $date): ?string
@@ -203,7 +203,7 @@ function ms_clean_gaps(string $json): array
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    ms_redirect('../milestones.php', 'Invalid request.', 'error');
+    ms_redirect('../milestones', 'Invalid request.', 'error');
 }
 
 $action = ms_post('action');
@@ -251,7 +251,7 @@ if ($action === 'save_analysis') {
 
     if ($id > 0 && !ms_exists($conn, 'gap_analyses', $id)) {
         ms_redirect(
-            '../milestones.php?tab=analyses',
+            '../milestones?tab=analyses',
             'Analysis not found. Cannot update.',
             'error',
             $old_input
@@ -438,7 +438,7 @@ if ($action === 'save_analysis') {
         unset($_SESSION['milestones_old']);
 
         ms_redirect(
-            '../milestones.php?tab=entry&edit=' . $analysis_id,
+            '../milestones?tab=entry&edit=' . $analysis_id,
             $id > 0 ? 'Analysis updated successfully.' : 'Analysis saved successfully.'
         );
 
@@ -463,7 +463,7 @@ if ($action === 'delete_analysis') {
     $id = (int)($_POST['id'] ?? 0);
 
     if ($id <= 0) {
-        ms_redirect('../milestones.php?tab=analyses', 'Invalid analysis.', 'error');
+        ms_redirect('../milestones?tab=analyses', 'Invalid analysis.', 'error');
     }
 
     $conn->begin_transaction();
@@ -495,12 +495,12 @@ if ($action === 'delete_analysis') {
 
         unset($_SESSION['milestones_old']);
 
-        ms_redirect('../milestones.php?tab=analyses', 'Analysis deleted successfully.');
+        ms_redirect('../milestones?tab=analyses', 'Analysis deleted successfully.');
 
     } catch (Throwable $e) {
         $conn->rollback();
 
-        ms_redirect('../milestones.php?tab=analyses', 'Delete failed: ' . $e->getMessage(), 'error');
+        ms_redirect('../milestones?tab=analyses', 'Delete failed: ' . $e->getMessage(), 'error');
     }
 }
 
@@ -511,13 +511,13 @@ if ($action === 'delete_gap') {
     $id = (int)($_POST['id'] ?? 0);
 
     if ($id <= 0) {
-        ms_redirect('../milestones.php?tab=tracker', 'Invalid gap.', 'error');
+        ms_redirect('../milestones?tab=tracker', 'Invalid gap.', 'error');
     }
 
     $stmt = $conn->prepare("DELETE FROM gap_items WHERE id = ? LIMIT 1");
 
     if (!$stmt) {
-        ms_redirect('../milestones.php?tab=tracker', 'DB error: ' . $conn->error, 'error');
+        ms_redirect('../milestones?tab=tracker', 'DB error: ' . $conn->error, 'error');
     }
 
     $stmt->bind_param('i', $id);
@@ -526,7 +526,7 @@ if ($action === 'delete_gap') {
     $stmt->close();
 
     ms_redirect(
-        '../milestones.php?tab=tracker',
+        '../milestones?tab=tracker',
         $ok ? 'Gap deleted successfully.' : 'Delete failed: ' . $err,
         $ok ? 'success' : 'error'
     );
@@ -539,7 +539,7 @@ if ($action === 'update_gap_status') {
     $id = (int)($_POST['id'] ?? 0);
 
     if ($id <= 0) {
-        ms_redirect('../milestones.php?tab=tracker', 'Invalid gap.', 'error');
+        ms_redirect('../milestones?tab=tracker', 'Invalid gap.', 'error');
     }
 
     $status = ms_status(ms_post('status'));
@@ -583,7 +583,7 @@ if ($action === 'update_gap_status') {
     $stmt = $conn->prepare($sql);
 
     if (!$stmt) {
-        ms_redirect('../milestones.php?tab=tracker', 'DB error: ' . $conn->error, 'error');
+        ms_redirect('../milestones?tab=tracker', 'DB error: ' . $conn->error, 'error');
     }
 
     $stmt->bind_param($types, ...$params);
@@ -592,10 +592,10 @@ if ($action === 'update_gap_status') {
     $stmt->close();
 
     ms_redirect(
-        '../milestones.php?tab=tracker',
+        '../milestones?tab=tracker',
         $ok ? 'Gap updated successfully.' : 'Update failed: ' . $err,
         $ok ? 'success' : 'error'
     );
 }
 
-ms_redirect('../milestones.php', 'Unknown action.', 'error');
+ms_redirect('../milestones', 'Unknown action.', 'error');

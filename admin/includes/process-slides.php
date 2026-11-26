@@ -9,7 +9,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 $conn->set_charset('utf8mb4');
 
 function redirect_slides(): void {
-    header('Location: ../slides.php');
+    header('Location: ../slides');
     exit;
 }
 

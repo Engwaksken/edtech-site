@@ -69,7 +69,7 @@ $activeTab = ($flash['tab'] ?? '') === 'password' ? 'password' : 'profile';
   <header class="admin-topbar">
     <div class="topbar-left">
       <div class="topbar-breadcrumb">
-        <a href="index.php">Dashboard</a> › <strong>My Profile</strong>
+        <a href="./">Dashboard</a> › <strong>My Profile</strong>
       </div>
     </div>
 

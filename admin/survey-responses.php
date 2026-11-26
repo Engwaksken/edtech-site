@@ -15,7 +15,7 @@ function sr_h($v): string {
 $survey_id = (int)($_GET['id'] ?? 0);
 
 if ($survey_id <= 0) {
-    header('Location: surveys.php');
+    header('Location: surveys');
     exit;
 }
 
@@ -26,7 +26,7 @@ $stmt->execute();
 $survey = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-if (!$survey) { header('Location: surveys.php'); exit; }
+if (!$survey) { header('Location: surveys'); exit; }
 
 /* -- Questions ------------------------------------- */
 $questions = [];
@@ -211,7 +211,7 @@ $field_type_icons = [
     'linear_scale'=>'fa-sliders-h','consent'=>'fa-shield-alt'
 ];
 
-$external_link = rtrim(SITE_URL, '/') . '/survey.php?t=' . urlencode($survey['external_token']);
+$external_link = rtrim(SITE_URL, '/') . '/survey?t=' . urlencode($survey['external_token']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -239,9 +239,9 @@ $external_link = rtrim(SITE_URL, '/') . '/survey.php?t=' . urlencode($survey['ex
       <div class="rp-hero-top">
         <div>
           <div class="rp-hero-meta">
-            <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
+            <a href="./"><i class="fa fa-home"></i> Dashboard</a>
             <span>/</span>
-            <a href="surveys.php">Surveys</a>
+            <a href="surveys">Surveys</a>
             <span>/</span>
             Responses
           </div>
@@ -255,7 +255,7 @@ $external_link = rtrim(SITE_URL, '/') . '/survey.php?t=' . urlencode($survey['ex
           </div>
         </div>
         <div class="rp-hero-actions">
-          <a href="survey-builder.php?id=<?= $survey_id ?>" class="btn btn-ghost btn-sm">
+          <a href="survey-builder?id=<?= $survey_id ?>" class="btn btn-ghost btn-sm">
             <i class="fa fa-edit"></i> Builder
           </a>
           <a href="?id=<?= $survey_id ?>&export=csv" class="btn btn-ghost btn-sm">

@@ -17,7 +17,7 @@ if (
     empty($_SESSION['venture_login']) ||
     empty($_SESSION['venture_id'])
 ) {
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 
@@ -725,7 +725,7 @@ if (
             );
 
         $downloadUrl =
-            'resource-file.php?id=' .
+            'resource-file?id=' .
             urlencode((string) $id) .
             '&mode=download';
 
@@ -794,7 +794,7 @@ if (
 
         echo '<p>';
 
-        echo '<a class="rf-btn" href="resource-file.php?id=' .
+        echo '<a class="rf-btn" href="resource-file?id=' .
             urlencode((string) $id) .
             '&amp;mode=download">';
 
@@ -884,7 +884,7 @@ if (
         }
 
         $downloadUrl =
-            'resource-file.php?id=' .
+            'resource-file?id=' .
             urlencode((string) $id) .
             '&mode=download';
 
@@ -958,7 +958,7 @@ if (
 
         echo '<p>';
 
-        echo '<a class="rf-btn" href="resource-file.php?id=' .
+        echo '<a class="rf-btn" href="resource-file?id=' .
             urlencode((string) $id) .
             '&amp;mode=download">';
 
@@ -991,7 +991,7 @@ if (
 rf_html_header('Preview unavailable');
 
 $downloadUrl =
-    'resource-file.php?id=' .
+    'resource-file?id=' .
     urlencode((string) $id) .
     '&mode=download';
 

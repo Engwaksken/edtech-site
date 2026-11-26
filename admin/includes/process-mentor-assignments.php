@@ -6,7 +6,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) die('Database connection not fo
 $conn->set_charset('utf8mb4');
 
 function redir(string $qs = ''): void {
-    header('Location: ../mentor-assignments.php' . ($qs ? '?' . $qs : ''));
+    header('Location: ../mentor-assignments' . ($qs ? '?' . $qs : ''));
     exit;
 }
 

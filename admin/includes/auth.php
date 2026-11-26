@@ -54,7 +54,7 @@ if (!function_exists('auth_role_variants')) {
 if (!function_exists('require_admin_login')) {
     function require_admin_login(): void {
         if (empty($_SESSION['admin_id'])) {
-            header('Location: login.php');
+            header('Location: login');
             exit;
         }
     }
@@ -74,6 +74,45 @@ if (!function_exists('admin_is_super')) {
     }
 }
 
+if (!function_exists('admin_role_allowed')) {
+    /**
+     * True when the signed-in admin's role matches one of $roles.
+     * Accepts display names ("MEAL Lead", "Administrator") or role keys
+     * ("meal-lead", "admin"). Super admins are always allowed.
+     */
+    function admin_role_allowed(array $roles): bool {
+        if (admin_is_super()) {
+            return true;
+        }
+        $current = auth_normalize_role((string)($_SESSION['admin_role'] ?? ''));
+        if ($current === '') {
+            return false;
+        }
+        $aliases = ['administrator' => 'admin'];
+        foreach ($roles as $role) {
+            $key = auth_normalize_role((string)preg_replace('/\s+/', '-', trim((string)$role)));
+            $key = $aliases[$key] ?? $key;
+            if ($key !== '' && $key === $current) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+if (!function_exists('check_role')) {
+    /** Stop with a 403 page unless admin_role_allowed($roles). */
+    function check_role(array $roles): void {
+        if (admin_role_allowed($roles)) {
+            return;
+        }
+        http_response_code(403);
+        echo '<h2 style="font-family:Arial;margin:40px">Access denied</h2>';
+        echo '<p style="font-family:Arial;margin:40px">Your role is not allowed to access this page.</p>';
+        exit;
+    }
+}
+
 require_admin_login();
 
 /* Idle timeout (Site Settings > UAT & Security). 0 or unset disables it. */
@@ -90,7 +129,7 @@ require_admin_login();
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_regenerate_id(true);
         }
-        $login = str_contains(str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? '')), '/admin/includes/') ? '../login.php' : 'login.php';
+        $login = str_contains(str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? '')), '/admin/includes/') ? '../login' : 'login';
         header('Location: ' . $login);
         exit;
     }
@@ -123,7 +162,7 @@ $stmt->close();
 if (!$ADMIN || !auth_is_active($ADMIN['status'] ?? '')) {
     $_SESSION = [];
     session_destroy();
-    header('Location: login.php?error=inactive');
+    header('Location: login?error=inactive');
     exit;
 }
 

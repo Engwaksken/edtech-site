@@ -22,7 +22,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 
 $conn->set_charset('utf8mb4');
 
-function redirect_with_message(string $message, string $type = 'danger', string $location = 'milestones.php'): void
+function redirect_with_message(string $message, string $type = 'danger', string $location = 'milestones'): void
 {
     if (function_exists('send_notification') && isset($_SESSION['user_id'])) {
         send_notification((int)$_SESSION['user_id'], $message, $type);
@@ -201,7 +201,7 @@ $userId = (int)($_SESSION['user_id'] ?? 0);
 $userRole = (string)($_SESSION['role'] ?? '');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: milestones.php');
+    header('Location: milestones');
     exit();
 }
 
@@ -361,27 +361,27 @@ if (isset($_POST['edit_milestone'])) {
     $notes                = post_nullable_string('notes');
 
     if ($milestoneId <= 0 || !milestone_exists($conn, $milestoneId)) {
-        redirect_with_message('Invalid milestone selected.', 'danger', 'milestones.php');
+        redirect_with_message('Invalid milestone selected.', 'danger', 'milestones');
     }
 
     if ($milestoneName === null || $entityType === null || $dueDate === null) {
         redirect_with_message(
             'Milestone name, entity type, and due date are required.',
             'danger',
-            "milestones.php?edit={$milestoneId}"
+            "milestones?edit={$milestoneId}"
         );
     }
 
     $entityError = resolve_entity($conn, $entityType, $projectId, $programId, $entityId);
     if ($entityError !== null) {
-        redirect_with_message($entityError, 'danger', "milestones.php?edit={$milestoneId}");
+        redirect_with_message($entityError, 'danger', "milestones?edit={$milestoneId}");
     }
 
     if ($progressPercentage < 0 || $progressPercentage > 100) {
         redirect_with_message(
             'Progress percentage must be between 0 and 100.',
             'danger',
-            "milestones.php?edit={$milestoneId}"
+            "milestones?edit={$milestoneId}"
         );
     }
 
@@ -389,7 +389,7 @@ if (isset($_POST['edit_milestone'])) {
         redirect_with_message(
             'Start date cannot be after due date.',
             'danger',
-            "milestones.php?edit={$milestoneId}"
+            "milestones?edit={$milestoneId}"
         );
     }
 
@@ -397,7 +397,7 @@ if (isset($_POST['edit_milestone'])) {
         redirect_with_message(
             'Completion date cannot be in the future.',
             'danger',
-            "milestones.php?edit={$milestoneId}"
+            "milestones?edit={$milestoneId}"
         );
     }
 
@@ -440,7 +440,7 @@ if (isset($_POST['edit_milestone'])) {
         redirect_with_message(
             'Failed to prepare update milestone query: ' . $conn->error,
             'danger',
-            "milestones.php?edit={$milestoneId}"
+            "milestones?edit={$milestoneId}"
         );
     }
 
@@ -488,7 +488,7 @@ if (isset($_POST['edit_milestone'])) {
     redirect_with_message(
         'Error updating milestone: ' . $error,
         'danger',
-        "milestones.php?edit={$milestoneId}"
+        "milestones?edit={$milestoneId}"
     );
 }
 
@@ -539,6 +539,6 @@ if (isset($_POST['delete_milestone'])) {
     redirect_with_message('Error deleting milestone: ' . $error);
 }
 
-header('Location: milestones.php');
+header('Location: milestones');
 exit();
 ?>

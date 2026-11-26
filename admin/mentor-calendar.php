@@ -239,7 +239,7 @@ function ms_mentor_label(array $session, array $mentors_by_session): string
 <header class="admin-topbar">
   <div class="topbar-left">
     <div class="topbar-breadcrumb">
-      <a href="index.php">Dashboard</a> &rsaquo; <a href="mentors.php">Mentors</a> &rsaquo; <strong>Calendar</strong>
+      <a href="./">Dashboard</a> &rsaquo; <a href="mentors">Mentors</a> &rsaquo; <strong>Calendar</strong>
     </div>
   </div>
   <div class="topbar-right">
@@ -261,7 +261,7 @@ function ms_mentor_label(array $session, array $mentors_by_session): string
     <p class="page-subtitle">Availability, multi-mentor sessions, venture assignment &amp; messages</p>
   </div>
   <div class="page-actions">
-    <a href="mentor-sessions.php" class="btn btn-secondary"><i class="fa fa-list"></i> List view</a>
+    <a href="mentor-sessions" class="btn btn-secondary"><i class="fa fa-list"></i> List view</a>
     <?php if ($CAN_MANAGE || $IS_MENTOR): ?>
     <button class="btn btn-primary" onclick="openScheduleModal()"><i class="fa fa-plus"></i> Schedule session</button>
     <?php endif; ?>
@@ -923,7 +923,7 @@ function ms_mentor_label(array $session, array $mentors_by_session): string
   </div>
   <div class="modal-footer">
     <button class="btn btn-secondary" onclick="closeM('msgPanelModal')">Close</button>
-    <a href="messages.php" class="btn btn-primary"><i class="fa fa-external-link-alt"></i> Open messages</a>
+    <a href="messages" class="btn btn-primary"><i class="fa fa-external-link-alt"></i> Open messages</a>
   </div>
 </div>
 </div>
@@ -949,7 +949,7 @@ function ms_mentor_label(array $session, array $mentors_by_session): string
   </div>
   <div class="modal-footer">
     <button class="btn btn-secondary" onclick="closeM('msgDetailModal')">Close</button>
-    <a href="messages.php" class="btn btn-secondary btn-sm"><i class="fa fa-external-link-alt"></i> Full thread</a>
+    <a href="messages" class="btn btn-secondary btn-sm"><i class="fa fa-external-link-alt"></i> Full thread</a>
   </div>
 </div>
 </div>
@@ -1209,7 +1209,7 @@ function openDetailModal(id){
     document.getElementById('dm-reply-section').style.display = CAN_MANAGE ? '' : 'none';
 
     // -- Edit link
-    document.getElementById('dm-edit-btn').href='mentor-sessions.php';
+    document.getElementById('dm-edit-btn').href='mentor-sessions';
 
     openM('detailModal');
 }

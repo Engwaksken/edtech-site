@@ -120,7 +120,7 @@ if (is_file($sidebarFile)) {
         <div class="topbar-right">
 
             <a
-                href="messages.php"
+                href="messages"
                 class="topbar-btn"
                 title="Messages"
                 aria-label="Messages"

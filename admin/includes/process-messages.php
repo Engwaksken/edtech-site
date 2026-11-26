@@ -10,7 +10,7 @@ $conn->set_charset('utf8mb4');
 
 function redirect_messages(): void
 {
-    header('Location: ../messages.php');
+    header('Location: ../messages');
     exit;
 }
 

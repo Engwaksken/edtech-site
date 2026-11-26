@@ -628,7 +628,7 @@ function rs_notify_stakeholders(mysqli $conn, int $reportId, string $reportLabel
         @$conn->query("
             INSERT INTO admin_notifications (role, title, body, link)
             VALUES ('" . $conn->real_escape_string($r['role']) . "', '" . $conn->real_escape_string($sysTitle) . "', '"
-            . $conn->real_escape_string($sysBody) . "', 'mentor-reports.php?view_report=" . (int)$reportId . "')
+            . $conn->real_escape_string($sysBody) . "', 'mentor-reports?view_report=" . (int)$reportId . "')
         ");
     }
 

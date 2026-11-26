@@ -150,17 +150,17 @@ function profile_upload_image(string $field, string $folder = 'ventures'): ?stri
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     vp_flash('Invalid request method.', 'error');
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 }
 
 if (($_POST['action'] ?? '') !== 'save_profile') {
     vp_flash('Invalid profile action.', 'error');
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 }
 
 if (!isset($conn) || !($conn instanceof mysqli)) {
     vp_flash('Database connection was not found.', 'error');
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 }
 
 $conn->set_charset('utf8mb4');
@@ -169,7 +169,7 @@ $venture_id = (int)($venture_id ?? ($_SESSION['venture_id'] ?? 0));
 
 if ($venture_id <= 0) {
     vp_flash('Session expired. Please login again.', 'error');
-    vp_redir('../login.php');
+    vp_redir('../login');
 }
 
 /* =========================================================
@@ -209,27 +209,27 @@ $allowedStages = ['idea', 'mvp', 'pre_seed', 'seed', 'series_a', 'growth'];
 
 if ($name === '') {
     vp_flash('Venture name is required.', 'error');
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 }
 
 if ($cofounder1_email !== '' && !filter_var($cofounder1_email, FILTER_VALIDATE_EMAIL)) {
     vp_flash('Enter a valid co-founder 1 email address.', 'error');
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 }
 
 if ($cofounder2_email !== '' && !filter_var($cofounder2_email, FILTER_VALIDATE_EMAIL)) {
     vp_flash('Enter a valid co-founder 2 email address.', 'error');
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 }
 
 if ($website !== '' && !filter_var($website, FILTER_VALIDATE_URL)) {
     vp_flash('Enter a valid website URL.', 'error');
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 }
 
 if ($linkedin_url !== '' && !filter_var($linkedin_url, FILTER_VALIDATE_URL)) {
     vp_flash('Enter a valid LinkedIn URL.', 'error');
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 }
 
 if (!in_array($stage, $allowedStages, true)) {
@@ -240,7 +240,7 @@ $founded_year = $founded_year !== '' ? (int)$founded_year : null;
 
 if ($founded_year !== null && ($founded_year < 1900 || $founded_year > (int)date('Y'))) {
     vp_flash('Enter a valid founded year.', 'error');
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 }
 
 $funding_raised = $funding_raised !== '' ? (float)$funding_raised : 0;
@@ -248,7 +248,7 @@ $funding_sought = $funding_sought !== '' ? (float)$funding_sought : 0;
 
 if ($funding_raised < 0 || $funding_sought < 0) {
     vp_flash('Funding values cannot be negative.', 'error');
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 }
 
 $wantsPasswordChange = $current_password !== '' || $new_password !== '' || $confirm_password !== '';
@@ -256,22 +256,22 @@ $wantsPasswordChange = $current_password !== '' || $new_password !== '' || $conf
 if ($wantsPasswordChange) {
     if ($current_password === '' || $new_password === '' || $confirm_password === '') {
         vp_flash('To change password, enter current password, new password and confirm password.', 'error');
-        vp_redir('../profile.php');
+        vp_redir('../profile');
     }
 
     if (strlen($new_password) < 8) {
         vp_flash('New password must be at least 8 characters.', 'error');
-        vp_redir('../profile.php');
+        vp_redir('../profile');
     }
 
     if ($new_password !== $confirm_password) {
         vp_flash('New password and confirmation do not match.', 'error');
-        vp_redir('../profile.php');
+        vp_redir('../profile');
     }
 
     if ($current_password === $new_password) {
         vp_flash('New password must be different from the current password.', 'error');
-        vp_redir('../profile.php');
+        vp_redir('../profile');
     }
 }
 
@@ -296,7 +296,7 @@ try {
 
     if (!$current) {
         vp_flash('Venture profile was not found.', 'error');
-        vp_redir('../profile.php');
+        vp_redir('../profile');
     }
 
     if ($wantsPasswordChange) {
@@ -308,7 +308,7 @@ try {
 
         if (!profile_verify_password($current_password, $storedPassword)) {
             vp_flash('Current password is incorrect.', 'error');
-            vp_redir('../profile.php');
+            vp_redir('../profile');
         }
     }
 
@@ -430,7 +430,7 @@ try {
         'success'
     );
 
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 
 } catch (Throwable $e) {
     if (isset($conn) && $conn instanceof mysqli) {
@@ -438,5 +438,5 @@ try {
     }
 
     vp_flash('Failed to update profile: ' . $e->getMessage(), 'error');
-    vp_redir('../profile.php');
+    vp_redir('../profile');
 }

@@ -116,11 +116,11 @@ include 'includes/header.php';
             </p>
 
             <div class="cohorts-hero-actions">
-                <a href="index.php#eligibility" class="btn btn-primary">
+                <a href="./#eligibility" class="btn btn-primary">
                     <i class="fa fa-check-circle"></i> Eligibility Criteria
                 </a>
 
-                <a href="index.php#contact" class="btn btn-outline cohorts-outline-btn">
+                <a href="./#contact" class="btn btn-outline cohorts-outline-btn">
                     <i class="fa fa-phone"></i> Contact Us
                 </a>
             </div>
@@ -168,7 +168,7 @@ include 'includes/header.php';
                         <i class="fa fa-search"></i>
                     </button>
 
-                    <a href="cohorts.php" title="Clear filters">
+                    <a href="cohorts" title="Clear filters">
                         <i class="fa fa-trash"></i>
                     </a>
                 </div>
@@ -302,7 +302,7 @@ include 'includes/header.php';
                                 $venture_name = (string)($venture['name'] ?? 'Venture');
                                 $venture_slug = (string)($venture['slug'] ?? '');
                                 $venture_url = $venture_slug !== ''
-                                    ? SITE_URL . '/venture.php?slug=' . urlencode($venture_slug)
+                                    ? SITE_URL . '/venture?slug=' . urlencode($venture_slug)
                                     : '#';
 
                                 $logo = trim((string)($venture['logo'] ?? ''));
@@ -386,7 +386,7 @@ include 'includes/header.php';
                     <i class="fa fa-search"></i>
                     <h2>No Ventures Found</h2>
                     <p>No ventures match your current search filters.</p>
-                    <a href="cohorts.php" class="btn btn-primary">Clear Filters</a>
+                    <a href="cohorts" class="btn btn-primary">Clear Filters</a>
                 </div>
             <?php endif; ?>
 

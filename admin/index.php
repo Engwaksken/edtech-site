@@ -167,7 +167,7 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
     </div>
 
     <div class="topbar-right">
-      <a href="messages.php" class="topbar-btn" title="Messages">
+      <a href="messages" class="topbar-btn" title="Messages">
         <i class="fa fa-envelope"></i>
         <?php if ($stats['messages'] > 0): ?>
           <span class="badge-count"><?= (int)$stats['messages'] ?></span>
@@ -210,10 +210,10 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
       </div>
 
       <div class="legacy-style-6002dd784e">
-        <a href="cohorts.php" class="btn btn-secondary btn-sm">
+        <a href="cohorts" class="btn btn-secondary btn-sm">
           <i class="fa fa-plus"></i> Add Cohort
         </a>
-        <a href="ventures.php" class="btn btn-sm legacy-style-b4f7e237ad">
+        <a href="ventures" class="btn btn-sm legacy-style-b4f7e237ad">
           <i class="fa fa-rocket"></i> Add Venture
         </a>
       </div>
@@ -223,28 +223,28 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
       <?php
       $cards = [
           [
-              'url'   => 'meal-report.php?tab=participants',
+              'url'   => 'meal-report?tab=participants',
               'color' => 'blue',
               'icon'  => 'fa-user-graduate',
               'value' => number_format((int)$stats['overall_learners']),
               'label' => 'Overall Learners',
           ],
           [
-              'url'   => 'meal-report.php?tab=schools',
+              'url'   => 'meal-report?tab=schools',
               'color' => 'green',
               'icon'  => 'fa-school',
               'value' => number_format((int)$stats['schools_reached']),
               'label' => 'Schools Reached',
           ],
           [
-              'url'   => 'meal-report.php?tab=revenue',
+              'url'   => 'meal-report?tab=revenue',
               'color' => 'orange',
               'icon'  => 'fa-chart-line',
               'value' => dashboard_money_short((float)$stats['total_revenue_ugx']),
               'label' => 'Total Revenue',
           ],
           [
-              'url'   => 'ventures.php',
+              'url'   => 'ventures',
               'color' => 'purple',
               'icon'  => 'fa-female',
               'value' => number_format((int)$stats['female_venture_owners']),
@@ -253,42 +253,42 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
 
           // Existing administration cards.
           [
-              'url'   => 'cohorts.php',
+              'url'   => 'cohorts',
               'color' => 'orange',
               'icon'  => 'fa-layer-group',
               'value' => number_format((int)$stats['cohorts']),
               'label' => 'Cohorts',
           ],
           [
-              'url'   => 'ventures.php',
+              'url'   => 'ventures',
               'color' => 'teal',
               'icon'  => 'fa-rocket',
               'value' => number_format((int)$stats['ventures']),
               'label' => 'Ventures',
           ],
           [
-              'url'   => 'venture-team.php',
+              'url'   => 'venture-team',
               'color' => 'blue',
               'icon'  => 'fa-users',
               'value' => number_format((int)$stats['team']),
               'label' => 'Team Members',
           ],
           [
-              'url'   => 'staff.php',
+              'url'   => 'staff',
               'color' => 'purple',
               'icon'  => 'fa-user-tie',
               'value' => number_format((int)$stats['staff']),
               'label' => 'Staff & Mentors',
           ],
           [
-              'url'   => 'assign-staff.php',
+              'url'   => 'assign-staff',
               'color' => 'green',
               'icon'  => 'fa-link',
               'value' => number_format((int)$stats['assignments']),
               'label' => 'Assignments',
           ],
           [
-              'url'   => 'messages.php',
+              'url'   => 'messages',
               'color' => $stats['messages'] > 0 ? 'red' : 'gray',
               'icon'  => 'fa-envelope',
               'value' => number_format((int)$stats['messages']),
@@ -332,9 +332,9 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
         </div>
 
         <div class="tab-actions">
-          <a href="cohorts.php" class="btn btn-sm btn-secondary dashboard-tab-link" data-link="tab-cohorts">Manage All</a>
-          <a href="messages.php" class="btn btn-sm btn-secondary dashboard-tab-link legacy-style-6b99de8b69" data-link="tab-messages">View All</a>
-          <a href="ventures.php" class="btn btn-sm btn-primary dashboard-tab-link legacy-style-6b99de8b69" data-link="tab-ventures">
+          <a href="cohorts" class="btn btn-sm btn-secondary dashboard-tab-link" data-link="tab-cohorts">Manage All</a>
+          <a href="messages" class="btn btn-sm btn-secondary dashboard-tab-link legacy-style-6b99de8b69" data-link="tab-messages">View All</a>
+          <a href="ventures" class="btn btn-sm btn-primary dashboard-tab-link legacy-style-6b99de8b69" data-link="tab-ventures">
             <i class="fa fa-plus"></i> Add Venture
           </a>
         </div>
@@ -383,7 +383,7 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
                       <i class="fa fa-layer-group"></i>
                       <h3>No cohorts yet</h3>
                       <p>No cohorts have been created.</p>
-                      <a href="cohorts.php" class="btn btn-primary btn-sm">
+                      <a href="cohorts" class="btn btn-primary btn-sm">
                         <i class="fa fa-plus"></i> Add Cohort
                       </a>
                     </div>
@@ -488,12 +488,12 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
 
                     <td>
                       <div class="tbl-actions">
-                        <a href="ventures.php?edit=<?= (int)$st['id'] ?>" class="btn btn-sm btn-secondary" title="Edit">
+                        <a href="ventures?edit=<?= (int)$st['id'] ?>" class="btn btn-sm btn-secondary" title="Edit">
                           <i class="fa fa-edit"></i>
                         </a>
 
                         <?php if (!empty($st['slug'])): ?>
-                          <a href="../venture.php?slug=<?= h($st['slug']) ?>" target="_blank" class="btn btn-sm btn-secondary" title="View">
+                          <a href="../venture?slug=<?= h($st['slug']) ?>" target="_blank" class="btn btn-sm btn-secondary" title="View">
                             <i class="fa fa-eye"></i>
                           </a>
                         <?php endif; ?>
@@ -510,7 +510,7 @@ $current_url = $site_url . ($_SERVER['REQUEST_URI'] ?? '/');
                       <i class="fa fa-rocket"></i>
                       <h3>No ventures yet</h3>
                       <p>Add cohorts first, then Add Ventures.</p>
-                      <a href="ventures.php" class="btn btn-primary btn-sm">
+                      <a href="ventures" class="btn btn-primary btn-sm">
                         Add Venture
                       </a>
                     </div>

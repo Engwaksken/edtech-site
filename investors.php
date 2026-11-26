@@ -507,7 +507,7 @@ include __DIR__ . '/layout.php';
         </button>
 
         <?php if ($search !== '' || $filter_type !== '' || $filter_stage !== ''): ?>
-            <a href="investors.php?view=<?= h($view_mode) ?>" class="tb-btn tb-ghost">
+            <a href="investors?view=<?= h($view_mode) ?>" class="tb-btn tb-ghost">
                 <i class="fas fa-times"></i> Clear
             </a>
         <?php endif; ?>

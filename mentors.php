@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (empty($_SESSION['venture_id'])) {
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 
@@ -52,7 +52,7 @@ $venture_stmt->close();
 
 if (!$VENTURE) {
     session_destroy();
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 
@@ -213,7 +213,7 @@ include 'layout.php';
                             data-mentor-name="<?= mentors_h($mentor_name) ?>">
                         <i class="fa fa-calendar-plus"></i> Request Session
                     </button>
-                    <a href="messages.php?mentor_id=<?= $mentor_id ?>" class="btn btn-outline">
+                    <a href="messages?mentor_id=<?= $mentor_id ?>" class="btn btn-outline">
                         <i class="fa fa-comment-dots"></i>
                     </a>
                 </div>

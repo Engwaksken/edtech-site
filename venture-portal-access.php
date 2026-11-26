@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   $stmt->execute() ? 'success' : 'error');
             $stmt->close();
         }
-        header('Location: venture-portal-access.php'); exit;
+        header('Location: venture-portal-access'); exit;
     }
 
     if ($action === 'toggle_active') {
@@ -41,24 +41,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $is = (int)($_POST['is_active'] ?? 0);
         $conn->query("UPDATE venture_portal_access SET is_active=" . ($is ? 0 : 1) . " WHERE id=$id");
         flash('vpa', $is ? 'Account suspended.' : 'Account reactivated.');
-        header('Location: venture-portal-access.php'); exit;
+        header('Location: venture-portal-access'); exit;
     }
 
     if ($action === 'reset_password') {
         $id       = (int)($_POST['id']       ?? 0);
         $password = trim($_POST['new_password'] ?? '');
-        if (strlen($password) < 8) { flash('vpa','Password too short.','error'); header('Location: venture-portal-access.php'); exit; }
+        if (strlen($password) < 8) { flash('vpa','Password too short.','error'); header('Location: venture-portal-access'); exit; }
         $hash = $conn->real_escape_string(password_hash($password, PASSWORD_DEFAULT));
         $conn->query("UPDATE venture_portal_access SET password_hash='$hash' WHERE id=$id");
         flash('vpa', 'Password reset successfully.');
-        header('Location: venture-portal-access.php'); exit;
+        header('Location: venture-portal-access'); exit;
     }
 
     if ($action === 'revoke_access') {
         $id = (int)($_POST['id'] ?? 0);
         $conn->query("DELETE FROM venture_portal_access WHERE id=$id LIMIT 1");
         flash('vpa', 'Portal access revoked.');
-        header('Location: venture-portal-access.php'); exit;
+        header('Location: venture-portal-access'); exit;
     }
 }
 
@@ -104,7 +104,7 @@ $site_name = function_exists('get_setting') ? get_setting($conn,'site_name','EdT
 
 <header class="admin-topbar">
   <div class="topbar-left">
-    <div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> › <strong>Venture Portal Access</strong></div>
+    <div class="topbar-breadcrumb"><a href="./">Dashboard</a> › <strong>Venture Portal Access</strong></div>
   </div>
   <div class="topbar-right">
     <div class="admin-avatar"><div class="avatar-circle"><?= strtoupper(substr($ADMIN['full_name'],0,1)) ?></div></div>

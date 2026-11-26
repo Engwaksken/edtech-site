@@ -33,7 +33,7 @@ if (
     !empty($_SESSION['venture_login']) &&
     !empty($_SESSION['venture_id'])
 ) {
-    header('Location: dashboard.php');
+    header('Location: dashboard');
     exit;
 }
 
@@ -400,7 +400,7 @@ $logo_exists = file_exists(__DIR__ . '/' . $logo_path);
         <div style="text-align:center;">
 
             <a
-                href="login.php"
+                href="login"
                 class="back-login"
             >
 

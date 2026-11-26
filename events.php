@@ -410,7 +410,7 @@ include __DIR__ . '/layout.php';
         </button>
 
         <?php if ($search !== '' || $filter_type !== ''): ?>
-            <a href="events.php?time=<?= h($filter_time) ?>"
+            <a href="events?time=<?= h($filter_time) ?>"
                class="tb-btn tb-ghost">
                 <i class="fas fa-times"></i> Clear
             </a>

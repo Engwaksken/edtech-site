@@ -237,7 +237,7 @@ if (
 <div class="admin-main" id="adminMain">
   <header class="admin-topbar">
     <div class="topbar-left">
-      <div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> > <strong>Grant Tracking</strong></div>
+      <div class="topbar-breadcrumb"><a href="./">Dashboard</a> > <strong>Grant Tracking</strong></div>
     </div>
     <div class="topbar-right">
       <a href="<?= h(rtrim((string) SITE_URL, '/')) ?>" target="_blank" class="btn btn-secondary btn-sm"><i class="fa fa-eye"></i> View Site</a>
@@ -402,7 +402,7 @@ if (
 
               <?php if ($grant_message_code === 'loa_template_missing'): ?>
                 <div class="mt-7">
-                  <a href="loa-template.php?tab=upload-template">
+                  <a href="loa-template?tab=upload-template">
                     Open LoA Template Management
                   </a>
                 </div>
