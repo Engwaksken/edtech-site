@@ -1053,7 +1053,7 @@ $mealCrudSchemas = [
             'school_name' => ['label'=>'School / Institution','type'=>'text','required'=>true],
             'location_type' => ['label'=>'Location Type','type'=>'select','options'=>[''=>'Select','Rural'=>'Rural','Urban'=>'Urban','Peri-Urban'=>'Peri-Urban']],
             'ownership_type' => ['label'=>'Ownership','type'=>'select','options'=>[''=>'Select','Government-aided'=>'Government-aided','Private'=>'Private']],
-            'school_level' => ['label'=>'Level','type'=>'select','options'=>[''=>'Select','Secondary'=>'Secondary','Tertiary'=>'Tertiary','BTVET'=>'BTVET']],
+            'school_level' => ['label'=>'Level','type'=>'select','options'=>[''=>'Select','Primary'=>'Primary','Secondary'=>'Secondary','Tertiary'=>'Tertiary','BTVET'=>'BTVET']],
         ],
     ],
     'other_users' => [
@@ -2790,6 +2790,7 @@ body > .meal-modal.open,
                 <label>Level of School</label>
                 <select name="school_level" class="form-control">
                   <option value="">Select</option>
+                  <option>Primary</option>
                   <option>Secondary</option>
                   <option>Tertiary</option>
                   <option>BTVET</option>

@@ -68,7 +68,7 @@ if (!function_exists('meal_template_field_specs')) {
                 ['label' => 'School / Institution Name',  'options' => null, 'example' => "St. Mary's Secondary School"],
                 ['label' => 'Geographical Location',       'options' => ['Rural', 'Urban', 'Peri-Urban'], 'example' => 'Rural'],
                 ['label' => 'Ownership Type',              'options' => ['Government-aided', 'Private'], 'example' => 'Government-aided'],
-                ['label' => 'Level of School',             'options' => ['Secondary', 'Tertiary', 'BTVET'], 'example' => 'Secondary'],
+                ['label' => 'Level of School',             'options' => ['Primary', 'Secondary', 'Tertiary', 'BTVET'], 'example' => 'Secondary'],
             ],
             'other_users' => [
                 ['label' => 'Date (DD/MM/YYYY)',                       'options' => null, 'example' => date('d/m/Y')],

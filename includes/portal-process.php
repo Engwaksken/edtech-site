@@ -4934,7 +4934,7 @@ if ($action === 'add_meal_school') {
 
     $allowed_location  = ['', 'Rural', 'Urban', 'Peri-Urban'];
     $allowed_ownership = ['', 'Government-aided', 'Private'];
-    $allowed_level     = ['', 'Secondary', 'Tertiary', 'BTVET'];
+    $allowed_level     = ['', 'Primary', 'Secondary', 'Tertiary', 'BTVET'];
 
     if (!in_array($location_type, $allowed_location, true)) $location_type = '';
     if (!in_array($ownership_type, $allowed_ownership, true)) $ownership_type = '';
