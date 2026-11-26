@@ -23,7 +23,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 $conn->set_charset('utf8mb4');
 
 
-function redirect_with_message(string $message, string $type = 'danger', string $location = '../milestones.php'): void
+function redirect_with_message(string $message, string $type = 'danger', string $location = '../milestones'): void
 {
     if (function_exists('send_notification') && isset($_SESSION['user_id'])) {
         send_notification((int)$_SESSION['user_id'], $message, $type);
@@ -485,7 +485,7 @@ $userId = (int)($_SESSION['user_id'] ?? 0);
 $userRole = (string)($_SESSION['role'] ?? '');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../milestones.php');
+    header('Location: ../milestones');
     exit();
 }
 
@@ -644,7 +644,7 @@ if (isset($_POST['add_milestone'])) {
 */
 if (isset($_POST['edit_milestone'])) {
     $milestoneId          = (int)post_string('milestone_id', '0');
-    $editLocation         = "../milestones.php?edit={$milestoneId}";
+    $editLocation         = "../milestones?edit={$milestoneId}";
 
     $entityType           = clean_text(post_string('entity_type'));
     $projectId            = post_nullable_int('project_id');
@@ -666,7 +666,7 @@ if (isset($_POST['edit_milestone'])) {
     $notes                = post_nullable_string('notes');
 
     if ($milestoneId <= 0 || !milestone_exists($conn, $milestoneId)) {
-        redirect_with_message('Invalid milestone selected.', 'danger', '../milestones.php');
+        redirect_with_message('Invalid milestone selected.', 'danger', '../milestones');
     }
 
     if ($milestoneName === null || $entityType === null || $dueDate === null) {
@@ -852,5 +852,5 @@ if (isset($_POST['delete_milestone'])) {
     }
 }
 
-header('Location: ../milestones.php');
+header('Location: ../milestones');
 exit();

@@ -14,7 +14,7 @@ ven_ensure_document_folders($conn);
 $venture_id = (int)($_GET['venture_id'] ?? 0);
 
 if ($venture_id <= 0) {
-    header('Location: ventures.php');
+    header('Location: ventures');
     exit;
 }
 
@@ -25,7 +25,7 @@ $venture = $ven_stmt->get_result()->fetch_assoc();
 $ven_stmt->close();
 
 if (!$venture) {
-    header('Location: ventures.php');
+    header('Location: ventures');
     exit;
 }
 
@@ -307,8 +307,8 @@ function doc_status_badge(array $doc): string
 <header class="admin-topbar">
     <div class="topbar-left">
         <div class="topbar-breadcrumb">
-            <a href="index.php">Dashboard</a> &gt;
-            <a href="ventures.php">Ventures</a> &gt;
+            <a href="./">Dashboard</a> &gt;
+            <a href="ventures">Ventures</a> &gt;
             <strong><?= h($venture['name']) ?> - Documents</strong>
         </div>
     </div>
@@ -333,7 +333,7 @@ function doc_status_badge(array $doc): string
     </div>
 
     <div class="page-actions">
-        <a href="ventures.php" class="btn btn-secondary">
+        <a href="ventures" class="btn btn-secondary">
             <i class="fa fa-arrow-left"></i> Back to Ventures
         </a>
 

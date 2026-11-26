@@ -25,13 +25,13 @@ $error = trim((string)($_GET['error'] ?? ''));
 
 if ($error !== '') {
     goog_flash('Google Calendar connection was cancelled.', 'error');
-    header('Location: ../mentor-calendar.php');
+    header('Location: ../mentor-calendar');
     exit;
 }
 
 if ($code === '') {
     goog_flash('Invalid Google Calendar callback (missing authorization code).', 'error');
-    header('Location: ../mentor-calendar.php');
+    header('Location: ../mentor-calendar');
     exit;
 }
 
@@ -44,5 +44,5 @@ if ($mentorId) {
     goog_flash('Failed to connect Google Calendar. Please try again.', 'error');
 }
 
-header('Location: ../mentor-calendar.php');
+header('Location: ../mentor-calendar');
 exit;

@@ -22,7 +22,7 @@ $MY_MENTOR_ID = ms_mentor_record_id($conn);
 
 function av_redirect(string $qs = ''): void
 {
-    header('Location: ../mentor-calendar.php' . ($qs !== '' ? '?' . $qs : ''));
+    header('Location: ../mentor-calendar' . ($qs !== '' ? '?' . $qs : ''));
     exit;
 }
 

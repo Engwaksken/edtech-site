@@ -109,7 +109,7 @@ function login_asset_exists(string $path): bool
 }
 
 if (!empty($_SESSION['admin_id'])) {
-    header('Location: ../index.php');
+    header('Location: ../');
     exit;
 }
 
@@ -119,10 +119,11 @@ unset($_SESSION['login_error']);
 $old_username = $_SESSION['login_username'] ?? '';
 unset($_SESSION['login_username']);
 
-$redirect = $_GET['redirect'] ?? ($_SESSION['login_redirect'] ?? 'index.php');
+$redirect = (string)($_GET['redirect'] ?? ($_SESSION['login_redirect'] ?? ''));
 
-if (!preg_match('/^[a-zA-Z0-9_\-\/.?=&]+$/', $redirect) || str_contains($redirect, '..')) {
-    $redirect = 'index.php';
+// Empty means "dashboard" (process-otp.php falls back to the admin home).
+if ($redirect !== '' && (!preg_match('/^[a-zA-Z0-9_\-\/.?=&]+$/', $redirect) || str_contains($redirect, '..'))) {
+    $redirect = '';
 }
 
 $site_name = login_setting($conn, ['site_name', 'website_name', 'app_name'], 'EdTech Fellowship');

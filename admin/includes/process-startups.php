@@ -10,7 +10,7 @@ $conn->set_charset('utf8mb4');
 
 function redirect_startups(int $cohortId = 0): void
 {
-    $url = '../startups.php';
+    $url = '../startups';
 
     if ($cohortId > 0) {
         $url .= '?cohort_id=' . $cohortId;

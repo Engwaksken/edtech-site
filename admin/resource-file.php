@@ -118,7 +118,7 @@ function arf_html_page(string $title, string $message, ?string $downloadUrl = nu
 {
     ?><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><?= arf_h($title) ?></title>
     <?php require_once __DIR__ . '/../includes/favicon.php'; ?>
-    <style>body{margin:0;background:#f5f7fb;color:#172033;font:14px/1.6 Arial,sans-serif}.box{max-width:760px;margin:calc(8vh / var(--screen-zoom, 1)) auto;background:#fff;border:1px solid #e3e8f0;border-radius:16px;padding:28px;box-shadow:0 12px 35px rgba(20,35,60,.08)}h1{margin:0 0 10px;font-size:22px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.btn{display:inline-flex;padding:10px 15px;border-radius:9px;background:#1f5eff;color:#fff;text-decoration:none}.btn.secondary{background:#eef2f7;color:#172033}.details{white-space:pre-wrap;margin-top:18px;padding:12px;background:#f8fafc;border-radius:9px;color:#667085}@media(max-width:600px){.box{margin:12px;padding:18px}.actions .btn{width:100%;justify-content:center}}</style></head><body><div class="box"><h1><?= arf_h($title) ?></h1><p><?= arf_h($message) ?></p><?php if($downloadUrl): ?><div class="actions"><a class="btn" href="<?= arf_h($downloadUrl) ?>">Download Original File</a><a class="btn secondary" href="resources.php">Go Back</a></div><?php endif; ?><?php if($details!==''): ?><div class="details"><?= arf_h($details) ?></div><?php endif; ?></div></body></html><?php exit;
+    <style>body{margin:0;background:#f5f7fb;color:#172033;font:14px/1.6 Arial,sans-serif}.box{max-width:760px;margin:calc(8vh / var(--screen-zoom, 1)) auto;background:#fff;border:1px solid #e3e8f0;border-radius:16px;padding:28px;box-shadow:0 12px 35px rgba(20,35,60,.08)}h1{margin:0 0 10px;font-size:22px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.btn{display:inline-flex;padding:10px 15px;border-radius:9px;background:#1f5eff;color:#fff;text-decoration:none}.btn.secondary{background:#eef2f7;color:#172033}.details{white-space:pre-wrap;margin-top:18px;padding:12px;background:#f8fafc;border-radius:9px;color:#667085}@media(max-width:600px){.box{margin:12px;padding:18px}.actions .btn{width:100%;justify-content:center}}</style></head><body><div class="box"><h1><?= arf_h($title) ?></h1><p><?= arf_h($message) ?></p><?php if($downloadUrl): ?><div class="actions"><a class="btn" href="<?= arf_h($downloadUrl) ?>">Download Original File</a><a class="btn secondary" href="resources">Go Back</a></div><?php endif; ?><?php if($details!==''): ?><div class="details"><?= arf_h($details) ?></div><?php endif; ?></div></body></html><?php exit;
 }
 
 function arf_render_html_document(string $title, string $body, string $downloadUrl): never
@@ -366,7 +366,7 @@ if ($mode === 'view' && in_array($ext, $inlineExt, true)) {
 $officeExt = ['doc','docx','ppt','pptx','xls','xlsx','odt','ods','odp'];
 
 if (in_array($ext, $officeExt, true) && in_array($mode, ['view','pdf'], true)) {
-    $downloadUrl = 'resource-file.php?id=' . (int)$id . '&mode=download';
+    $downloadUrl = 'resource-file?id=' . (int)$id . '&mode=download';
     $preview = arf_office_preview($fileAbs, $ext, $originalName, $downloadUrl);
     if ($preview['ok']) {
         arf_render_html_document($originalName, $preview['html'], $downloadUrl);
@@ -380,7 +380,7 @@ if (in_array($ext, $officeExt, true) && in_array($mode, ['view','pdf'], true)) {
 }
 
 if ($mode === 'pdf') {
-    arf_html_page('Preview Not Available', 'This file type cannot be previewed as a document. Please download the original file.', 'resource-file.php?id=' . (int)$id . '&mode=download');
+    arf_html_page('Preview Not Available', 'This file type cannot be previewed as a document. Please download the original file.', 'resource-file?id=' . (int)$id . '&mode=download');
 }
 
 arf_send_file($fileAbs, $originalName, $mime, false);

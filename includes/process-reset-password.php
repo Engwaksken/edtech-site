@@ -12,7 +12,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
     $_SESSION['reset_error'] =
         'Database connection error.';
 
-    header('Location: ../login.php');
+    header('Location: ../login');
     exit;
 }
 
@@ -55,7 +55,7 @@ function vp_reset_back(
 ): never {
 
     $url =
-        '../reset-password.php?token='
+        '../reset-password?token='
         . urlencode($token)
         . '&email='
         . urlencode($email);
@@ -72,7 +72,7 @@ function vp_reset_back(
 */
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
-    header('Location: ../forgot-password.php');
+    header('Location: ../forgot-password');
     exit;
 }
 
@@ -91,7 +91,7 @@ if (
         'The password reset link is invalid. '
         . 'Please request a new one.';
 
-    header('Location: ../forgot-password.php');
+    header('Location: ../forgot-password');
     exit;
 }
 
@@ -101,7 +101,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $_SESSION['forgot_error'] =
         'The password reset link is invalid.';
 
-    header('Location: ../forgot-password.php');
+    header('Location: ../forgot-password');
     exit;
 }
 
@@ -258,7 +258,7 @@ if (!$reset) {
         . 'has already been used or is invalid. '
         . 'Please request a new link.';
 
-    header('Location: ../forgot-password.php');
+    header('Location: ../forgot-password');
     exit;
 }
 
@@ -488,5 +488,5 @@ $_SESSION['login_success'] =
     . 'You can now sign in using your new password.';
 
 
-header('Location: ../login.php');
+header('Location: ../login');
 exit;

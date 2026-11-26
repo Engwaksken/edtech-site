@@ -9,7 +9,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 $conn->set_charset('utf8mb4');
 
 function redirect_staff(): void {
-    header('Location: ../staff.php');
+    header('Location: ../staff');
     exit;
 }
 

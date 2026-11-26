@@ -1294,7 +1294,7 @@ body.md-modal-open{
 <body>
 <?php include __DIR__ . '/includes/sidebar.php'; ?>
 <div class="admin-main">
-<header class="admin-topbar"><div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> &gt; <strong>Mentor Deliverables</strong></div></header>
+<header class="admin-topbar"><div class="topbar-breadcrumb"><a href="./">Dashboard</a> &gt; <strong>Mentor Deliverables</strong></div></header>
 <main class="admin-content">
 <div class="md-head"><div><h1>Mentor Deliverables &amp; Deadline Tracker</h1><p>Assign deliverables to ventures and track mentor workload, progress, and deadlines.</p></div></div>
 
@@ -1893,7 +1893,7 @@ body.md-modal-open{
 <select name="status"><option value="">All Statuses</option><?php foreach(['not_started','in_progress','submitted','returned_for_revision','approved','overdue','completed'] as $s):?><option value="<?= h($s) ?>" <?= $status===$s?'selected':'' ?>><?= h(deliverable_status_label($s)) ?></option><?php endforeach;?></select>
 <label><input type="checkbox" name="due_this_week" value="1" <?= $dueWeek?'checked':'' ?>> Due this week</label>
 <label><input type="checkbox" name="overdue" value="1" <?= $overdue?'checked':'' ?>> Overdue</label>
-<button class="btn btn-primary btn-sm">Filter</button><a href="mentor-deliverables.php" class="btn btn-outline btn-sm">Reset</a>
+<button class="btn btn-primary btn-sm">Filter</button><a href="mentor-deliverables" class="btn btn-outline btn-sm">Reset</a>
 </form>
 
 <div class="md-box md-wrap">

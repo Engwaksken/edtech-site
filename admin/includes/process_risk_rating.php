@@ -3,38 +3,38 @@ declare(strict_types=1);
 
 ob_start();
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+// The PDF/Excel report service is optional: saving works without it and
+// report generation reports a clear error when it is not deployed.
+$riskReportService = __DIR__ . '/../services/RiskRatingReportService.php';
+if (is_file($riskReportService)) {
+    require_once $riskReportService;
 }
 
-require_once 'config.php';
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../services/RiskRatingReportService.php';
+function risk_report_service(mysqli $conn): object
+{
+    if (!class_exists('RiskRatingReportService')) {
+        throw new RuntimeException('Report generation is unavailable: admin/services/RiskRatingReportService.php is not installed.');
+    }
+    return new RiskRatingReportService($conn);
+}
 
 /* -----------------------------------------------------------------------------
    Access control
 ----------------------------------------------------------------------------- */
-$allowedRoles = ['Administrator', 'MEAL Lead', 'Programs Lead', 'Reviewer', 'Project Officer', 'project Officer'];
-
-if (
-    empty($_SESSION['user_id']) ||
-    empty($_SESSION['role']) ||
-    !in_array((string)$_SESSION['role'], $allowedRoles, true)
-) {
-    $_SESSION['error'] = 'Access denied.';
-    header('Location: ../dashboard.php');
+if (empty($_SESSION['admin_id'])) {
+    header('Location: ../login');
     exit();
 }
+require_once __DIR__ . '/auth.php';
+
+check_role(['Administrator', 'MEAL Lead', 'Programs Lead', 'Reviewer', 'Project Officer']);
 
 if (strtoupper($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     $_SESSION['error'] = 'Invalid request method.';
-    header('Location: ../applications.php');
-    exit();
-}
-
-if (!isset($conn) || !($conn instanceof mysqli)) {
-    $_SESSION['error'] = 'Database connection not available.';
-    header('Location: ../applications.php');
+    header('Location: ../risk_ratings_report');
     exit();
 }
 
@@ -43,7 +43,7 @@ mysqli_report(MYSQLI_REPORT_OFF);
 /* -----------------------------------------------------------------------------
    Constants
 ----------------------------------------------------------------------------- */
-$currentUserId = (int)($_SESSION['user_id'] ?? 0);
+$currentUserId = (int)($_SESSION['admin_id'] ?? 0);
 
 const VALID_SCORES = [1.0, 2.0, 3.0, 5.0];
 const VALID_RECOMMENDATIONS = ['Proceed', 'Proceed with Conditions', 'Hold', 'Decline'];
@@ -83,7 +83,7 @@ function normalizeRiskLabel(float $score): string
 
 function redirectToRating(int $applicationId, int $reviewTypeId = 0): never
 {
-    $url = '../risk_rating.php?application_id=' . $applicationId;
+    $url = '../risk_rating?application_id=' . $applicationId;
     if ($reviewTypeId > 0) {
         $url .= '&review_type_id=' . $reviewTypeId;
     }
@@ -169,7 +169,7 @@ if (!in_array($action, VALID_ACTIONS, true)) {
 
 if ($riskRatingId <= 0 || $applicationId <= 0) {
     $_SESSION['error'] = 'Missing risk rating or application ID.';
-    header('Location: ../applications.php');
+    header('Location: ../risk_ratings_report');
     exit();
 }
 
@@ -489,7 +489,7 @@ try {
     /* ------------------------------------------------------------------------
        6. Generate reports when requested
     ----------------------------------------------------------------------- */
-    $service = new RiskRatingReportService($conn);
+    $service = $action === 'save' ? null : risk_report_service($conn);
 
     $generatedPdfPath = '';
     $generatedPdfName = '';

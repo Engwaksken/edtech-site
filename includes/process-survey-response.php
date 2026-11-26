@@ -115,7 +115,7 @@ function psr_redirect(string $url): void
 
 function psr_back_url(string $token): string
 {
-    return '../survey.php?t=' . urlencode($token);
+    return '../survey?t=' . urlencode($token);
 }
 
 function psr_fail(string $message, string $token = '', int $status = 422): void
@@ -892,7 +892,7 @@ try {
             'answers_saved'  => $saved_answer_count,
             'submitted_at'   => $submitted_at_sql,
             'timezone'       => 'Africa/Nairobi',
-            'redirect'       => '../survey.php?t=' . urlencode($token) . '&done=1',
+            'redirect'       => '../survey?t=' . urlencode($token) . '&done=1',
         ]);
     } catch (Throwable $e) {
         try {

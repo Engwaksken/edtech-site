@@ -92,7 +92,7 @@ include 'layout.php';
     </div>
 
     <div class="vp-profile-hero-actions">
-      <a href="dashboard.php" class="btn btn-outline">Cancel</a>
+      <a href="dashboard" class="btn btn-outline">Cancel</a>
       <button type="submit" class="btn btn-primary">
         <i class="fa fa-save"></i> Save Changes
       </button>
@@ -321,7 +321,7 @@ include 'layout.php';
   </div>
 
   <div class="vp-profile-bottom-actions">
-    <a href="dashboard.php" class="btn btn-outline">Cancel</a>
+    <a href="dashboard" class="btn btn-outline">Cancel</a>
     <button type="submit" class="btn btn-primary">
       <i class="fa fa-save"></i> Save Changes
     </button>

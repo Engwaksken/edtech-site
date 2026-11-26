@@ -16,7 +16,7 @@ $conn->set_charset('utf8mb4');
 
 function back_login(string $msg): void {
     $_SESSION['login_error'] = $msg;
-    header('Location: ../login.php');
+    header('Location: ../login');
     exit;
 }
 
@@ -135,5 +135,5 @@ if ($mailResult !== true) {
     back_login('We could not send your verification code. Please try again.');
 }
 
-header('Location: ../verify-otp.php');
+header('Location: ../verify-otp');
 exit;

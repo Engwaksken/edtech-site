@@ -35,14 +35,14 @@ include 'includes/header.php';
       <div style="text-align:center;padding:60px 20px;color:#6c757d">
         <i class="fa fa-question-circle" style="font-size:3rem;opacity:.3;display:block;margin-bottom:14px"></i>
         <h3>No FAQs available yet</h3>
-        <p>Check back soon or <a href="index.php#contact" style="color:var(--primary-color)">contact us</a> directly.</p>
+        <p>Check back soon or <a href="./#contact" style="color:var(--primary-color)">contact us</a> directly.</p>
       </div>
       <?php endif; ?>
 
       <div style="background:linear-gradient(135deg,#fc7f10,#e06900);border-radius:12px;padding:32px;margin-top:40px;text-align:center;color:#fff">
         <h3 style="margin:0 0 10px">Still have questions?</h3>
         <p style="opacity:.9;margin-bottom:18px">Our team is happy to help you understand the fellowship program.</p>
-        <a href="index.php#contact" class="btn btn-secondary"><i class="fa fa-envelope"></i> Contact Us</a>
+        <a href="./#contact" class="btn btn-secondary"><i class="fa fa-envelope"></i> Contact Us</a>
       </div>
     </div>
   </section>

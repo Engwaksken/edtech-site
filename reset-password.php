@@ -372,7 +372,7 @@ if (
         </p>
 
         <a
-            href="forgot-password.php"
+            href="forgot-password"
             class="btn-login"
             style="text-decoration:none;"
         >
@@ -387,7 +387,7 @@ if (
 
 
         <a
-            href="login.php"
+            href="login"
             class="back-login"
         >
 
@@ -633,7 +633,7 @@ if (
     <div style="text-align:center;">
 
         <a
-            href="login.php"
+            href="login"
             class="back-login"
         >
 

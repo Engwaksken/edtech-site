@@ -301,7 +301,7 @@ if ($ventureStatus !== '' && !in_array($ventureStatus, ['active', 'approved'], t
     vp_otp_login_redirect();
 }
 
-$redirect = vp_otp_safe_redirect((string)($pending['redirect'] ?? 'dashboard.php'));
+$redirect = vp_otp_safe_redirect((string)($pending['redirect'] ?? 'dashboard'));
 
 session_regenerate_id(true);
 

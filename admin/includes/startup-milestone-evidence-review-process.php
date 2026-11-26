@@ -17,7 +17,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 }
 $conn->set_charset('utf8mb4');
 
-function redirect_with_message(string $message, string $type = 'danger', string $location = '../startup-milestones-dashboard.php?active_tab=evidence'): void
+function redirect_with_message(string $message, string $type = 'danger', string $location = '../startup-milestones-dashboard?active_tab=evidence'): void
 {
     if (function_exists('send_notification') && isset($_SESSION['user_id'])) {
         send_notification((int)$_SESSION['user_id'], $message, $type);
@@ -50,7 +50,7 @@ function evidence_exists(mysqli $conn, int $evidenceId): bool
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['review_milestone_evidence'])) {
-    header('Location: ../startup-milestones-dashboard.php?active_tab=evidence');
+    header('Location: ../startup-milestones-dashboard?active_tab=evidence');
     exit();
 }
 

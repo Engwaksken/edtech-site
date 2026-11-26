@@ -2,32 +2,17 @@
 declare(strict_types=1);
 
 ob_start();
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
-require_once 'includes/config.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
+// Shared site config + admin login (redirects to login when signed out).
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/includes/auth.php';
 
 $page_title = 'Risk Ratings Report';
 
-$allowed_roles = ['Administrator', 'MEAL Lead', 'Programs Lead', 'Reviewer', 'Project Officer', 'project Officer'];
-
-if (
-    empty($_SESSION['user_id']) ||
-    empty($_SESSION['role']) ||
-    !in_array((string)$_SESSION['role'], $allowed_roles, true)
-) {
-    $_SESSION['error'] = 'Access denied.';
-    header('Location: dashboard.php');
-    exit();
-}
-
-if (!isset($conn) || !($conn instanceof mysqli)) {
-    die('Database connection not available.');
-}
+check_role(['Administrator', 'MEAL Lead', 'Programs Lead', 'Reviewer', 'Project Officer']);
 
 if (!function_exists('h')) {
     function h($value): string {
@@ -175,7 +160,7 @@ if (isset($_GET['pdf']) && $_GET['pdf'] === '1') {
     if (!class_exists('Dompdf\Dompdf')) {
         ob_end_clean();
         $_SESSION['error'] = 'DOMPDF is not installed. Run <code>composer require dompdf/dompdf</code> in your project root, then try again.';
-        header('Location: risk_ratings_report.php');
+        header('Location: risk_ratings_report');
         exit();
     }
 
@@ -353,11 +338,11 @@ foreach ($ratings as $rr) {
       </div>
       <div class="d-flex gap-2 flex-wrap align-items-center">
         <?php if ($totalCount > 0): ?>
-          <a href="risk_ratings_report.php?pdf=1" class="btn-pdf">
+          <a href="risk_ratings_report?pdf=1" class="btn-pdf">
             <i class="fas fa-file-pdf"></i> Download PDF Report
           </a>
         <?php endif; ?>
-        <a href="manage_risk_ratings.php" class="btn btn-light border">
+        <a href="./" class="btn btn-light border">
           <i class="fas fa-arrow-left me-1"></i> Back
         </a>
       </div>
@@ -428,7 +413,7 @@ foreach ($ratings as $rr) {
           <div class="legacy-style-fc8ad139bf">No generated risk ratings found</div>
           <div class="legacy-style-3a3bbc6f70">
             Only risk ratings with status <strong>Generated</strong> appear here.
-            Go to <a href="manage_risk_ratings.php">Manage Risk Ratings</a> to generate assessments.
+            Open a startup's risk rating and generate it to see it here.
           </div>
         </div>
       <?php else: ?>
@@ -469,7 +454,7 @@ foreach ($ratings as $rr) {
               ?>
               <tr>
                 <td class="center legacy-style-65711d484a"><?= $i + 1 ?></td>
-                <td class="legacy-style-534436e95e"><?= h($rr['startup_name'] ?? '-') ?></td>
+                <td class="legacy-style-534436e95e"><a href="risk_rating?application_id=<?= (int)$rr['application_id'] ?>"><?= h($rr['startup_name'] ?? '-') ?></a></td>
                 <td class="legacy-style-e48b05836a"><?= h($rr['preparer']) ?></td>
                 <td class="<?= scoreClass($gov)  ?>"><?= fmtScore($gov)  ?></td>
                 <td class="<?= scoreClass($oper) ?>"><?= fmtScore($oper) ?></td>

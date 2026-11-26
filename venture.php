@@ -2,14 +2,14 @@
 require_once 'includes/config.php';
 
 $slug = esc($conn, $_GET['slug'] ?? '');
-if (!$slug) { header('Location: cohorts.php'); exit; }
+if (!$slug) { header('Location: cohorts'); exit; }
 
 $startup = mysqli_fetch_assoc(mysqli_query($conn,
     "SELECT v.*, c.name AS cohort_name, c.slug AS cohort_slug FROM ventures v
      LEFT JOIN cohorts c ON c.id=v.cohort_id
      WHERE v.slug='$slug' AND v.status='active' LIMIT 1"
 ));
-if (!$startup) { header('Location: cohorts.php'); exit; }
+if (!$startup) { header('Location: cohorts'); exit; }
 
 $sid = $startup['id'];
 
@@ -46,12 +46,12 @@ include 'includes/header.php';
 <section class="startup-hero" style="background:linear-gradient(135deg,#0d1117,#1a2332);padding:64px 0 48px">
   <div class="container">
     <div style="margin-bottom:18px">
-      <a href="cohorts.php" style="color:rgba(255,255,255,.6);font-size:.875rem">
+      <a href="cohorts" style="color:rgba(255,255,255,.6);font-size:.875rem">
         <i class="fa fa-arrow-left"></i> All Cohorts
       </a>
       <?php if ($startup['cohort_name']): ?>
       <span style="color:rgba(255,255,255,.4);margin:0 8px">›</span>
-      <a href="cohorts.php#cohort-<?= $startup['cohort_id'] ?>" style="color:rgba(255,255,255,.6);font-size:.875rem"><?= h($startup['cohort_name']) ?></a>
+      <a href="cohorts#cohort-<?= $startup['cohort_id'] ?>" style="color:rgba(255,255,255,.6);font-size:.875rem"><?= h($startup['cohort_name']) ?></a>
       <?php endif; ?>
     </div>
 

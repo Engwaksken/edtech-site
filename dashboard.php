@@ -61,7 +61,7 @@ include __DIR__ . '/layout.php';
 
 <div class="dashboard-tab-content active" id="tab-overview">
   <div class="stats-row">
-    <a href="documents.php" class="dashboard-stat-link" aria-label="View venture documents" title="View Documents">
+    <a href="documents" class="dashboard-stat-link" aria-label="View venture documents" title="View Documents">
       <div class="stat-tile">
         <div class="stat-tile-icon icon-doc"><i class="fa fa-folder-open"></i></div>
         <div>
@@ -72,7 +72,7 @@ include __DIR__ . '/layout.php';
       </div>
     </a>
 
-    <a href="team.php" class="dashboard-stat-link" aria-label="View team members" title="View Team Members">
+    <a href="team" class="dashboard-stat-link" aria-label="View team members" title="View Team Members">
       <div class="stat-tile">
         <div class="stat-tile-icon icon-team"><i class="fa fa-users"></i></div>
         <div>
@@ -83,7 +83,7 @@ include __DIR__ . '/layout.php';
       </div>
     </a>
 
-    <a href="investors.php" class="dashboard-stat-link" aria-label="View investor connections" title="View Investor Connections">
+    <a href="investors" class="dashboard-stat-link" aria-label="View investor connections" title="View Investor Connections">
       <div class="stat-tile">
         <div class="stat-tile-icon icon-investor"><i class="fa fa-handshake"></i></div>
         <div>
@@ -94,7 +94,7 @@ include __DIR__ . '/layout.php';
       </div>
     </a>
 
-    <a href="events.php" class="dashboard-stat-link" aria-label="View upcoming events" title="View Upcoming Events">
+    <a href="events" class="dashboard-stat-link" aria-label="View upcoming events" title="View Upcoming Events">
       <div class="stat-tile">
         <div class="stat-tile-icon icon-event"><i class="fa fa-calendar-alt"></i></div>
         <div>
@@ -105,7 +105,7 @@ include __DIR__ . '/layout.php';
       </div>
     </a>
 
-    <a href="survey.php" class="dashboard-stat-link" aria-label="View pending surveys" title="View Pending Surveys">
+    <a href="survey" class="dashboard-stat-link" aria-label="View pending surveys" title="View Pending Surveys">
       <div class="stat-tile">
         <div class="stat-tile-icon icon-survey"><i class="fa fa-poll-h"></i></div>
         <div>
@@ -150,12 +150,12 @@ include __DIR__ . '/layout.php';
             </div>
             <div class="survey-table-actions">
               <?php if (!empty($sv['response_id'])): ?>
-                <a href="survey.php?action=view_response&id=<?= (int)$sv['response_id'] ?>" class="btn btn-outline btn-sm">
+                <a href="survey?action=view_response&id=<?= (int)$sv['response_id'] ?>" class="btn btn-outline btn-sm">
                   <i class="fa fa-eye"></i> View
                 </a>
               <?php endif; ?>
               <?php if (!empty($sv['allow_multiple_responses'])): ?>
-                <a href="survey.php?t=<?= h($sv['external_token']) ?>" class="btn btn-outline btn-sm">
+                <a href="survey?t=<?= h($sv['external_token']) ?>" class="btn btn-outline btn-sm">
                   <i class="fa fa-redo"></i> Retake
                 </a>
               <?php endif; ?>
@@ -167,7 +167,7 @@ include __DIR__ . '/layout.php';
       <div class="empty-state">
         <i class="fa fa-clipboard-check"></i>
         <p>No completed surveys yet.</p>
-        <a href="survey.php">Browse available surveys.</a>
+        <a href="survey">Browse available surveys.</a>
       </div>
     <?php endif; ?>
   </div>
@@ -181,13 +181,13 @@ include __DIR__ . '/layout.php';
     </div>
 
     <div class="qa-grid">
-      <a href="documents.php?action=upload" class="qa-btn"><i class="fa fa-cloud-upload-alt"></i>Upload Doc</a>
-      <a href="profile.php" class="qa-btn"><i class="fa fa-edit"></i>Edit Profile</a>
-      <a href="team.php?action=add" class="qa-btn"><i class="fa fa-user-plus"></i>Add Team Member</a>
-      <a href="investors.php" class="qa-btn"><i class="fa fa-user-tie"></i>View Investors</a>
-      <a href="events.php" class="qa-btn"><i class="fa fa-calendar-check"></i>Browse Events</a>
-      <a href="messages.php" class="qa-btn"><i class="fa fa-comment-dots"></i>Messages</a>
-      <a href="survey.php" class="qa-btn"><i class="fa fa-poll-h"></i>Surveys</a>
+      <a href="documents?action=upload" class="qa-btn"><i class="fa fa-cloud-upload-alt"></i>Upload Doc</a>
+      <a href="profile" class="qa-btn"><i class="fa fa-edit"></i>Edit Profile</a>
+      <a href="team?action=add" class="qa-btn"><i class="fa fa-user-plus"></i>Add Team Member</a>
+      <a href="investors" class="qa-btn"><i class="fa fa-user-tie"></i>View Investors</a>
+      <a href="events" class="qa-btn"><i class="fa fa-calendar-check"></i>Browse Events</a>
+      <a href="messages" class="qa-btn"><i class="fa fa-comment-dots"></i>Messages</a>
+      <a href="survey" class="qa-btn"><i class="fa fa-poll-h"></i>Surveys</a>
     </div>
   </div>
 </div>
@@ -218,7 +218,7 @@ include __DIR__ . '/layout.php';
     </div>
 
     <?php if ($profile_pct < 100): ?>
-      <a href="profile.php" class="btn btn-outline btn-sm mt-14">
+      <a href="profile" class="btn btn-outline btn-sm mt-14">
         <i class="fa fa-edit"></i> Complete Profile
       </a>
     <?php endif; ?>
@@ -232,7 +232,7 @@ include __DIR__ . '/layout.php';
         <h3>Recent Documents</h3>
         <p>Your latest uploaded venture documents.</p>
       </div>
-      <a href="documents.php" class="btn btn-outline btn-sm"><i class="fa fa-arrow-right"></i> All</a>
+      <a href="documents" class="btn btn-outline btn-sm"><i class="fa fa-arrow-right"></i> All</a>
     </div>
 
     <?php if (!empty($recent_docs)): ?>
@@ -259,7 +259,7 @@ include __DIR__ . '/layout.php';
       <div class="empty-state">
         <i class="fa fa-folder-open"></i>
         <p>No documents yet.</p>
-        <a href="documents.php?action=upload">Upload your first document.</a>
+        <a href="documents?action=upload">Upload your first document.</a>
       </div>
     <?php endif; ?>
   </div>
@@ -272,7 +272,7 @@ include __DIR__ . '/layout.php';
         <h3>Upcoming Events</h3>
         <p>Events you have registered for.</p>
       </div>
-      <a href="events.php" class="btn btn-outline btn-sm"><i class="fa fa-arrow-right"></i> All</a>
+      <a href="events" class="btn btn-outline btn-sm"><i class="fa fa-arrow-right"></i> All</a>
     </div>
 
     <?php if (!empty($upcoming_events)): ?>
@@ -296,7 +296,7 @@ include __DIR__ . '/layout.php';
       <div class="empty-state">
         <i class="fa fa-calendar-alt"></i>
         <p>No upcoming events.</p>
-        <a href="events.php">Browse all events.</a>
+        <a href="events">Browse all events.</a>
       </div>
     <?php endif; ?>
   </div>
@@ -309,7 +309,7 @@ include __DIR__ . '/layout.php';
         <h3>Investor Connections</h3>
         <p>Your current investor pipeline.</p>
       </div>
-      <a href="investors.php" class="btn btn-outline btn-sm"><i class="fa fa-arrow-right"></i> All</a>
+      <a href="investors" class="btn btn-outline btn-sm"><i class="fa fa-arrow-right"></i> All</a>
     </div>
 
     <?php if (!empty($investor_pipe)): ?>
@@ -346,7 +346,7 @@ include __DIR__ . '/layout.php';
         <h3>Surveys</h3>
         <p>Pending survey requests and your past responses.</p>
       </div>
-      <a href="survey.php" class="btn btn-outline btn-sm"><i class="fa fa-arrow-right"></i> All</a>
+      <a href="survey" class="btn btn-outline btn-sm"><i class="fa fa-arrow-right"></i> All</a>
     </div>
 
     <div class="survey-subnav">
@@ -392,7 +392,7 @@ include __DIR__ . '/layout.php';
               Pending
             </span>
 
-            <a href="survey.php?t=<?= h($sv['external_token']) ?>" class="btn btn-primary btn-sm">
+            <a href="survey?t=<?= h($sv['external_token']) ?>" class="btn btn-primary btn-sm">
               <i class="fa fa-arrow-right"></i> Start
             </a>
           </div>
@@ -424,7 +424,7 @@ include __DIR__ . '/layout.php';
             <span class="badge badge-success">Completed</span>
 
             <?php if (!empty($sv['allow_multiple_responses'])): ?>
-              <a href="survey.php?t=<?= h($sv['external_token']) ?>" class="btn btn-outline btn-sm">
+              <a href="survey?t=<?= h($sv['external_token']) ?>" class="btn btn-outline btn-sm">
                 <i class="fa fa-redo"></i> Retake
               </a>
             <?php endif; ?>

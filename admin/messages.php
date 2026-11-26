@@ -605,7 +605,7 @@ $site_name = function_exists('get_setting')
 <?php include 'includes/sidebar.php'; ?>
 <div class="admin-main" id="adminMain">
 <header class="admin-topbar">
-  <div class="topbar-left"><div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> &rsaquo; <?php if($IS_PRIVILEGED): ?><a href="mentors.php">Mentors</a> &rsaquo; <?php endif; ?> <strong>Messages</strong></div></div>
+  <div class="topbar-left"><div class="topbar-breadcrumb"><a href="./">Dashboard</a> &rsaquo; <?php if($IS_PRIVILEGED): ?><a href="mentors">Mentors</a> &rsaquo; <?php endif; ?> <strong>Messages</strong></div></div>
   <div class="topbar-right">
     <button class="btn btn-primary btn-sm" onclick="openComposeModal()"><i class="fa fa-pen"></i> Compose</button>
     <div class="admin-avatar"><div class="avatar-circle"><?= h(strtoupper(substr($ADMIN['full_name'] ?? 'A', 0, 1))) ?></div></div>
@@ -631,7 +631,7 @@ $site_name = function_exists('get_setting')
     </button>
 
     <nav class="mail-nav">
-      <a href="messages.php?folder=inbox" class="mail-nav-link <?= $folder === 'inbox' ? 'active' : '' ?>">
+      <a href="messages?folder=inbox" class="mail-nav-link <?= $folder === 'inbox' ? 'active' : '' ?>">
         <i class="fa fa-inbox"></i> Inbox
         <?php if ($total_unread > 0): ?>
           <span class="mail-nav-count is-unread"><?= $total_unread ?></span>
@@ -640,14 +640,14 @@ $site_name = function_exists('get_setting')
         <?php endif; ?>
       </a>
 
-      <a href="messages.php?folder=outbox" class="mail-nav-link <?= $folder === 'outbox' ? 'active' : '' ?>">
+      <a href="messages?folder=outbox" class="mail-nav-link <?= $folder === 'outbox' ? 'active' : '' ?>">
         <i class="fa fa-paper-plane"></i> Outbox
         <?php if ($count_outbox > 0): ?>
           <span class="mail-nav-count"><?= $count_outbox ?></span>
         <?php endif; ?>
       </a>
 
-      <a href="messages.php?folder=drafts" class="mail-nav-link <?= $folder === 'drafts' ? 'active' : '' ?>">
+      <a href="messages?folder=drafts" class="mail-nav-link <?= $folder === 'drafts' ? 'active' : '' ?>">
         <i class="fa fa-file-alt"></i> Drafts
         <?php if ($count_drafts > 0): ?>
           <span class="mail-nav-count"><?= $count_drafts ?></span>
@@ -668,7 +668,7 @@ $site_name = function_exists('get_setting')
       </form>
 
       <?php if ($search !== ''): ?>
-        <a href="messages.php?folder=<?= h($folder) ?>" class="mail-search-clear"><i class="fa fa-times"></i> Clear</a>
+        <a href="messages?folder=<?= h($folder) ?>" class="mail-search-clear"><i class="fa fa-times"></i> Clear</a>
       <?php endif; ?>
     </header>
 
@@ -683,7 +683,7 @@ $site_name = function_exists('get_setting')
           </div>
         <?php else: ?>
           <?php foreach ($draft_rows as $draft): ?>
-            <a href="messages.php?folder=drafts&amp;draft=<?= (int)$draft['id'] ?>" class="mail-row <?= $draft_id === (int)$draft['id'] ? 'active' : '' ?>">
+            <a href="messages?folder=drafts&amp;draft=<?= (int)$draft['id'] ?>" class="mail-row <?= $draft_id === (int)$draft['id'] ? 'active' : '' ?>">
               <div class="mail-avatar"><?= h(msg_initials((string)$draft['party_label'])) ?></div>
               <div class="mail-row-body">
                 <div class="mail-row-top">
@@ -708,7 +708,7 @@ $site_name = function_exists('get_setting')
           </div>
         <?php else: ?>
           <?php foreach ($thread_rows as $thread): $unread = (int)($thread['unread'] ?? 0) > 0; $is_active = $active_thread === (string)$thread['thread_id']; ?>
-            <a href="messages.php?folder=<?= h($folder) ?>&amp;thread=<?= rawurlencode((string)$thread['thread_id']) ?>" class="mail-row <?= $unread ? 'unread' : '' ?> <?= $is_active ? 'active' : '' ?>">
+            <a href="messages?folder=<?= h($folder) ?>&amp;thread=<?= rawurlencode((string)$thread['thread_id']) ?>" class="mail-row <?= $unread ? 'unread' : '' ?> <?= $is_active ? 'active' : '' ?>">
               <div class="mail-avatar"><?= h(msg_initials((string)$thread['party_name'])) ?></div>
               <div class="mail-row-body">
                 <div class="mail-row-top">

@@ -818,7 +818,7 @@ $nlUrl    = nl_site_url() !== '' ? nl_site_url().'/admin/assets/css/newsletters.
     <div class="nl-topbar-inner">
       <div>
         <div class="nl-crumb">
-          <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
+          <a href="./"><i class="fa fa-home"></i> Dashboard</a>
           <span>/</span><span>Newsletters</span>
         </div>
         <h1 class="nl-page-title">Newsletters</h1>
@@ -1453,7 +1453,7 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
   if (!window.NL) return;
   window.NL.openEmbed = function (id, subject) {
-    var url = window.NL_SITE_URL + '/newsletter-view.php?id=' + encodeURIComponent(id) + '&embed=1';
+    var url = window.NL_SITE_URL + '/newsletter-view?id=' + encodeURIComponent(id) + '&embed=1';
     var title = String(subject || 'Newsletter');
     var code = '<iframe src="' + url + '" title="' + title.replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]; }) + '" width="100%" height="800" style="border:0" loading="lazy"></iframe>';
     $('newsletterEmbedTitle').textContent = title + ' — Embed Preview';

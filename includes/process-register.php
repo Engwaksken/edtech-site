@@ -15,7 +15,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 function reg_redirect(int $event_id): void
 {
-    header('Location: ../register-event.php?event_id=' . $event_id);
+    header('Location: ../register-event?event_id=' . $event_id);
     exit;
 }
 

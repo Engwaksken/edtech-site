@@ -443,7 +443,7 @@ if ($hasEvidenceTable) {
 $queryBase = $_GET;
 unset($queryBase['page']);
 $baseQueryString = http_build_query($queryBase);
-$basePageUrl = 'startup-milestones-dashboard.php' . ($baseQueryString ? '?' . $baseQueryString . '&' : '?');
+$basePageUrl = 'startup-milestones-dashboard' . ($baseQueryString ? '?' . $baseQueryString . '&' : '?');
 ?>
 
 <link rel="stylesheet" href="css/reports.css">
@@ -459,12 +459,12 @@ $basePageUrl = 'startup-milestones-dashboard.php' . ($baseQueryString ? '?' . $b
         </div>
 
         <div class="hero-actions">
-            <a href="startup-milestones.php" class="btn btn-primary">
+            <a href="startup-milestones" class="btn btn-primary">
                 <i class="fas fa-list-check"></i> Manage Startup Milestones
             </a>
 
             <?php if ($hasFieldVisits): ?>
-                <a href="startup-field-visits.php" class="btn btn-gray">
+                <a href="startup-field-visits" class="btn btn-gray">
                     <i class="fas fa-clipboard-check"></i> Field Visits
                 </a>
             <?php endif; ?>
@@ -618,7 +618,7 @@ $basePageUrl = 'startup-milestones-dashboard.php' . ($baseQueryString ? '?' . $b
                     <button class="btn btn-dark" type="submit">
                         <i class="fas fa-filter"></i> Filter
                     </button>
-                    <a href="startup-milestones-dashboard.php" class="btn btn-gray">
+                    <a href="startup-milestones-dashboard" class="btn btn-gray">
                         <i class="fas fa-times"></i> Clear
                     </a>
                 </div>
@@ -925,7 +925,7 @@ $basePageUrl = 'startup-milestones-dashboard.php' . ($baseQueryString ? '?' . $b
         <section id="tab-latest" class="tab-panel">
             <div class="section-title">
                 <h3><i class="fas fa-list-check"></i> Recent Startup Milestones</h3>
-                <a href="startup-milestones.php" class="btn btn-sm btn-soft">
+                <a href="startup-milestones" class="btn btn-sm btn-soft">
                     <i class="fas fa-arrow-right"></i> View All
                 </a>
             </div>

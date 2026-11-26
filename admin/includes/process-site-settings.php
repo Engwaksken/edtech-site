@@ -54,7 +54,7 @@ unset($_SESSION['ss_flash_success'], $_SESSION['ss_flash_error']);
 function ss_redirect(string $tab, string $message, bool $ok = true): void
 {
     $_SESSION[$ok ? 'ss_flash_success' : 'ss_flash_error'] = $message;
-    header('Location: site-settings.php?tab=' . rawurlencode($tab));
+    header('Location: site-settings?tab=' . rawurlencode($tab));
     exit;
 }
 

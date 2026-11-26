@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (empty($_SESSION['venture_id'])) {
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 
@@ -425,7 +425,7 @@ include __DIR__ . '/layout.php';
                 <?php if ($mentors): ?>
                     <button class="btn btn-primary" type="button" onclick="openRequestModal()"><i class="fa fa-calendar-plus"></i> Request session</button>
                 <?php endif; ?>
-                <a href="sessions.php" class="btn"><i class="fa fa-list"></i> All sessions</a>
+                <a href="sessions" class="btn"><i class="fa fa-list"></i> All sessions</a>
             </div>
         </div>
 

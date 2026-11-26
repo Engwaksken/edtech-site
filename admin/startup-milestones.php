@@ -305,12 +305,12 @@ $stats = [
         </div>
 
         <div class="hero-actions">
-            <a href="startup-milestones-dashboard.php" class="btn btn-gray">
+            <a href="startup-milestones-dashboard" class="btn btn-gray">
                 <i class="fas fa-chart-line"></i> Dashboard
             </a>
 
             <?php if ($hasFieldVisits): ?>
-                <a href="startup-field-visits.php" class="btn btn-gray">
+                <a href="startup-field-visits" class="btn btn-gray">
                     <i class="fas fa-clipboard-check"></i> Field Visits
                 </a>
             <?php endif; ?>
@@ -420,7 +420,7 @@ $stats = [
             <button class="btn btn-dark" type="submit">
                 <i class="fas fa-filter"></i> Filter
             </button>
-            <a href="startup-milestones.php" class="btn btn-gray">
+            <a href="startup-milestones" class="btn btn-gray">
                 <i class="fas fa-times"></i> Clear
             </a>
         </div>
@@ -532,7 +532,7 @@ $stats = [
 
                                         <?php if (!empty($milestone['latest_visit_id'])): ?>
                                             <br>
-                                            <a href="startup-field-visits.php?visit_id=<?php echo (int)$milestone['latest_visit_id']; ?>#score" style="font-size:12px;color:#0f766e;font-weight:700;">
+                                            <a href="startup-field-visits?visit_id=<?php echo (int)$milestone['latest_visit_id']; ?>#score" style="font-size:12px;color:#0f766e;font-weight:700;">
                                                 Open latest
                                             </a>
                                         <?php endif; ?>

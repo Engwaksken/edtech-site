@@ -12,7 +12,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
         'Database connection error. Please try again later.',
     ];
 
-    header('Location: ../referral.php');
+    header('Location: ../referral');
     exit;
 }
 
@@ -26,7 +26,7 @@ $conn->set_charset('utf8mb4');
 if (!function_exists('referral_process_redirect')) {
     function referral_process_redirect(string $suffix = ''): never
     {
-        $location = '../referral.php';
+        $location = '../referral';
 
         if ($suffix !== '') {
             $location .= $suffix;

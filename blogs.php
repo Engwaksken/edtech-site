@@ -335,7 +335,7 @@ $share_site_name = function_exists('get_setting')
 $share_title       = $share_site_name . ' - Blogs';
 $share_description = 'Latest stories, updates and insights from the Mastercard Foundation EdTech Fellowship.';
 $share_image       = '';
-$share_url         = rtrim((string)SITE_URL, '/') . '/blogs.php';
+$share_url         = rtrim((string)SITE_URL, '/') . '/blogs';
 $share_type        = 'website';
 
 if ($blog) {
@@ -372,7 +372,7 @@ if ($blog) {
     }
 
     $share_url = rtrim((string)SITE_URL, '/')
-        . '/blogs.php?slug='
+        . '/blogs?slug='
         . rawurlencode((string)$blog['slug']);
 }
 
@@ -594,7 +594,7 @@ if ($slug === ''): ?>
                     // Keep listing cards brief. The full description/content
                     // is displayed only on the article page after Read More.
                     $excerpt  = blog_card_excerpt($b, 125);
-                    $card_url = 'blogs.php?slug=' . urlencode($b['slug']);
+                    $card_url = 'blogs?slug=' . urlencode($b['slug']);
                 ?>
 
                 <article class="blog-card">
@@ -672,7 +672,7 @@ else:
                 <i class="fa fa-file-slash"></i>
                 <h1>Article Not Found</h1>
                 <p>The article you're looking for is unavailable or has been removed.</p>
-                <a href="blogs.php" class="btn btn-primary">
+                <a href="blogs" class="btn btn-primary">
                     <i class="fa fa-arrow-left"></i> Back to Articles
                 </a>
             </div>
@@ -705,7 +705,7 @@ else:
         <div class="container">
             <div class="blog-detail-hero__content">
 
-                <a href="blogs.php" class="blog-detail-hero__back">
+                <a href="blogs" class="blog-detail-hero__back">
                     <i class="fa fa-arrow-left"></i> All Articles
                 </a>
 
@@ -739,7 +739,7 @@ else:
     else: ?>
     <div class="blog-detail-header">
         <div class="container">
-            <a href="blogs.php" class="blog-detail-header__back">
+            <a href="blogs" class="blog-detail-header__back">
                 <i class="fa fa-arrow-left"></i> All Articles
             </a>
             <?php if (!empty($blog['category'])): ?>
@@ -783,7 +783,7 @@ else:
                         <?php endif; ?>
                     </div>
                     <div class="blog-article-toolbar__right">
-                        <a href="blog-pdf.php?slug=<?= h($blog['slug']) ?>"
+                        <a href="blog-pdf?slug=<?= h($blog['slug']) ?>"
                            target="_blank"
                            class="btn-article-pdf"
                            title="View &amp; Download PDF">
@@ -811,10 +811,10 @@ else:
 
                            <!-- <footer class="blog-detail-footer">
                     <div class="blog-detail-footer__actions">
-                        <a href="blogs.php" class="btn btn-secondary">
+                        <a href="blogs" class="btn btn-secondary">
                             <i class="fa fa-arrow-left"></i> Back to Articles
                         </a>
-                        <a href="blog-pdf.php?slug=<?= h($blog['slug']) ?>"
+                        <a href="blog-pdf?slug=<?= h($blog['slug']) ?>"
                            target="_blank"
                            class="btn-article-pdf btn-article-pdf--lg">
                             <i class="fa fa-file-pdf"></i> Download PDF

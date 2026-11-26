@@ -187,7 +187,7 @@ $site_name = function_exists('get_setting')
 <header class="admin-topbar">
   <div class="topbar-left">
     <div class="topbar-breadcrumb">
-      <a href="index.php">Dashboard</a> › <strong>Staff & Mentors</strong>
+      <a href="./">Dashboard</a> › <strong>Staff & Mentors</strong>
     </div>
   </div>
 
@@ -250,7 +250,7 @@ $site_name = function_exists('get_setting')
     <i class="fa fa-filter"></i> Filter
   </button>
 
-  <a href="staff.php" class="btn btn-secondary">
+  <a href="staff" class="btn btn-secondary">
     <i class="fa fa-times"></i> Clear
   </a>
 </form>
@@ -368,7 +368,7 @@ $site_name = function_exists('get_setting')
 
   <td>
     <div class="tbl-actions">
-      <a href="assign-staff.php?staff_id=<?= (int)$s['id'] ?>"
+      <a href="assign-staff?staff_id=<?= (int)$s['id'] ?>"
          class="btn btn-sm btn-teal"
          title="View assignments">
         <i class="fa fa-link"></i>

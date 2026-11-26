@@ -45,7 +45,7 @@ $MENTOR_RECORD_ID = ms_mentor_record_id($conn);
 
 function ms_redirect(string $qs = ''): void
 {
-    header('Location: ../mentor-sessions.php' . ($qs !== '' ? '?' . $qs : ''));
+    header('Location: ../mentor-sessions' . ($qs !== '' ? '?' . $qs : ''));
     exit;
 }
 
@@ -982,7 +982,7 @@ if ($action === 'upload_report') {
             $conn,
             'New session report uploaded: ' . ($sess_row['title'] ?? 'Session'),
             $uploaded_by . ' uploaded a report ("' . $report_title . '") for session "' . ($sess_row['title'] ?? '') . '".',
-            'mentor-sessions.php'
+            'mentor-sessions'
         );
     }
 
@@ -1424,7 +1424,7 @@ if ($action === 'save') {
                 $conn,
                 'Session marked completed: ' . $title,
                 $invited_by . ' marked "' . $title . '" as completed.',
-                'mentor-sessions.php'
+                'mentor-sessions'
             );
         }
 
@@ -1546,7 +1546,7 @@ if ($action === 'save') {
             $conn,
             'Session marked completed: ' . $title,
             $invited_by . ' marked "' . $title . '" as completed.',
-            'mentor-sessions.php'
+            'mentor-sessions'
         );
     }
 
@@ -1912,7 +1912,7 @@ if ($action === 'update_status') {
             $status === 'confirmed'
                 ? $actor . ' confirmed the requested session "' . (string)$current['title'] . '".'
                 : $actor . ' rejected the requested session "' . (string)$current['title'] . '". Reason: ' . $rejection_reason,
-            'mentor-sessions.php'
+            'mentor-sessions'
         );
     }
 
@@ -1924,7 +1924,7 @@ if ($action === 'update_status') {
             $conn,
             'Session marked completed: ' . ($current['title'] ?? ''),
             $actor . ' marked "' . ($current['title'] ?? '') . '" as completed.',
-            'mentor-sessions.php'
+            'mentor-sessions'
         );
     }
 

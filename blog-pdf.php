@@ -661,7 +661,7 @@ body {
     <span class="pdf-chrome-site"><?= h($site_name) ?></span>
   </div>
   <div class="pdf-chrome-actions">
-    <a href="blogs.php?slug=<?= h($blog['slug']) ?>" class="btn-pdf btn-pdf-ghost">
+    <a href="blogs?slug=<?= h($blog['slug']) ?>" class="btn-pdf btn-pdf-ghost">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
       <span>Back to Article</span>
     </a>

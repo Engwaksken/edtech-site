@@ -55,7 +55,7 @@ function iv_datetime_or_null(string $value): ?string
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    iv_redirect('../interviews.php', 'Invalid request.', 'error');
+    iv_redirect('../interviews', 'Invalid request.', 'error');
 }
 
 $action = $_POST['action'] ?? '';
@@ -78,7 +78,7 @@ if ($action === 'save_interview') {
     $questions_json = $_POST['questions_json'] ?? '[]';
 
     if ($title === '') {
-        iv_redirect('../interviews.php?tab=create', 'Title is required.', 'error');
+        iv_redirect('../interviews?tab=create', 'Title is required.', 'error');
     }
 
     $allowed_types = [
@@ -127,7 +127,7 @@ if ($action === 'save_interview') {
 
         if (!$stmt) {
             iv_redirect(
-                '../interviews.php?tab=create&edit=' . $id,
+                '../interviews?tab=create&edit=' . $id,
                 'DB error: ' . $conn->error,
                 'error'
             );
@@ -153,7 +153,7 @@ if ($action === 'save_interview') {
             $stmt->close();
 
             iv_redirect(
-                '../interviews.php?tab=create&edit=' . $id,
+                '../interviews?tab=create&edit=' . $id,
                 'Update failed: ' . $error,
                 'error'
             );
@@ -161,7 +161,7 @@ if ($action === 'save_interview') {
 
         $stmt->close();
 
-        iv_redirect('../interviews.php?tab=list', 'Interview session updated successfully.');
+        iv_redirect('../interviews?tab=list', 'Interview session updated successfully.');
     }
 
     $token = iv_token();
@@ -188,7 +188,7 @@ if ($action === 'save_interview') {
     ");
 
     if (!$stmt) {
-        iv_redirect('../interviews.php?tab=create', 'DB error: ' . $conn->error, 'error');
+        iv_redirect('../interviews?tab=create', 'DB error: ' . $conn->error, 'error');
     }
 
     $stmt->bind_param(
@@ -211,14 +211,14 @@ if ($action === 'save_interview') {
         $error = $stmt->error;
         $stmt->close();
 
-        iv_redirect('../interviews.php?tab=create', 'Insert failed: ' . $error, 'error');
+        iv_redirect('../interviews?tab=create', 'Insert failed: ' . $error, 'error');
     }
 
     $new_id = (int)$conn->insert_id;
     $stmt->close();
 
     iv_redirect(
-        '../interviews.php?tab=create&edit=' . $new_id,
+        '../interviews?tab=create&edit=' . $new_id,
         'Session created successfully. Share the generated link below.'
     );
 }
@@ -231,7 +231,7 @@ if ($action === 'delete_interview') {
     $id = (int)($_POST['id'] ?? 0);
 
     if ($id < 1) {
-        iv_redirect('../interviews.php?tab=list', 'Invalid interview selected.', 'error');
+        iv_redirect('../interviews?tab=list', 'Invalid interview selected.', 'error');
     }
 
     $conn->begin_transaction();
@@ -275,14 +275,14 @@ if ($action === 'delete_interview') {
 
         $conn->commit();
 
-        iv_redirect('../interviews.php?tab=list', 'Interview session deleted successfully.');
+        iv_redirect('../interviews?tab=list', 'Interview session deleted successfully.');
 
     } catch (Throwable $e) {
 
         $conn->rollback();
 
         iv_redirect(
-            '../interviews.php?tab=list',
+            '../interviews?tab=list',
             'Delete failed: ' . $e->getMessage(),
             'error'
         );
@@ -297,7 +297,7 @@ if ($action === 'delete_response') {
     $id = (int)($_POST['id'] ?? 0);
 
     if ($id < 1) {
-        iv_redirect('../interviews.php?tab=responses', 'Invalid response selected.', 'error');
+        iv_redirect('../interviews?tab=responses', 'Invalid response selected.', 'error');
     }
 
     $conn->begin_transaction();
@@ -326,18 +326,18 @@ if ($action === 'delete_response') {
 
         $conn->commit();
 
-        iv_redirect('../interviews.php?tab=responses', 'Response deleted successfully.');
+        iv_redirect('../interviews?tab=responses', 'Response deleted successfully.');
 
     } catch (Throwable $e) {
 
         $conn->rollback();
 
         iv_redirect(
-            '../interviews.php?tab=responses',
+            '../interviews?tab=responses',
             'Delete failed: ' . $e->getMessage(),
             'error'
         );
     }
 }
 
-iv_redirect('../interviews.php', 'Unknown action.', 'error');
+iv_redirect('../interviews', 'Unknown action.', 'error');

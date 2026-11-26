@@ -126,7 +126,7 @@ $scoreFields = [
             <p>Field teams can score visited startups, upload evidence/report files, and submit field recommendations.</p>
         </div>
         <div class="hero-actions">
-            <a href="startup-milestones.php" class="btn btn-gray">
+            <a href="startup-milestones" class="btn btn-gray">
                 <i class="fas fa-arrow-left"></i> Startup Milestones
             </a>
         </div>
@@ -207,7 +207,7 @@ $scoreFields = [
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <a href="startup-field-visits.php?visit_id=<?php echo (int)$visit['visit_id']; ?>#score" class="btn btn-sm btn-primary">
+                                        <a href="startup-field-visits?visit_id=<?php echo (int)$visit['visit_id']; ?>#score" class="btn btn-sm btn-primary">
                                             <i class="fas fa-star"></i> Score
                                         </a>
                                     </td>

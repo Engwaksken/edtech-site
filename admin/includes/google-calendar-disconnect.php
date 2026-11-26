@@ -28,5 +28,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $target_mentor_id > 0 && ($IS_MENTO
     }
 }
 
-header('Location: ../mentor-calendar.php');
+header('Location: ../mentor-calendar');
 exit;

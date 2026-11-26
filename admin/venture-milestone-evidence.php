@@ -97,7 +97,7 @@ if ($applicationId > 0) {
             <p>Upload milestone evidence files for reviewers to view, comment, and score.</p>
         </div>
         <div class="hero-actions">
-            <a href="startup-milestones-dashboard.php" class="btn btn-gray">
+            <a href="startup-milestones-dashboard" class="btn btn-gray">
                 <i class="fas fa-chart-line"></i> Dashboard
             </a>
         </div>

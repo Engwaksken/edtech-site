@@ -75,7 +75,7 @@ foreach ($roles as $role) {
   <header class="admin-topbar">
     <div class="topbar-left">
       <div class="topbar-breadcrumb">
-        <a href="index.php">Dashboard</a> > <strong>Role Permissions</strong>
+        <a href="./">Dashboard</a> > <strong>Role Permissions</strong>
       </div>
     </div>
     <div class="topbar-right">
@@ -424,7 +424,7 @@ foreach ($roles as $role) {
       <div class="rp-field-grid">
         <div class="rp-field">
           <label>Page URL <span class="req">*</span></label>
-          <input type="text" id="pm_url" placeholder="e.g. users.php">
+          <input type="text" id="pm_url" placeholder="e.g. users">
         </div>
         <div class="rp-field">
           <label>Group / Section</label>

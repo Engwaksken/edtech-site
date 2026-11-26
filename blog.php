@@ -164,7 +164,7 @@ function render_block(array $b): string {
 /* -- Fetch article ----------------------------------------- */
 $slug = trim($_GET['slug'] ?? '');
 if ($slug === '') {
-    header('Location: blogs.php');
+    header('Location: blogs');
     exit;
 }
 
@@ -187,7 +187,7 @@ if (!$blog) {
         <i class="fa fa-file-slash"></i>
         <h1>Article Not Found</h1>
         <p>The article you're looking for is unavailable or has been removed.</p>
-        <a href="blogs.php" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back to Articles</a>
+        <a href="blogs" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back to Articles</a>
       </div>
     </div>
   </section>
@@ -215,8 +215,8 @@ $builder_json = $blog['content_builder'] ?? '';
 $has_builder  = $builder_json && is_array(json_decode($builder_json, true)) && !empty(json_decode($builder_json, true));
 
 // Canonical & share URLs
-$canonical = rtrim(SITE_URL, '/') . '/blog.php?slug=' . rawurlencode($slug);
-$pdf_url   = rtrim(SITE_URL, '/') . '/blog-pdf.php?slug=' . rawurlencode($slug);
+$canonical = rtrim(SITE_URL, '/') . '/blog?slug=' . rawurlencode($slug);
+$pdf_url   = rtrim(SITE_URL, '/') . '/blog-pdf?slug=' . rawurlencode($slug);
 
 /* -- Related posts (same category, exclude current) ------- */
 $related = [];
@@ -449,7 +449,7 @@ include 'includes/header.php';
     <div class="container">
       <div class="blog-detail-hero__content">
 
-        <a href="blogs.php" class="blog-detail-hero__back">
+        <a href="blogs" class="blog-detail-hero__back">
           <i class="fa fa-arrow-left"></i> All Articles
         </a>
 
@@ -481,7 +481,7 @@ include 'includes/header.php';
   <div class="blog-detail-header">
     <div class="container">
 
-      <a href="blogs.php" class="blog-detail-header__back">
+      <a href="blogs" class="blog-detail-header__back">
         <i class="fa fa-arrow-left"></i> All Articles
       </a>
 
@@ -594,7 +594,7 @@ include 'includes/header.php';
         <!-- FOOTER ACTIONS -->
         <footer class="blog-detail-footer">
           <div class="blog-detail-footer__actions">
-            <a href="blogs.php" class="btn btn-secondary">
+            <a href="blogs" class="btn btn-secondary">
               <i class="fa fa-arrow-left"></i> All Articles
             </a>
             <a href="<?= h($pdf_url) ?>"
@@ -625,7 +625,7 @@ include 'includes/header.php';
           $r_img = trim((string)($r['featured_image'] ?? ''));
           $r_img = $r_img !== '' ? ba($r_img) : '';
           $r_exc = h(mb_strimwidth(strip_tags($r['excerpt'] ?? ''), 0, 120, '…'));
-          $r_url = h('blog.php?slug=' . rawurlencode($r['slug']));
+          $r_url = h('blog?slug=' . rawurlencode($r['slug']));
         ?>
         <article class="blog-card">
           <a href="<?= $r_url ?>" class="blog-card__thumb" aria-label="<?= h($r['title']) ?>">

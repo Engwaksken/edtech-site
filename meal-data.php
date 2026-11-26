@@ -560,7 +560,7 @@ if (!function_exists('meal_export_pdf')) {
         if (!$autoload_loaded || !class_exists('Dompdf\\Dompdf')) {
             $_SESSION['vp_flash_msg'] = 'DOMPDF is not installed. Run composer require dompdf/dompdf, then try PDF export again.';
             $_SESSION['vp_flash_type'] = 'error';
-            header('Location: meal-data.php?tab=' . urlencode($type));
+            header('Location: meal-data?tab=' . urlencode($type));
             exit;
         }
 
@@ -2126,11 +2126,11 @@ body > .meal-modal.open,
 
       <!-- Download / Upload bar -->
       <div class="dl-bar">
-        <a href="meal-data.php?download_template=participants&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?download_template=participants&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-csv"><i class="fa fa-file-excel"></i> Download Template</a>
-        <a href="meal-data.php?export=csv&type=participants&venture_id=<?= $venture_id ?><?= $ben_q !== '' ? '&amp;q=' . h(urlencode($ben_q)) : '' ?>"
+        <a href="meal-data?export=csv&type=participants&venture_id=<?= $venture_id ?><?= $ben_q !== '' ? '&amp;q=' . h(urlencode($ben_q)) : '' ?>"
            class="btn-dl btn-dl-export"><i class="fa fa-file-export"></i> Export CSV</a>
-        <a href="meal-data.php?export=pdf&type=participants&venture_id=<?= $venture_id ?><?= $ben_q !== '' ? '&amp;q=' . h(urlencode($ben_q)) : '' ?>"
+        <a href="meal-data?export=pdf&type=participants&venture_id=<?= $venture_id ?><?= $ben_q !== '' ? '&amp;q=' . h(urlencode($ben_q)) : '' ?>"
            class="btn-dl btn-dl-pdf"><i class="fa fa-file-pdf"></i> Export PDF</a>
         <?php if ($MEAL_CAN_EDIT): ?>
         <a
@@ -2488,11 +2488,11 @@ body > .meal-modal.open,
       style="<?= $tab==='teachers' ? 'display:block !important;' : 'display:none !important;' ?>"
     >
       <div class="dl-bar">
-        <a href="meal-data.php?download_template=teachers&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?download_template=teachers&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-csv"><i class="fa fa-file-excel"></i> Download Template</a>
-        <a href="meal-data.php?export=csv&type=teachers&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=csv&type=teachers&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-export"><i class="fa fa-file-export"></i> Export CSV</a>
-        <a href="meal-data.php?export=pdf&type=teachers&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=pdf&type=teachers&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-pdf"><i class="fa fa-file-pdf"></i> Export PDF</a>
         <?php if ($MEAL_CAN_EDIT): ?>
         <a
@@ -2690,11 +2690,11 @@ body > .meal-modal.open,
       style="<?= $tab==='schools' ? 'display:block !important;' : 'display:none !important;' ?>"
     >
       <div class="dl-bar">
-        <a href="meal-data.php?download_template=schools&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?download_template=schools&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-csv"><i class="fa fa-file-excel"></i> Download Template</a>
-        <a href="meal-data.php?export=csv&type=schools&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=csv&type=schools&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-export"><i class="fa fa-file-export"></i> Export CSV</a>
-        <a href="meal-data.php?export=pdf&type=schools&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=pdf&type=schools&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-pdf"><i class="fa fa-file-pdf"></i> Export PDF</a>
         <?php if ($MEAL_CAN_EDIT): ?>
         <a
@@ -2866,11 +2866,11 @@ body > .meal-modal.open,
       style="<?= $tab==='other_users' ? 'display:block !important;' : 'display:none !important;' ?>"
     >
       <div class="dl-bar">
-        <a href="meal-data.php?download_template=other_users&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?download_template=other_users&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-csv"><i class="fa fa-file-excel"></i> Download Template</a>
-        <a href="meal-data.php?export=csv&type=other_users&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=csv&type=other_users&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-export"><i class="fa fa-file-export"></i> Export CSV</a>
-        <a href="meal-data.php?export=pdf&type=other_users&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=pdf&type=other_users&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-pdf"><i class="fa fa-file-pdf"></i> Export PDF</a>
         <?php if ($MEAL_CAN_EDIT): ?>
         <a
@@ -3054,11 +3054,11 @@ body > .meal-modal.open,
       style="<?= $tab==='employment' ? 'display:block !important;' : 'display:none !important;' ?>"
     >
       <div class="dl-bar">
-        <a href="meal-data.php?download_template=employment&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?download_template=employment&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-csv"><i class="fa fa-file-excel"></i> Download Template</a>
-        <a href="meal-data.php?export=csv&type=employment&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=csv&type=employment&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-export"><i class="fa fa-file-export"></i> Export CSV</a>
-        <a href="meal-data.php?export=pdf&type=employment&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=pdf&type=employment&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-pdf"><i class="fa fa-file-pdf"></i> Export PDF</a>
         <?php if ($MEAL_CAN_EDIT): ?>
         <a
@@ -3249,11 +3249,11 @@ body > .meal-modal.open,
       style="<?= $tab==='finance' ? 'display:block !important;' : 'display:none !important;' ?>"
     >
       <div class="dl-bar">
-        <a href="meal-data.php?download_template=finance&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?download_template=finance&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-csv"><i class="fa fa-file-excel"></i> Download Template</a>
-        <a href="meal-data.php?export=csv&type=finance&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=csv&type=finance&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-export"><i class="fa fa-file-export"></i> Export CSV</a>
-        <a href="meal-data.php?export=pdf&type=finance&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=pdf&type=finance&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-pdf"><i class="fa fa-file-pdf"></i> Export PDF</a>
         <?php if ($MEAL_CAN_EDIT): ?>
         <a
@@ -3404,11 +3404,11 @@ body > .meal-modal.open,
       style="<?= $tab==='partnerships' ? 'display:block !important;' : 'display:none !important;' ?>"
     >
       <div class="dl-bar">
-        <a href="meal-data.php?download_template=partnerships&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?download_template=partnerships&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-csv"><i class="fa fa-file-excel"></i> Download Template</a>
-        <a href="meal-data.php?export=csv&type=partnerships&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=csv&type=partnerships&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-export"><i class="fa fa-file-export"></i> Export CSV</a>
-        <a href="meal-data.php?export=pdf&type=partnerships&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=pdf&type=partnerships&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-pdf"><i class="fa fa-file-pdf"></i> Export PDF</a>
         <?php if ($MEAL_CAN_EDIT): ?>
         <a
@@ -3562,11 +3562,11 @@ body > .meal-modal.open,
       style="<?= $tab==='revenue' ? 'display:block !important;' : 'display:none !important;' ?>"
     >
       <div class="dl-bar">
-        <a href="meal-data.php?download_template=revenue&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?download_template=revenue&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-csv"><i class="fa fa-file-excel"></i> Download Template</a>
-        <a href="meal-data.php?export=csv&type=revenue&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=csv&type=revenue&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-export"><i class="fa fa-file-export"></i> Export CSV</a>
-        <a href="meal-data.php?export=pdf&type=revenue&venture_id=<?= $venture_id ?>"
+        <a href="meal-data?export=pdf&type=revenue&venture_id=<?= $venture_id ?>"
            class="btn-dl btn-dl-pdf"><i class="fa fa-file-pdf"></i> Export PDF</a>
         <?php if ($MEAL_CAN_EDIT): ?>
         <a

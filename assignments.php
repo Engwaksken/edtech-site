@@ -132,7 +132,7 @@ include 'layout.php';
             onclick='openRequestModal(<?= (int)$m['id'] ?>, "<?= h(addslashes($m['full_name'])) ?>")'>
       <i class="fa fa-calendar-plus"></i> Request Session
     </button>
-    <a href="mentor-messages.php?mentor_id=<?= (int)$m['id'] ?>" class="btn btn-outline">
+    <a href="messages?compose=<?= (int)$m['id'] ?>" class="btn btn-outline" title="Message mentor" aria-label="Message <?= h($m['full_name']) ?>">
       <i class="fa fa-comment-dots"></i>
     </a>
   </div>

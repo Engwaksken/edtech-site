@@ -327,7 +327,7 @@ include __DIR__ . '/includes/header.php';
                         $status       = $venture_request_status[$resource_id] ?? '';
 
                         $request_url  = 'venture_resources?request_resource_id=' . $resource_id;
-                        $login_url    = 'login.php?redirect=' . urlencode($request_url);
+                        $login_url    = 'login?redirect=' . urlencode($request_url);
                         $download_url = 'includes/process-resources.php?action=download&resource_id=' . $resource_id;
                         $view_url     = $download_url . '&view=1';
                         ?>

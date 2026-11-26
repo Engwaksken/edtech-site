@@ -77,6 +77,8 @@ ErrorDocument 503 /admin/error.php?code=503
 <IfModule mod_rewrite.c>
 
     RewriteEngine On
+    # Relative redirect targets below (e.g. "$1", "./") resolve against /admin/.
+    RewriteBase /admin/
 
 
     # ========================================================

@@ -1262,8 +1262,8 @@ $showing_to   = $total_records > 0 ? min($offset + $per_page, $total_records) : 
 <header class="admin-topbar">
   <div class="topbar-left">
     <div class="topbar-breadcrumb">
-      <a href="index.php">Dashboard</a> &rsaquo;
-      <?php if (!$IS_MENTOR): ?><a href="mentors.php">Mentors</a> &rsaquo; <?php endif; ?>
+      <a href="./">Dashboard</a> &rsaquo;
+      <?php if (!$IS_MENTOR): ?><a href="mentors">Mentors</a> &rsaquo; <?php endif; ?>
       <strong>Sessions</strong>
     </div>
   </div>
@@ -1282,7 +1282,7 @@ $showing_to   = $total_records > 0 ? min($offset + $per_page, $total_records) : 
   </div>
   <?php if ($CAN_MANAGE || $IS_MENTOR): ?>
   <div class="page-actions">
-    <a class="btn btn-secondary" href="mentor-reports.php"><i class="fa fa-file-signature"></i> Reports Hub</a>
+    <a class="btn btn-secondary" href="mentor-reports"><i class="fa fa-file-signature"></i> Reports Hub</a>
     <button class="btn btn-primary" onclick="openSessionModal()"><i class="fa fa-plus"></i> Schedule Session</button>
   </div>
   <?php endif; ?>
@@ -1353,7 +1353,7 @@ $showing_to   = $total_records > 0 ? min($offset + $per_page, $total_records) : 
     </div>
 
     <?php if ($search || $filter_status || $filter_mentor || $filter_venture || $filter_cohort): ?>
-      <a href="mentor-sessions.php?view=<?= h($view) ?>" class="btn btn-sm" style="color:var(--danger,#ef4444)"><i class="fa fa-times"></i> Clear</a>
+      <a href="mentor-sessions?view=<?= h($view) ?>" class="btn btn-sm" style="color:var(--danger,#ef4444)"><i class="fa fa-times"></i> Clear</a>
     <?php endif; ?>
   </form>
 </div>
@@ -1546,7 +1546,7 @@ if ($view === 'calendar'):
     <div class="tbl-actions">
       <button class="btn btn-sm btn-secondary" title="View details" onclick="openDetailModal(<?= (int)$s['id'] ?>)"><i class="fa fa-eye"></i></button>
       <?php if($IS_MENTOR && $s['status']==='completed'): ?>
-        <a class="btn btn-sm btn-secondary" title="Create session report" href="mentor-reports.php?tab=session_report&session_id=<?= (int)$s['id'] ?>"><i class="fa fa-file-signature"></i></a>
+        <a class="btn btn-sm btn-secondary" title="Create session report" href="mentor-reports?tab=session_report&session_id=<?= (int)$s['id'] ?>"><i class="fa fa-file-signature"></i></a>
       <?php endif; ?>
       <?php if ($CAN_MANAGE): ?>
         <button class="btn btn-sm btn-secondary" title="Edit" onclick='openSessionModal(<?= json_encode($s,JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT) ?>)'><i class="fa fa-edit"></i></button>
@@ -2153,7 +2153,7 @@ function renderFeedbackReport(sessionId){
         <span class="badge ${esc(statusInfo[1])}">${esc(statusInfo[0])}</span>
         ${fb.submitted_at ? `<span class="legacy-style-7491483f4d">Submitted ${fmtDateShort(fb.submitted_at)}</span>` : ''}
         ${(fb.status === 'submitted' || fb.status === 'reviewed')
-            ? `<a class="btn btn-sm btn-secondary" href="mentor-sessions.php?feedback_pdf=1&session_id=${sessionId}" target="_blank" rel="noopener" style="margin-left:auto">
+            ? `<a class="btn btn-sm btn-secondary" href="mentor-sessions?feedback_pdf=1&session_id=${sessionId}" target="_blank" rel="noopener" style="margin-left:auto">
                     <i class="fa fa-file-pdf"></i> Download PDF
                </a>`
             : ''}
@@ -2361,10 +2361,10 @@ function openDetailModal(id){
 
     const footer=document.getElementById('dm-footer');
     footer.innerHTML='<button class="btn btn-secondary" onclick="closeM(\'detailModal\')">Close</button>';
-    footer.innerHTML+=`<a class="btn btn-secondary" href="mentor-reports.php?tab=session_report&session_id=${s.id}"><i class="fa fa-file-signature"></i> Session report</a>`;
+    footer.innerHTML+=`<a class="btn btn-secondary" href="mentor-reports?tab=session_report&session_id=${s.id}"><i class="fa fa-file-signature"></i> Session report</a>`;
     if (s.venture_count) {
-        footer.innerHTML+=`<a class="btn btn-secondary" href="mentor-reports.php?tab=final_report"><i class="fa fa-file-alt"></i> Final report</a>`;
-        footer.innerHTML+=`<a class="btn btn-secondary" href="mentor-reports.php?tab=cohort_evaluation"><i class="fa fa-clipboard-check"></i> Cohort evaluation</a>`;
+        footer.innerHTML+=`<a class="btn btn-secondary" href="mentor-reports?tab=final_report"><i class="fa fa-file-alt"></i> Final report</a>`;
+        footer.innerHTML+=`<a class="btn btn-secondary" href="mentor-reports?tab=cohort_evaluation"><i class="fa fa-clipboard-check"></i> Cohort evaluation</a>`;
     }
     if(IS_MENTOR&&s.status==='completed'&&!s.mentor_rating)
         footer.innerHTML+=`<button class="btn btn-primary" onclick="closeM('detailModal');openRateVentureModal(${s.id},'${esc(s.venture_name).replace(/'/g,"\\'")}')"><i class="fa fa-star"></i> Rate venture</button>`;

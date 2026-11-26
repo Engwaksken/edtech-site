@@ -27,7 +27,7 @@ $conn->set_charset('utf8mb4');
 | Helpers
 |--------------------------------------------------------------------------
 */
-function redirect_with_message(string $message, string $type = 'danger', string $location = '../milestones.php'): void
+function redirect_with_message(string $message, string $type = 'danger', string $location = '../milestones'): void
 {
     if (function_exists('send_notification') && isset($_SESSION['user_id'])) {
         send_notification((int)$_SESSION['user_id'], $message, $type);
@@ -285,7 +285,7 @@ function safe_upload_path(int $milestoneId, string $extension): array
 $userId = (int)($_SESSION['user_id'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../milestones.php');
+    header('Location: ../milestones');
     exit();
 }
 
@@ -296,7 +296,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 */
 if (isset($_POST['add_update'])) {
     $milestoneId = (int)post_string('milestone_id', '0');
-    $location = "../milestone-details.php?id={$milestoneId}";
+    $location = "../milestone-details?id={$milestoneId}";
 
     $updateType = clean_text(post_string('update_type'));
     $updateText = clean_text(post_string('update_text'));
@@ -305,7 +305,7 @@ if (isset($_POST['add_update'])) {
     $allowedTypes = ['General', 'Status Update', 'Achievement', 'Issue', 'Delay'];
 
     if ($milestoneId <= 0 || !milestone_exists($conn, $milestoneId)) {
-        redirect_with_message('Milestone not found.', 'danger', '../milestones.php');
+        redirect_with_message('Milestone not found.', 'danger', '../milestones');
     }
 
     if ($updateType === null || !in_array($updateType, $allowedTypes, true)) {
@@ -420,14 +420,14 @@ if (isset($_POST['add_update'])) {
 if (isset($_POST['update_deliverable'])) {
     $milestoneId = (int)post_string('milestone_id', '0');
     $deliverableId = (int)post_string('deliverable_id', '0');
-    $location = "../milestone-details.php?id={$milestoneId}";
+    $location = "../milestone-details?id={$milestoneId}";
 
     if (!table_exists($conn, 'milestone_deliverables')) {
         redirect_with_message('milestone_deliverables table does not exist.', 'danger', $location);
     }
 
     if ($milestoneId <= 0 || !milestone_exists($conn, $milestoneId)) {
-        redirect_with_message('Invalid milestone selected.', 'danger', '../milestones.php');
+        redirect_with_message('Invalid milestone selected.', 'danger', '../milestones');
     }
 
     if ($deliverableId <= 0 || !deliverable_belongs_to_milestone($conn, $deliverableId, $milestoneId)) {
@@ -567,12 +567,12 @@ if (isset($_POST['update_deliverable'])) {
 */
 if (isset($_POST['upload_document'])) {
     $milestoneId = (int)post_string('milestone_id', '0');
-    $location = "../milestone-details.php?id={$milestoneId}";
+    $location = "../milestone-details?id={$milestoneId}";
 
     $documentName = clean_text(post_string('document_name'));
 
     if ($milestoneId <= 0 || !milestone_exists($conn, $milestoneId)) {
-        redirect_with_message('Milestone not found.', 'danger', '../milestones.php');
+        redirect_with_message('Milestone not found.', 'danger', '../milestones');
     }
 
     if ($documentName === null) {
@@ -675,5 +675,5 @@ if (isset($_POST['upload_document'])) {
     }
 }
 
-header('Location: ../milestones.php');
+header('Location: ../milestones');
 exit();

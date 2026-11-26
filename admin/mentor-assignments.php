@@ -319,7 +319,7 @@ foreach ($rows as $row) {
     $grouped[$key]['rows'][] = $row;
 }
 
-$clear_url = 'mentor-assignments.php';
+$clear_url = 'mentor-assignments';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -341,16 +341,16 @@ $clear_url = 'mentor-assignments.php';
 <header class="admin-topbar">
   <div class="topbar-left">
     <div class="topbar-breadcrumb">
-      <a href="index.php">Dashboard</a> &gt;
-      <a href="mentors.php">Mentors</a> &gt;
+      <a href="./">Dashboard</a> &gt;
+      <a href="mentors">Mentors</a> &gt;
       <strong>Assignments</strong>
     </div>
   </div>
 
   <div class="topbar-right">
    
-    <a href="mentor-sessions.php" class="btn btn-secondary btn-sm"><i class="fa fa-calendar-alt"></i> Sessions</a>
-    <a href="messages.php" class="btn btn-secondary btn-sm"><i class="fa fa-envelope"></i> Messages</a>
+    <a href="mentor-sessions" class="btn btn-secondary btn-sm"><i class="fa fa-calendar-alt"></i> Sessions</a>
+    <a href="messages" class="btn btn-secondary btn-sm"><i class="fa fa-envelope"></i> Messages</a>
     <div class="admin-avatar">
       <div class="avatar-circle"><?= h(strtoupper(substr($ADMIN['full_name'] ?? 'A', 0, 1))) ?></div>
     </div>
@@ -602,7 +602,7 @@ $clear_url = 'mentor-assignments.php';
     <div class="ar-cell legacy-style-9944357314">
       <div class="tbl-actions">
         <?php if (!empty($row['venture_id'])): ?>
-          <a href="mentor-sessions.php?mentor_id=<?= (int)$row['mentor_id'] ?>&venture_id=<?= (int)$row['venture_id'] ?>"
+          <a href="mentor-sessions?mentor_id=<?= (int)$row['mentor_id'] ?>&venture_id=<?= (int)$row['venture_id'] ?>"
              class="btn btn-sm btn-teal" title="Sessions for this pair">
             <i class="fa fa-calendar-alt"></i>
           </a>

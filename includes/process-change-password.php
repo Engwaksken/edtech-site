@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 function cp_back(): void
 {
-    header('Location: ../change-password.php');
+    header('Location: ../change-password');
     exit;
 }
 
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 if (empty($_SESSION['venture_login']) || empty($_SESSION['venture_access_id'])) {
-    header('Location: ../login.php');
+    header('Location: ../login');
     exit;
 }
 
@@ -126,7 +126,7 @@ if ($update->execute()) {
     $_SESSION['login_success'] =
         'Password changed successfully. Please sign in again.';
 
-    header('Location: ../login.php');
+    header('Location: ../login');
 
     exit;
 

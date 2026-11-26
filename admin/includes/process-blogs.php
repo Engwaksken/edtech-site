@@ -16,7 +16,7 @@ $conn->set_charset('utf8mb4');
 
 function redirect_blogs(): void
 {
-    header('Location: ../blogs.php');
+    header('Location: ../blogs');
     exit;
 }
 

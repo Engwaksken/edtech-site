@@ -105,7 +105,7 @@ $current_uid = (int)($_SESSION['admin_id'] ?? $ADMIN['id'] ?? 0);
 <header class="admin-topbar">
   <div class="topbar-left">
     <div class="topbar-breadcrumb">
-      <a href="index.php">Dashboard</a> > <strong>Users</strong>
+      <a href="./">Dashboard</a> > <strong>Users</strong>
     </div>
   </div>
   <div class="topbar-right">
@@ -159,7 +159,7 @@ $current_uid = (int)($_SESSION['admin_id'] ?? $ADMIN['id'] ?? 0);
 </div>
 
 <!-- Filter bar -->
-<form method="GET" action="users.php" id="filterForm">
+<form method="GET" action="users" id="filterForm">
 <div class="users-filter-bar">
   <div class="search-bar">
     <i class="fa fa-search"></i>
@@ -178,7 +178,7 @@ $current_uid = (int)($_SESSION['admin_id'] ?? $ADMIN['id'] ?? 0);
     <option value="inactive" <?= $filter_stat==='inactive'?'selected':'' ?>>Inactive</option>
   </select>
   <?php if ($search || $filter_role || $filter_stat): ?>
-    <a href="users.php" class="btn btn-secondary">
+    <a href="users" class="btn btn-secondary">
       <i class="fa fa-times"></i> Clear
     </a>
   <?php endif; ?>
@@ -325,7 +325,7 @@ if (!$has): ?>
       <h3>No users found</h3>
       <?php if ($search || $filter_role || $filter_stat): ?>
         <p>Try adjusting your filters.</p>
-        <a href="users.php" class="btn btn-secondary">Clear Filters</a>
+        <a href="users" class="btn btn-secondary">Clear Filters</a>
       <?php else: ?>
         <p>Create the first admin user.</p>
         <button type="button" class="btn btn-primary" onclick="openAddModal()">

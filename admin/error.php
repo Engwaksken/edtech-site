@@ -132,8 +132,8 @@ $siteName =
         )
         : 'EdTech Fellowship';
 
-$dashboardUrl = 'index.php';
-$loginUrl = 'login.php';
+$dashboardUrl = './';
+$loginUrl = 'login';
 
 if (
     isset($_SESSION['admin_user'])

@@ -3,33 +3,17 @@ declare(strict_types=1);
 
 ob_start();
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-require_once 'includes/config.php';
+// Shared site config + admin login (redirects to login when signed out).
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/includes/auth.php';
 
 $page_title = 'Risk Rating';
 
-$allowedRoles = ['Administrator', 'MEAL Lead', 'Programs Lead', 'Reviewer', 'Project Officer', 'project Officer'];
-
-if (
-    empty($_SESSION['user_id']) ||
-    empty($_SESSION['role']) ||
-    !in_array((string)$_SESSION['role'], $allowedRoles, true)
-) {
-    $_SESSION['error'] = 'Access denied.';
-    header('Location: dashboard.php');
-    exit();
-}
+check_role(['Administrator', 'MEAL Lead', 'Programs Lead', 'Reviewer', 'Project Officer']);
 
 require_once 'includes/header.php';
 
-if (!isset($conn) || !($conn instanceof mysqli)) {
-    die('Database connection not available.');
-}
-
-$currentUserId = (int)($_SESSION['user_id'] ?? 0);
+$currentUserId = (int)($_SESSION['admin_id'] ?? 0);
 $applicationId = (int)($_GET['application_id'] ?? $_GET['id'] ?? 0);
 $reviewTypeId  = (int)($_GET['review_type_id'] ?? 0);
 
@@ -39,7 +23,7 @@ unset($_SESSION['success'], $_SESSION['error']);
 
 if ($applicationId <= 0) {
     $_SESSION['error'] = 'Invalid application ID.';
-    header('Location: startups-shortlisting.php');
+    header('Location: risk_ratings_report');
     exit();
 }
 

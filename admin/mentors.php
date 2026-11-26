@@ -146,7 +146,7 @@ $site_url = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '..';
 <header class="admin-topbar">
     <div class="topbar-left">
         <div class="topbar-breadcrumb">
-            <a href="index.php">Dashboard</a> &gt; <strong>Mentors</strong>
+            <a href="./">Dashboard</a> &gt; <strong>Mentors</strong>
         </div>
     </div>
 
@@ -173,10 +173,10 @@ $site_url = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '..';
     </div>
 
     <div class="page-actions">
-        <a href="mentor-sessions.php" class="btn btn-secondary">
+        <a href="mentor-sessions" class="btn btn-secondary">
             <i class="fa fa-calendar-alt"></i> Sessions
         </a>
-        <a href="mentor-assignments.php" class="btn btn-secondary">
+        <a href="mentor-assignments" class="btn btn-secondary">
             <i class="fa fa-link"></i> Assignments
         </a>
         <button class="btn btn-primary" onclick="openMentorModal()">
@@ -231,7 +231,7 @@ $site_url = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '..';
         </button>
 
         <?php if ($search || $filter_status || $filter_expertise): ?>
-            <a href="mentors.php" class="btn btn-sm legacy-style-2af7847e65">
+            <a href="mentors" class="btn btn-sm legacy-style-2af7847e65">
                 <i class="fa fa-times"></i> Clear
             </a>
         <?php endif; ?>
@@ -331,11 +331,11 @@ $site_url = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '..';
 
     <td>
         <div class="tbl-actions">
-            <a href="mentor-sessions.php?mentor_id=<?= (int)$m['id'] ?>" class="btn btn-sm btn-teal" title="Sessions">
+            <a href="mentor-sessions?mentor_id=<?= (int)$m['id'] ?>" class="btn btn-sm btn-teal" title="Sessions">
                 <i class="fa fa-calendar-alt"></i>
             </a>
 
-            <a href="mentor-assignments.php?mentor_id=<?= (int)$m['id'] ?>" class="btn btn-sm btn-secondary" title="Assignments">
+            <a href="mentor-assignments?mentor_id=<?= (int)$m['id'] ?>" class="btn btn-sm btn-secondary" title="Assignments">
                 <i class="fa fa-link"></i>
             </a>
 

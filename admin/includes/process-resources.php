@@ -20,7 +20,7 @@ function res_redirect(?string $msg = null, string $type = 'success', string $tab
         flash('resources', $msg, $type);
     }
 
-    header("Location: ../resources.php?tab=" . urlencode($tab));
+    header("Location: ../resources?tab=" . urlencode($tab));
     exit;
 }
 
@@ -629,7 +629,7 @@ if ($action === 'approve_request') {
         $rq->close();
 
         if ($req && filter_var((string)$req['requester_email'], FILTER_VALIDATE_EMAIL)) {
-            $dl_url = rtrim(SITE_URL, '/') . '/resources.php?download=' . urlencode($token);
+            $dl_url = rtrim(SITE_URL, '/') . '/resources?download=' . urlencode($token);
             $subject = 'Your Access Request Has Been Approved';
 
             $body = "Hello {$req['requester_name']},\n\n";

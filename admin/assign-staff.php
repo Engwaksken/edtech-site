@@ -22,14 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 VALUES($venture_id,$staff_id,'$role_desc',NOW())");
         }
         flash('assign', 'Staff assignments saved successfully.');
-        header("Location: assign-staff.php?venture_id=$venture_id"); exit;
+        header("Location: assign-staff?venture_id=$venture_id"); exit;
     }
 
     if ($action === 'remove') {
         $id = (int)$_POST['assignment_id'];
         mysqli_query($conn, "DELETE FROM venture_staff WHERE id=$id");
         flash('assign', 'Assignment removed.');
-        header('Location: assign-staff.php?venture_id=' . $venture_id); exit;
+        header('Location: assign-staff?venture_id=' . $venture_id); exit;
     }
 }
 
@@ -100,7 +100,7 @@ $site_name = get_setting($conn, 'site_name', 'EdTech Fellowship');
 <div class="admin-main" id="adminMain">
   <header class="admin-topbar">
     <div class="topbar-left">
-      <div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> › <strong>Assign Staff to ventures</strong></div>
+      <div class="topbar-breadcrumb"><a href="./">Dashboard</a> › <strong>Assign Staff to ventures</strong></div>
     </div>
     <div class="topbar-right">
       <div class="admin-avatar">
@@ -122,8 +122,8 @@ $site_name = get_setting($conn, 'site_name', 'EdTech Fellowship');
         <p class="page-subtitle">Assign mentors, staff, and advisors to ventures</p>
       </div>
       <div class="page-actions">
-        <a href="staff.php" class="btn btn-secondary"><i class="fa fa-user-tie"></i> Manage Staff</a>
-        <a href="ventures.php" class="btn btn-secondary"><i class="fa fa-rocket"></i> Manage ventures</a>
+        <a href="staff" class="btn btn-secondary"><i class="fa fa-user-tie"></i> Manage Staff</a>
+        <a href="ventures" class="btn btn-secondary"><i class="fa fa-rocket"></i> Manage ventures</a>
       </div>
     </div>
 
@@ -163,8 +163,8 @@ $site_name = get_setting($conn, 'site_name', 'EdTech Fellowship');
         <p class="legacy-style-f4313b9e05"><?= h($venture_row['cohort_name'] ?? '') ?> · <?= count($assigned) ?> staff assigned</p>
       </div>
       <div class="legacy-style-ff2ab46b1a">
-        <a href="venture-team.php?venture_id=<?= $venture_id ?>" class="btn btn-secondary btn-sm"><i class="fa fa-users"></i> Team</a>
-        <a href="../venture.php?slug=<?= h($venture_row['slug']) ?>" target="_blank" class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)"><i class="fa fa-eye"></i> View</a>
+        <a href="venture-team?venture_id=<?= $venture_id ?>" class="btn btn-secondary btn-sm"><i class="fa fa-users"></i> Team</a>
+        <a href="../venture?slug=<?= h($venture_row['slug']) ?>" target="_blank" class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)"><i class="fa fa-eye"></i> View</a>
       </div>
     </div>
 
@@ -314,7 +314,7 @@ $site_name = get_setting($conn, 'site_name', 'EdTech Fellowship');
               <td><small class="legacy-style-5872de20d5"><?= h($ov['staff_names'] ?: 'No staff assigned') ?></small></td>
               <td><span class="badge <?= $ov['staff_count'] > 0 ? 'badge-success' : 'badge-warning' ?>"><?= $ov['staff_count'] ?> staff</span></td>
               <td>
-                <a href="assign-staff.php?venture_id=<?= $ov['id'] ?>" class="btn btn-sm btn-primary"><i class="fa fa-link"></i> Manage</a>
+                <a href="assign-staff?venture_id=<?= $ov['id'] ?>" class="btn btn-sm btn-primary"><i class="fa fa-link"></i> Manage</a>
               </td>
             </tr>
             <?php endwhile; ?>

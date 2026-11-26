@@ -326,7 +326,7 @@ switch ($action) {
     case 'create_deliverable': {
         if (!deliverables_can_create_assignment()) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Your role is not permitted to create deliverables.'
             );
@@ -364,7 +364,7 @@ switch ($action) {
 
         if ($name === '' || $theme === '') {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Deliverable name and theme are required.'
             );
@@ -389,7 +389,7 @@ switch ($action) {
             && ($expectedHours < 0 || $expectedHours > 9999)
         ) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Expected completion hours are invalid.'
             );
@@ -410,7 +410,7 @@ switch ($action) {
 
         if ($exists) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'A deliverable with the same name and theme already exists.'
             );
@@ -434,7 +434,7 @@ switch ($action) {
                 && $uploadError !== UPLOAD_ERR_NO_FILE
             ) {
                 dredirect(
-                    '../admin/mentor-deliverables.php',
+                    '../admin/mentor-deliverables',
                     'error',
                     deliverables_upload_error($uploadError)
                 );
@@ -465,7 +465,7 @@ switch ($action) {
 
                 if (!in_array($extension, $allowedExtensions, true)) {
                     dredirect(
-                        '../admin/mentor-deliverables.php',
+                        '../admin/mentor-deliverables',
                         'error',
                         'Unsupported template file type.'
                     );
@@ -488,7 +488,7 @@ switch ($action) {
                     || $size > 20 * 1024 * 1024
                 ) {
                     dredirect(
-                        '../admin/mentor-deliverables.php',
+                        '../admin/mentor-deliverables',
                         'error',
                         'Template upload is invalid or exceeds 20 MB.'
                     );
@@ -502,7 +502,7 @@ switch ($action) {
                     && !mkdir($directory, 0755, true)
                 ) {
                     dredirect(
-                        '../admin/mentor-deliverables.php',
+                        '../admin/mentor-deliverables',
                         'error',
                         'Could not create the template upload directory.'
                     );
@@ -520,7 +520,7 @@ switch ($action) {
                     )
                 ) {
                     dredirect(
-                        '../admin/mentor-deliverables.php',
+                        '../admin/mentor-deliverables',
                         'error',
                         'Could not save the template file.'
                     );
@@ -554,7 +554,7 @@ switch ($action) {
 
         if (!$stmt) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Could not prepare deliverable creation: '
                 . $conn->error
@@ -586,7 +586,7 @@ switch ($action) {
             $stmt->close();
 
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Deliverable creation failed: ' . $error
             );
@@ -595,7 +595,7 @@ switch ($action) {
         $stmt->close();
 
         dredirect(
-            '../admin/mentor-deliverables.php',
+            '../admin/mentor-deliverables',
             'success',
             'Deliverable created successfully.'
         );
@@ -605,7 +605,7 @@ switch ($action) {
     case 'create_bulk_assignments': {
         if (!deliverables_can_create_assignment()) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Your role is not permitted to create assignments.'
             );
@@ -672,7 +672,7 @@ switch ($action) {
             || !deliverables_valid_date($dueDate)
         ) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Select a deliverable, at least one venture, at least one mentor, and valid dates.'
             );
@@ -680,7 +680,7 @@ switch ($action) {
 
         if ($dueDate < $assignedDate) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'The due date cannot be before the assigned date.'
             );
@@ -694,7 +694,7 @@ switch ($action) {
             )
         ) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Reminder date must be valid and cannot be after the due date.'
             );
@@ -708,7 +708,7 @@ switch ($action) {
             )
         ) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Escalation date must be valid and cannot be before the due date.'
             );
@@ -727,7 +727,7 @@ switch ($action) {
 
             if ($currentMentorId <= 0) {
                 dredirect(
-                    '../admin/mentor-deliverables.php',
+                    '../admin/mentor-deliverables',
                     'error',
                     'Your account is not linked to an active mentor.'
                 );
@@ -753,7 +753,7 @@ switch ($action) {
 
         if (!$catalogueExists) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'The selected deliverable does not exist.'
             );
@@ -794,7 +794,7 @@ switch ($action) {
 
         if (count($ventureMap) !== count($ventureIds)) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'One or more selected ventures were not found.'
             );
@@ -836,7 +836,7 @@ switch ($action) {
 
         if ($validMentorIds !== $expectedMentorIds) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'One or more selected mentors were not found or are inactive.'
             );
@@ -983,7 +983,7 @@ switch ($action) {
             );
 
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Assignment creation failed: '
                 . $exception->getMessage()
@@ -991,7 +991,7 @@ switch ($action) {
         }
 
         dredirect(
-            '../admin/mentor-deliverables.php',
+            '../admin/mentor-deliverables',
             'success',
             $created
             . ' assignment(s) created. '
@@ -1052,7 +1052,7 @@ switch ($action) {
             )
         ) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Invalid deliverable update.'
             );
@@ -1073,7 +1073,7 @@ switch ($action) {
 
         if (!$stmt) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Could not validate the deliverable.'
             );
@@ -1092,7 +1092,7 @@ switch ($action) {
 
         if (!$assignment) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Deliverable assignment not found.'
             );
@@ -1107,7 +1107,7 @@ switch ($action) {
 
         if (!$canUpdate) {
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'You are not permitted to update this deliverable.'
             );
@@ -1188,14 +1188,14 @@ switch ($action) {
             );
 
             dredirect(
-                '../admin/mentor-deliverables.php',
+                '../admin/mentor-deliverables',
                 'error',
                 'Deliverable could not be updated.'
             );
         }
 
         dredirect(
-            '../admin/mentor-deliverables.php',
+            '../admin/mentor-deliverables',
             'success',
             'Deliverable updated successfully.'
         );
@@ -1230,7 +1230,7 @@ switch ($action) {
             || $ventureId <= 0
         ) {
             dredirect(
-                '../deliverables.php',
+                '../deliverables',
                 'error',
                 'Invalid deliverable submission.'
             );
@@ -1249,7 +1249,7 @@ switch ($action) {
 
         if (!$stmt) {
             dredirect(
-                '../deliverables.php',
+                '../deliverables',
                 'error',
                 'Could not validate the deliverable.'
             );
@@ -1269,7 +1269,7 @@ switch ($action) {
 
         if (!$assignment) {
             dredirect(
-                '../deliverables.php',
+                '../deliverables',
                 'error',
                 'This deliverable does not belong to your venture.'
             );
@@ -1283,7 +1283,7 @@ switch ($action) {
             )
         ) {
             dredirect(
-                '../deliverables.php',
+                '../deliverables',
                 'error',
                 'This deliverable has already been approved or completed.'
             );
@@ -1306,7 +1306,7 @@ switch ($action) {
                 && $uploadError !== UPLOAD_ERR_NO_FILE
             ) {
                 dredirect(
-                    '../deliverables.php',
+                    '../deliverables',
                     'error',
                     deliverables_upload_error(
                         $uploadError
@@ -1354,7 +1354,7 @@ switch ($action) {
                     )
                 ) {
                     dredirect(
-                        '../deliverables.php',
+                        '../deliverables',
                         'error',
                         'Unsupported file type.'
                     );
@@ -1372,7 +1372,7 @@ switch ($action) {
                     )
                 ) {
                     dredirect(
-                        '../deliverables.php',
+                        '../deliverables',
                         'error',
                         'The uploaded file is invalid.'
                     );
@@ -1389,7 +1389,7 @@ switch ($action) {
                     || $actualSize <= 0
                 ) {
                     dredirect(
-                        '../deliverables.php',
+                        '../deliverables',
                         'error',
                         'The uploaded file is empty.'
                     );
@@ -1397,7 +1397,7 @@ switch ($action) {
 
                 if ($actualSize > $maximumSize) {
                     dredirect(
-                        '../deliverables.php',
+                        '../deliverables',
                         'error',
                         'The uploaded file exceeds the 20 MB limit.'
                     );
@@ -1415,7 +1415,7 @@ switch ($action) {
                     )
                 ) {
                     dredirect(
-                        '../deliverables.php',
+                        '../deliverables',
                         'error',
                         'Could not create the deliverables upload directory.'
                     );
@@ -1423,7 +1423,7 @@ switch ($action) {
 
                 if (!is_writable($directory)) {
                     dredirect(
-                        '../deliverables.php',
+                        '../deliverables',
                         'error',
                         'The deliverables upload directory is not writable.'
                     );
@@ -1445,7 +1445,7 @@ switch ($action) {
                     )
                 ) {
                     dredirect(
-                        '../deliverables.php',
+                        '../deliverables',
                         'error',
                         'Could not save the uploaded file.'
                     );
@@ -1458,7 +1458,7 @@ switch ($action) {
             && $storedName === null
         ) {
             dredirect(
-                '../deliverables.php',
+                '../deliverables',
                 'error',
                 'Add submission notes or attach a file.'
             );
@@ -1545,14 +1545,14 @@ switch ($action) {
             );
 
             dredirect(
-                '../deliverables.php',
+                '../deliverables',
                 'error',
                 'Deliverable could not be submitted.'
             );
         }
 
         dredirect(
-            '../deliverables.php',
+            '../deliverables',
             'success',
             'Deliverable submitted successfully.'
         );

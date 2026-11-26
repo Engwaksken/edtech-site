@@ -16,7 +16,7 @@ $conn->set_charset('utf8mb4');
 
 function bem_redirect(): never
 {
-    header('Location: ../bulk-emails.php');
+    header('Location: ../bulk-emails');
     exit;
 }
 

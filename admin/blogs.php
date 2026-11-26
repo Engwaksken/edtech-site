@@ -32,7 +32,7 @@ $site_name = function_exists('get_setting') ? get_setting($conn, 'site_name', 'E
 <div class="admin-main" id="adminMain">
 <header class="admin-topbar">
   <div class="topbar-left">
-    <div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> > <strong>Blogs</strong></div>
+    <div class="topbar-breadcrumb"><a href="./">Dashboard</a> > <strong>Blogs</strong></div>
   </div>
 </header>
 
@@ -88,8 +88,8 @@ $site_name = function_exists('get_setting') ? get_setting($conn, 'site_name', 'E
 <td><?= $b['published_at'] ? date('M j, Y', strtotime($b['published_at'])) : '' ?></td>
 <td>
   <div class="tbl-actions">
-    <a href="../blog.php?slug=<?= h($b['slug']) ?>" target="_blank" class="btn btn-sm btn-teal" title="View"><i class="fa fa-eye"></i></a>
-    <a href="../blog-pdf.php?slug=<?= h($b['slug']) ?>" target="_blank" class="btn btn-sm" style="background:#fee2e2;color:#b91c1c;border-color:#fca5a5" title="PDF View"><i class="fa fa-file-pdf"></i></a>
+    <a href="../blog?slug=<?= h($b['slug']) ?>" target="_blank" class="btn btn-sm btn-teal" title="View"><i class="fa fa-eye"></i></a>
+    <a href="../blog-pdf?slug=<?= h($b['slug']) ?>" target="_blank" class="btn btn-sm" style="background:#fee2e2;color:#b91c1c;border-color:#fca5a5" title="PDF View"><i class="fa fa-file-pdf"></i></a>
     <button type="button" class="btn btn-sm btn-secondary" title="Edit"
       onclick='editBlog(<?= json_encode($b, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>)'>
       <i class="fa fa-edit"></i>

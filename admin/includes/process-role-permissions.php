@@ -20,7 +20,7 @@ if (!function_exists('admin_can_manage_permissions') || !admin_can_manage_permis
 
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../role-permissions.php'); exit;
+    header('Location: ../role-permissions'); exit;
 }
 
 
@@ -40,7 +40,7 @@ function json_fail(string $msg, int $status = 200): void {
 
 function redir_back(string $msg, string $type = 'success'): void {
     if (function_exists('flash')) flash('permissions', $msg, $type);
-    header('Location: ../role-permissions.php'); exit;
+    header('Location: ../role-permissions'); exit;
 }
 
 

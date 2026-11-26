@@ -23,7 +23,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 
 $conn->set_charset('utf8mb4');
 
-function redirect_with_message(string $message, string $type = 'danger', string $location = '../startup-milestones.php'): void
+function redirect_with_message(string $message, string $type = 'danger', string $location = '../startup-milestones'): void
 {
     if (function_exists('send_notification') && isset($_SESSION['user_id'])) {
         send_notification((int)$_SESSION['user_id'], $message, $type);
@@ -115,7 +115,7 @@ function get_review_application_id(mysqli $conn, int $reviewId): ?int
 $userId = (int)($_SESSION['user_id'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../startup-milestones.php');
+    header('Location: ../startup-milestones');
     exit();
 }
 
@@ -376,5 +376,5 @@ if (isset($_POST['delete_startup_milestone'])) {
     redirect_with_message('Error deleting startup milestone: ' . $error);
 }
 
-header('Location: ../startup-milestones.php');
+header('Location: ../startup-milestones');
 exit();

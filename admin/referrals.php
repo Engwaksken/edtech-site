@@ -618,7 +618,7 @@ include 'includes/sidebar.php';
 
         <div class="topbar-breadcrumb">
 
-            <a href="index.php">
+            <a href="./">
                 Dashboard
             </a>
 

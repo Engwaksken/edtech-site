@@ -12,7 +12,7 @@ if (
     empty($_SESSION['venture_login']) ||
     empty($_SESSION['venture_access_id'])
 ) {
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 

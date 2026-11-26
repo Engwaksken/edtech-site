@@ -27,7 +27,7 @@ if (!function_exists('h')) {
 $venture_id = (int)($venture_id ?? ($_SESSION['venture_id'] ?? 0));
 
 if ($venture_id <= 0) {
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 
@@ -440,7 +440,7 @@ include __DIR__ . '/layout.php';
       <p class="sessions-subtitle">Your session history and upcoming bookings. Contact the programme team if a session needs to be changed or cancelled.</p>
     </div>
 
-    <a href="mentors.php" class="btn btn-primary">
+    <a href="mentors" class="btn btn-primary">
       <i class="fa fa-calendar-plus"></i> Request Session
     </a>
   </div>
@@ -716,7 +716,7 @@ include __DIR__ . '/layout.php';
 
       <?php if ($filter === 'upcoming' || $filter === 'all'): ?>
         <p>Request a session with one of your assigned mentors.</p>
-        <a href="mentors.php" class="btn btn-primary">
+        <a href="mentors" class="btn btn-primary">
           Request Session
         </a>
       <?php endif; ?>

@@ -99,7 +99,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f6f8fc;color:#111827}.not
 </style>
 </head>
 <body>
-<div class="not-found"><div class="box"><i class="fa fa-envelope-open"></i><h1>Newsletter Not Found</h1><p>This newsletter is unavailable or has not been published yet.</p><a class="btn" href="newsletter.php"><i class="fa fa-arrow-left"></i> Back to Newsletters</a></div></div>
+<div class="not-found"><div class="box"><i class="fa fa-envelope-open"></i><h1>Newsletter Not Found</h1><p>This newsletter is unavailable or has not been published yet.</p><a class="btn" href="newsletter"><i class="fa fa-arrow-left"></i> Back to Newsletters</a></div></div>
 </body>
 </html>
 <?php
@@ -109,7 +109,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f6f8fc;color:#111827}.not
 $subject   = trim((string)($newsletter['subject'] ?? 'Newsletter')) ?: 'Newsletter';
 $preheader = trim((string)($newsletter['preheader'] ?? ''));
 $sent_at   = !empty($newsletter['sent_at']) ? date('F j, Y', strtotime((string)$newsletter['sent_at'])) : '';
-$canonical = rtrim(defined('SITE_URL') ? SITE_URL : '', '/') . '/newsletter-view.php?id=' . $id;
+$canonical = rtrim(defined('SITE_URL') ? SITE_URL : '', '/') . '/newsletter-view?id=' . $id;
 $pdf_path  = nlv_pdf_path($newsletter);
 $pdf_url   = $pdf_path !== '' ? nlv_public_url($pdf_path) : '';
 
@@ -161,12 +161,12 @@ html,body{background:#fff!important}.reader-main{padding:0!important}.reader-she
 <?php if (!$is_embed): ?>
 <header class="reader-top">
   <div class="reader-top-inner">
-    <a class="reader-brand" href="newsletter.php">
+    <a class="reader-brand" href="newsletter">
       <?php if ($logo_url): ?><img src="<?= h($logo_url) ?>" alt="<?= h($site_name) ?>"><?php else: ?><span class="reader-brand-mark"><?= h(mb_strtoupper(mb_substr($site_name,0,1))) ?></span><?php endif; ?>
       <span><?= h($site_name) ?></span>
     </a>
     <div class="reader-actions">
-      <a class="reader-btn" href="newsletter.php"><i class="fa fa-arrow-left"></i> Archive</a>
+      <a class="reader-btn" href="newsletter"><i class="fa fa-arrow-left"></i> Archive</a>
       <button class="reader-btn" type="button" onclick="copyNewsletterLink(this)"><i class="fa fa-link"></i> Copy Link</button>
       <button class="reader-btn" type="button" onclick="window.print()"><i class="fa fa-print"></i> Print</button>
       <?php if ($pdf_url): ?><a class="reader-btn reader-btn-primary" href="<?= h($pdf_url) ?>" target="_blank"><i class="fa fa-file-pdf"></i> Open PDF</a><?php endif; ?>
@@ -218,8 +218,8 @@ if ($pstmt) { $pstmt->bind_param('i', $id); $pstmt->execute(); $prev = $pstmt->g
 $nstmt = $conn->prepare("SELECT id, subject FROM newsletters WHERE status='sent' AND id > ? ORDER BY id ASC LIMIT 1");
 if ($nstmt) { $nstmt->bind_param('i', $id); $nstmt->execute(); $next = $nstmt->get_result()->fetch_assoc(); $nstmt->close(); }
 ?>
-  <?php if ($prev): ?><a class="reader-btn" href="newsletter-view.php?id=<?= (int)$prev['id'] ?>"><i class="fa fa-arrow-left"></i> Previous</a><?php endif; ?>
-  <?php if ($next): ?><a class="reader-btn" href="newsletter-view.php?id=<?= (int)$next['id'] ?>">Next <i class="fa fa-arrow-right"></i></a><?php endif; ?>
+  <?php if ($prev): ?><a class="reader-btn" href="newsletter-view?id=<?= (int)$prev['id'] ?>"><i class="fa fa-arrow-left"></i> Previous</a><?php endif; ?>
+  <?php if ($next): ?><a class="reader-btn" href="newsletter-view?id=<?= (int)$next['id'] ?>">Next <i class="fa fa-arrow-right"></i></a><?php endif; ?>
 </nav>
 <?php endif; ?>
 

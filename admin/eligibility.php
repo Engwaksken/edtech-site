@@ -8,9 +8,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         if(!$desc){flash('elig','Description required.','error');}
         else{if($id){mysqli_query($conn,"UPDATE eligibility_criteria SET icon='$icon',description='$desc',sort_order=$sort,status=$status WHERE id=$id");flash('elig','Updated.');}
         else{mysqli_query($conn,"INSERT INTO eligibility_criteria(icon,description,sort_order,status)VALUES('$icon','$desc',$sort,$status)");flash('elig','Added.');}}
-        header('Location: eligibility.php');exit;
+        header('Location: eligibility');exit;
     }
-    if($action==='delete'){$id=(int)$_POST['id'];mysqli_query($conn,"DELETE FROM eligibility_criteria WHERE id=$id");flash('elig','Deleted.');header('Location: eligibility.php');exit;}
+    if($action==='delete'){$id=(int)$_POST['id'];mysqli_query($conn,"DELETE FROM eligibility_criteria WHERE id=$id");flash('elig','Deleted.');header('Location: eligibility');exit;}
 }
 $edit=null;if(isset($_GET['edit'])){$r=mysqli_query($conn,"SELECT * FROM eligibility_criteria WHERE id=".(int)$_GET['edit']." LIMIT 1");$edit=$r?mysqli_fetch_assoc($r):null;}
 $list=mysqli_query($conn,"SELECT * FROM eligibility_criteria ORDER BY sort_order,id");
@@ -23,7 +23,7 @@ $site_name=get_setting($conn,'site_name');
 <link rel="stylesheet" href="assets/css/admin.css"></head><body>
 <?php include 'includes/sidebar.php';?>
 <div class="admin-main" id="adminMain">
-<header class="admin-topbar"><div class="topbar-left"><div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> › <strong>Eligibility Criteria</strong></div></div><div class="topbar-right"><div class="admin-avatar"><div class="avatar-circle"><?=strtoupper(substr($ADMIN['full_name'],0,1))?></div></div></div></header>
+<header class="admin-topbar"><div class="topbar-left"><div class="topbar-breadcrumb"><a href="./">Dashboard</a> › <strong>Eligibility Criteria</strong></div></div><div class="topbar-right"><div class="admin-avatar"><div class="avatar-circle"><?=strtoupper(substr($ADMIN['full_name'],0,1))?></div></div></div></header>
 <div class="admin-content"><?php show_flash('elig');?>
 <div class="page-header"><div><h1 class="page-title">Eligibility Criteria</h1><p class="page-subtitle">Manage who qualifies for the fellowship</p></div><button class="btn btn-primary" onclick="openModal()"><i class="fa fa-plus"></i> Add Criterion</button></div>
 <div class="card"><div class="table-wrap"><table><thead><tr><th>Icon</th><th>Description</th><th>Order</th><th>Status</th><th>Actions</th></tr></thead><tbody>

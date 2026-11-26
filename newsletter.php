@@ -130,7 +130,7 @@ if ($newsletter_bg_type === 'image' && $newsletter_bg_image !== '') {
                     </div>
                 <?php endif; ?>
 
-                <form class="nl-subscribe-form" method="POST" action="newsletter.php">
+                <form class="nl-subscribe-form" method="POST" action="newsletter">
                     <input type="hidden" name="_form" value="subscribe">
 
                     <div class="nl-sub-row">
@@ -250,7 +250,7 @@ if ($newsletter_bg_type === 'image' && $newsletter_bg_image !== '') {
                                 </div>
                             </div>
 
-                            <a href="newsletter-view.php?id=<?= (int)$nl['id'] ?>" class="nl-archive-card__link">
+                            <a href="newsletter-view?id=<?= (int)$nl['id'] ?>" class="nl-archive-card__link">
                                 Read <i class="fas fa-arrow-right"></i>
                             </a>
 
@@ -274,7 +274,7 @@ if ($newsletter_bg_type === 'image' && $newsletter_bg_image !== '') {
 
                 <form
                     method="POST"
-                    action="newsletter.php"
+                    action="newsletter"
                     style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:20px"
                 >
                     <input type="hidden" name="_form" value="subscribe">

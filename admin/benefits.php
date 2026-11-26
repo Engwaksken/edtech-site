@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 save_site_setting($conn, 'benefits_bg_type', 'image');
             } else {
                 flash('benefits', $err ?: 'Background image upload failed.', 'error');
-                header('Location: benefits.php');
+                header('Location: benefits');
                 exit;
             }
         }
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (!in_array($ext, ['mp4', 'webm', 'ogg'], true)) {
                 flash('benefits', 'Invalid video format. Use MP4, WebM, or OGG.', 'error');
-                header('Location: benefits.php');
+                header('Location: benefits');
                 exit;
             }
 
@@ -102,13 +102,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 save_site_setting($conn, 'benefits_bg_type', 'video');
             } else {
                 flash('benefits', 'Background video upload failed.', 'error');
-                header('Location: benefits.php');
+                header('Location: benefits');
                 exit;
             }
         }
 
         flash('benefits', 'Benefits section background updated successfully.');
-        header('Location: benefits.php');
+        header('Location: benefits');
         exit;
     }
 
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             save_site_setting($conn, 'benefits_bg_type', 'color');
         }
         flash('benefits', 'Background image removed.');
-        header('Location: benefits.php');
+        header('Location: benefits');
         exit;
     }
 
@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             save_site_setting($conn, 'benefits_bg_type', 'color');
         }
         flash('benefits', 'Background video removed.');
-        header('Location: benefits.php');
+        header('Location: benefits');
         exit;
     }
 
@@ -169,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        header('Location: benefits.php');
+        header('Location: benefits');
         exit;
     }
 
@@ -180,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = (int)($_POST['id'] ?? 0);
         mysqli_query($conn, "DELETE FROM benefits WHERE id=$id");
         flash('benefits', 'Benefit deleted.');
-        header('Location: benefits.php');
+        header('Location: benefits');
         exit;
     }
 }
@@ -451,7 +451,7 @@ $fa_icons = [
     <header class="admin-topbar">
         <div class="topbar-left">
             <div class="topbar-breadcrumb">
-                <a href="index.php">Dashboard</a> › <strong>Benefits</strong>
+                <a href="./">Dashboard</a> › <strong>Benefits</strong>
             </div>
         </div>
 

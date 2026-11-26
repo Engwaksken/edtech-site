@@ -26,7 +26,7 @@ function users_redirect(string $msg = '', string $type = 'success'): void
         }
     }
 
-    header('Location: ../users.php');
+    header('Location: ../users');
     exit;
 }
 
@@ -219,10 +219,10 @@ function delete_user_photo(string $path): void
 function users_login_url(): string
 {
     if (defined('BASE_URL')) {
-        return rtrim((string)BASE_URL, '/') . '/admin/login.php';
+        return rtrim((string)BASE_URL, '/') . '/admin/login';
     }
 
-    return '../login.php';
+    return '../login';
 }
 
 function send_new_user_registration_email(

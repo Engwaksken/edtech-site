@@ -1804,7 +1804,7 @@ body.meal-doc-modal-open{
 <div class="admin-main" id="adminMain">
   <header class="admin-topbar">
     <div class="topbar-left">
-      <div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> > <strong>M&amp;E Report</strong></div>
+      <div class="topbar-breadcrumb"><a href="./">Dashboard</a> > <strong>M&amp;E Report</strong></div>
     </div>
     <div class="topbar-right">
       <a href="<?= SITE_URL ?>" target="_blank" class="btn btn-secondary btn-sm"><i class="fa fa-eye"></i> View Site</a>

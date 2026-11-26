@@ -10,7 +10,7 @@ $conn->set_charset('utf8mb4');
 
 function redirect_partners(string $extra = ''): void
 {
-    header('Location: ../partners.php' . $extra);
+    header('Location: ../partners' . $extra);
     exit;
 }
 

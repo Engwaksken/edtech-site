@@ -23,7 +23,7 @@ function ss_tab_open(string $key, string $active): void
 
 function ss_form_open(string $action, string $tab, bool $multipart = false, string $extra = ''): void
 {
-    echo '<form method="POST" action="site-settings.php?tab=' . h($tab) . '"' . ($multipart ? ' enctype="multipart/form-data"' : '') . ' ' . $extra . '>';
+    echo '<form method="POST" action="site-settings?tab=' . h($tab) . '"' . ($multipart ? ' enctype="multipart/form-data"' : '') . ' ' . $extra . '>';
     echo '<input type="hidden" name="ss_action" value="' . h($action) . '">';
     echo '<input type="hidden" name="settings_active_tab" value="' . h($tab) . '">';
 }
@@ -83,7 +83,7 @@ $checklist_progress = static function (array $items, array $state): array {
 <div class="admin-main" id="adminMain">
   <header class="admin-topbar">
     <div class="topbar-left">
-      <div class="topbar-breadcrumb"><a href="index.php">Dashboard</a> &rsaquo; <strong>Site Settings</strong></div>
+      <div class="topbar-breadcrumb"><a href="./">Dashboard</a> &rsaquo; <strong>Site Settings</strong></div>
     </div>
   </header>
 
@@ -102,7 +102,7 @@ $checklist_progress = static function (array $items, array $state): array {
       <div class="card-body">
         <nav class="settings-tabs" role="tablist" aria-label="Site settings sections">
           <?php foreach ($tabs as $key => [$label, $icon]): ?>
-            <a href="site-settings.php?tab=<?= h($key) ?>" class="settings-tab <?= $active_tab === $key ? 'active' : '' ?>" role="tab" id="tab-<?= h($key) ?>"
+            <a href="site-settings?tab=<?= h($key) ?>" class="settings-tab <?= $active_tab === $key ? 'active' : '' ?>" role="tab" id="tab-<?= h($key) ?>"
                aria-selected="<?= $active_tab === $key ? 'true' : 'false' ?>" aria-controls="panel-<?= h($key) ?>" data-settings-tab="<?= h($key) ?>">
               <i class="fa <?= h($icon) ?>"></i> <?= h($label) ?>
             </a>
@@ -489,7 +489,7 @@ $checklist_progress = static function (array $items, array $state): array {
                     <td><?= h(date('j M Y, g:i a', $b['mtime'])) ?></td>
                     <td>
                       <div class="tbl-actions">
-                        <a class="btn btn-sm btn-secondary" href="site-settings.php?tab=backups&amp;download_backup=<?= h(rawurlencode($b['name'])) ?>" title="Download" aria-label="Download"><i class="fa fa-download"></i></a>
+                        <a class="btn btn-sm btn-secondary" href="site-settings?tab=backups&amp;download_backup=<?= h(rawurlencode($b['name'])) ?>" title="Download" aria-label="Download"><i class="fa fa-download"></i></a>
                         <?php if ($remote_on || ($settings['backup_remote_bucket'] ?? '') !== ''): ?>
                           <?php ss_form_open('upload_backup_remote', 'backups', false, 'class="ss-inline-form"'); ?>
                             <input type="hidden" name="backup_name" value="<?= h($b['name']) ?>">
@@ -612,7 +612,7 @@ $checklist_progress = static function (array $items, array $state): array {
                     <small>Used globally by calendar connections. A value in the server environment takes precedence.</small></div>
                   <div class="form-group full"><label for="gcalClientSecret">Google Calendar OAuth client secret</label>
                     <input id="gcalClientSecret" type="password" name="google_calendar_client_secret" class="form-control" autocomplete="new-password" placeholder="<?= ss_secret($settings, 'google_calendar_client_secret') !== '' ? 'Saved - leave blank to keep' : '' ?>">
-                    <small>Stored encrypted. Leave blank to keep the saved secret. <a href="google-calendar-connect.php">Manage calendar connection</a>.</small></div>
+                    <small>Stored encrypted. Leave blank to keep the saved secret. <a href="google-calendar-connect">Manage calendar connection</a>.</small></div>
                 </div>
               </div>
             </div>
@@ -943,7 +943,7 @@ form + .ss-inline-form{margin-top:10px}
         p.hidden = p.id !== 'panel-' + key;
         p.classList.toggle('active', !p.hidden);
       });
-      history.replaceState(null, '', 'site-settings.php?tab=' + encodeURIComponent(key));
+      history.replaceState(null, '', 'site-settings?tab=' + encodeURIComponent(key));
     });
   });
 

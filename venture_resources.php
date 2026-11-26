@@ -22,13 +22,13 @@ $conn->set_charset('utf8mb4');
 */
 
 if (empty($_SESSION['venture_login']) || empty($_SESSION['venture_id'])) {
-    $redirect = 'venture_resources.php';
+    $redirect = 'venture_resources';
 
     if (!empty($_GET['request_resource_id'])) {
         $redirect .= '?request_resource_id=' . (int) $_GET['request_resource_id'];
     }
 
-    header('Location: login.php?redirect=' . urlencode($redirect));
+    header('Location: login?redirect=' . urlencode($redirect));
     exit;
 }
 
@@ -224,7 +224,7 @@ function dash_page_url(int $page): string
 
     $query['page'] = max(1, $page);
 
-    return 'venture_resources.php?' . http_build_query($query);
+    return 'venture_resources?' . http_build_query($query);
 }
 
 function dash_filter_url(array $changes = []): string
@@ -245,8 +245,8 @@ function dash_filter_url(array $changes = []): string
     }
 
     return $query === []
-        ? 'venture_resources.php'
-        : 'venture_resources.php?' . http_build_query($query);
+        ? 'venture_resources'
+        : 'venture_resources?' . http_build_query($query);
 }
 
 
@@ -328,7 +328,7 @@ if (!$venture) {
     $_SESSION = [];
     session_destroy();
 
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 
@@ -968,7 +968,7 @@ include __DIR__ . '/layout.php';
         <div class="resource-filter-card">
             <form
                 method="GET"
-                action="venture_resources.php"
+                action="venture_resources"
             >
                 <?php if ($filter_type !== ''): ?>
                     <input
@@ -1009,7 +1009,7 @@ include __DIR__ . '/layout.php';
                         || $filter_cat !== ''
                     ): ?>
                         <a
-                            href="venture_resources.php"
+                            href="venture_resources"
                             class="btn btn-outline"
                         >
                             <i class="fa fa-times"></i>
@@ -1164,11 +1164,11 @@ include __DIR__ . '/layout.php';
 
                             $isPdf = dash_is_pdf_resource($resource);
 
-                            $viewUrl = 'resource-file.php?id='
+                            $viewUrl = 'resource-file?id='
                                 . (int) $resource['id']
                                 . '&mode=view';
 
-                            $downloadUrl = 'resource-file.php?id='
+                            $downloadUrl = 'resource-file?id='
                                 . (int) $resource['id']
                                 . '&mode=download';
 

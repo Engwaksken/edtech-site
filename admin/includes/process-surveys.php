@@ -85,7 +85,7 @@ function survey_redirect_back_to_builder(int $survey_id, string $message, string
         survey_json_response($type !== 'error', $message, ['survey_id' => $survey_id]);
     }
 
-    survey_flash_redirect('../survey-builder.php?id=' . $survey_id, $message, $type);
+    survey_flash_redirect('../survey-builder?id=' . $survey_id, $message, $type);
 }
 
 function survey_upload_base_dir(): string
@@ -764,7 +764,7 @@ function survey_save_single_question(mysqli $conn, array $data): int
 function survey_require_post(): void
 {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        survey_flash_redirect('../surveys.php', 'Invalid request.', 'error');
+        survey_flash_redirect('../surveys', 'Invalid request.', 'error');
     }
 }
 
@@ -794,7 +794,7 @@ try {
         $header_style = survey_clean((string)($_POST['header_style'] ?? 'color'));
 
         if ($title === '') {
-            survey_flash_redirect('../surveys.php', 'Survey title is required.', 'error');
+            survey_flash_redirect('../surveys', 'Survey title is required.', 'error');
         }
 
         if (!in_array($status, ['draft', 'published', 'closed'], true)) {
@@ -908,7 +908,7 @@ try {
 
             $stmt->close();
 
-            survey_flash_redirect('../surveys.php', 'Survey updated successfully.');
+            survey_flash_redirect('../surveys', 'Survey updated successfully.');
         }
 
         $slug = survey_unique_slug($conn, $title);
@@ -989,7 +989,7 @@ try {
             }
         }
 
-        survey_flash_redirect('../survey-builder.php?id=' . $new_id, 'Survey created successfully. Add questions now.');
+        survey_flash_redirect('../survey-builder?id=' . $new_id, 'Survey created successfully. Add questions now.');
     }
 
     if ($action === 'save_survey_appearance') {
@@ -998,7 +998,7 @@ try {
         $header_style = survey_clean((string)($_POST['header_style'] ?? 'color'));
 
         if ($survey_id <= 0) {
-            survey_flash_redirect('../surveys.php', 'Invalid survey.', 'error');
+            survey_flash_redirect('../surveys', 'Invalid survey.', 'error');
         }
 
         if (!preg_match('/^#[0-9a-fA-F]{3,8}$/', $theme_color)) {
@@ -1056,7 +1056,7 @@ try {
         $survey_id = (int)($_POST['survey_id'] ?? 0);
 
         if ($survey_id <= 0) {
-            survey_flash_redirect('../surveys.php', 'Invalid survey.', 'error');
+            survey_flash_redirect('../surveys', 'Invalid survey.', 'error');
         }
 
         if (!isset($_FILES['header_image'])) {
@@ -1095,7 +1095,7 @@ try {
         $survey_id = (int)($_POST['survey_id'] ?? 0);
 
         if ($survey_id <= 0) {
-            survey_flash_redirect('../surveys.php', 'Invalid survey.', 'error');
+            survey_flash_redirect('../surveys', 'Invalid survey.', 'error');
         }
 
         survey_delete_old_header_image($conn, $survey_id);
@@ -1122,7 +1122,7 @@ try {
         $id = (int)($_POST['id'] ?? 0);
 
         if ($id <= 0) {
-            survey_flash_redirect('../surveys.php', 'Invalid survey selected.', 'error');
+            survey_flash_redirect('../surveys', 'Invalid survey selected.', 'error');
         }
 
         survey_delete_old_header_image($conn, $id);
@@ -1141,7 +1141,7 @@ try {
 
         $stmt->close();
 
-        survey_flash_redirect('../surveys.php', 'Survey deleted successfully.');
+        survey_flash_redirect('../surveys', 'Survey deleted successfully.');
     }
 
     if ($action === 'save_question') {
@@ -1156,7 +1156,7 @@ try {
         $survey_id = (int)($_POST['survey_id'] ?? 0);
 
         if ($survey_id <= 0) {
-            survey_flash_redirect('../surveys.php', 'Invalid survey selected.', 'error');
+            survey_flash_redirect('../surveys', 'Invalid survey selected.', 'error');
         }
 
         $questions = $_POST['questions'] ?? [];
@@ -1250,7 +1250,7 @@ try {
         $survey_id = (int)($_POST['survey_id'] ?? 0);
 
         if ($id <= 0 || $survey_id <= 0) {
-            survey_flash_redirect('../surveys.php', 'Invalid question selected.', 'error');
+            survey_flash_redirect('../surveys', 'Invalid question selected.', 'error');
         }
 
         $stmt = $conn->prepare("DELETE FROM survey_questions WHERE id = ? AND survey_id = ? LIMIT 1");
@@ -1271,7 +1271,7 @@ try {
         $survey_id = (int)($_POST['survey_id'] ?? 0);
 
         if ($id <= 0 || $survey_id <= 0) {
-            survey_flash_redirect('../survey-responses.php?id=' . $survey_id, 'Invalid response.', 'error');
+            survey_flash_redirect('../survey-responses?id=' . $survey_id, 'Invalid response.', 'error');
         }
 
         $del = $conn->prepare("DELETE FROM survey_response_answers WHERE response_id = ?");
@@ -1294,10 +1294,10 @@ try {
         $stmt->execute();
         $stmt->close();
 
-        survey_flash_redirect('../survey-responses.php?id=' . $survey_id, 'Response deleted successfully.');
+        survey_flash_redirect('../survey-responses?id=' . $survey_id, 'Response deleted successfully.');
     }
 
-    survey_flash_redirect('../surveys.php', 'Unknown action.', 'error');
+    survey_flash_redirect('../surveys', 'Unknown action.', 'error');
 
 } catch (Throwable $e) {
     if (isset($conn) && $conn instanceof mysqli) {
@@ -1312,7 +1312,7 @@ try {
     }
 
     $survey_id = (int)($_POST['survey_id'] ?? $_POST['id'] ?? 0);
-    $url = $survey_id > 0 ? '../survey-builder.php?id=' . $survey_id : '../surveys.php';
+    $url = $survey_id > 0 ? '../survey-builder?id=' . $survey_id : '../surveys';
 
     survey_flash_redirect($url, $e->getMessage(), 'error');
 }

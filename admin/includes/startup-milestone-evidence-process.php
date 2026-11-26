@@ -17,7 +17,7 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 }
 $conn->set_charset('utf8mb4');
 
-function redirect_with_message(string $message, string $type = 'danger', string $location = '../venture-milestone-evidence.php'): void
+function redirect_with_message(string $message, string $type = 'danger', string $location = '../venture-milestone-evidence'): void
 {
     if (function_exists('send_notification') && isset($_SESSION['user_id'])) {
         send_notification((int)$_SESSION['user_id'], $message, $type);
@@ -79,7 +79,7 @@ function evidence_upload_path(int $applicationId, int $milestoneId, string $exte
 $userId = (int)($_SESSION['user_id'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['upload_milestone_evidence'])) {
-    header('Location: ../venture-milestone-evidence.php');
+    header('Location: ../venture-milestone-evidence');
     exit();
 }
 
@@ -93,7 +93,7 @@ if (!$milestone) {
 
 $applicationId = (int)$milestone['application_id'];
 $reviewId = !empty($milestone['review_id']) ? (int)$milestone['review_id'] : null;
-$location = '../venture-milestone-evidence.php?application_id=' . $applicationId;
+$location = '../venture-milestone-evidence?application_id=' . $applicationId;
 
 if ($postedApplicationId > 0 && $postedApplicationId !== $applicationId) {
     redirect_with_message('Selected milestone does not match the selected application.', 'danger', $location);

@@ -189,8 +189,8 @@ $site_name = function_exists('get_setting')
 <header class="admin-topbar">
   <div class="topbar-left">
     <div class="topbar-breadcrumb">
-      <a href="index.php">Dashboard</a> ›
-      <a href="ventures.php">Ventures</a> ›
+      <a href="./">Dashboard</a> ›
+      <a href="ventures">Ventures</a> ›
       <strong>Team: <?= h($venture_name) ?></strong>
     </div>
   </div>
@@ -233,11 +233,11 @@ $site_name = function_exists('get_setting')
 
   <div class="page-actions">
     <?php if ($venture_id > 0): ?>
-      <a href="ventures.php" class="btn btn-secondary">
+      <a href="ventures" class="btn btn-secondary">
         <i class="fa fa-arrow-left"></i> Back to ventures
       </a>
 
-      <a href="assign-staff.php?venture_id=<?= (int)$venture_id ?>" class="btn btn-teal">
+      <a href="assign-staff?venture_id=<?= (int)$venture_id ?>" class="btn btn-teal">
         <i class="fa fa-link"></i> Assign Staff
       </a>
     <?php endif; ?>
@@ -275,7 +275,7 @@ $site_name = function_exists('get_setting')
     <i class="fa fa-filter"></i> Filter
   </button>
 
-  <a href="venture-team.php" class="btn btn-secondary">
+  <a href="venture-team" class="btn btn-secondary">
     <i class="fa fa-times"></i> Clear
   </a>
 </form>

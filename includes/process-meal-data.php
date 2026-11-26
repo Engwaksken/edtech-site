@@ -67,7 +67,7 @@ function pmd_redirect(
     }
 
     header(
-        'Location: ../meal-data.php?tab='
+        'Location: ../meal-data?tab='
         . urlencode($tab)
     );
 

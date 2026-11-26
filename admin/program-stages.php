@@ -92,20 +92,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 save_setting($conn, 'program_stages_banner_image', $new_img);
             } else {
                 flash('stages', $err ?: 'Banner image upload failed.', 'error');
-                header('Location: program-stages.php');
+                header('Location: program-stages');
                 exit;
             }
         }
 
         flash('stages', 'Program stages banner updated successfully.');
-        header('Location: program-stages.php');
+        header('Location: program-stages');
         exit;
     }
 
     if ($action === 'remove_banner') {
         save_setting($conn, 'program_stages_banner_image', '');
         flash('stages', 'Banner image removed.');
-        header('Location: program-stages.php');
+        header('Location: program-stages');
         exit;
     }
 
@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (!$uploaded) {
                 flash('stages', $err ?: 'Image upload failed.', 'error');
-                header('Location: program-stages.php' . ($id ? '?edit=' . $id : ''));
+                header('Location: program-stages' . ($id ? '?edit=' . $id : ''));
                 exit;
             }
 
@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (!$uploaded) {
                 flash('stages', $err ?: 'Video upload failed.', 'error');
-                header('Location: program-stages.php' . ($id ? '?edit=' . $id : ''));
+                header('Location: program-stages' . ($id ? '?edit=' . $id : ''));
                 exit;
             }
 
@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        header('Location: program-stages.php');
+        header('Location: program-stages');
         exit;
     }
 
@@ -255,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = (int)($_POST['id'] ?? 0);
         mysqli_query($conn, "DELETE FROM program_stages WHERE id=$id");
         flash('stages', 'Program stage deleted.');
-        header('Location: program-stages.php');
+        header('Location: program-stages');
         exit;
     }
 }
@@ -298,7 +298,7 @@ $banner_overlay  = get_setting($conn, 'program_stages_banner_overlay') ?: '45';
     <header class="admin-topbar">
         <div class="topbar-left">
             <div class="topbar-breadcrumb">
-                <a href="index.php">Dashboard</a> › <strong>Program Stages</strong>
+                <a href="./">Dashboard</a> › <strong>Program Stages</strong>
             </div>
         </div>
 
@@ -391,7 +391,7 @@ $banner_overlay  = get_setting($conn, 'program_stages_banner_overlay') ?: '45';
 
                 <div class="modal-footer">
                     <?php if ($banner_image !== ''): ?>
-                        <button type="submit" formaction="program-stages.php" formmethod="POST" name="action" value="remove_banner" class="btn btn-danger" onclick="return confirm('Remove banner image?')">
+                        <button type="submit" formaction="program-stages" formmethod="POST" name="action" value="remove_banner" class="btn btn-danger" onclick="return confirm('Remove banner image?')">
                             <i class="fa fa-times"></i> Remove Image
                         </button>
                     <?php endif; ?>

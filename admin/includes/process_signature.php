@@ -3,17 +3,25 @@ declare(strict_types=1);
 
 ob_start();
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+// The PDF/Excel report service is optional: saving works without it and
+// report generation reports a clear error when it is not deployed.
+$riskReportService = __DIR__ . '/../services/RiskRatingReportService.php';
+if (is_file($riskReportService)) {
+    require_once $riskReportService;
 }
 
-require_once 'config.php';
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../services/RiskRatingReportService.php';
+function risk_report_service(mysqli $conn): object
+{
+    if (!class_exists('RiskRatingReportService')) {
+        throw new RuntimeException('Report generation is unavailable: admin/services/RiskRatingReportService.php is not installed.');
+    }
+    return new RiskRatingReportService($conn);
+}
 
 header('Content-Type: application/json; charset=UTF-8');
-
-$allowedRoles = ['Administrator', 'MEAL Lead', 'Programs Lead', 'Reviewer', 'Project Officer', 'project Officer'];
 
 function jsonOut(bool $success, string $message, array $extra = [], int $statusCode = 200): never
 {
@@ -25,20 +33,17 @@ function jsonOut(bool $success, string $message, array $extra = [], int $statusC
     exit;
 }
 
-if (
-    empty($_SESSION['user_id']) ||
-    empty($_SESSION['role']) ||
-    !in_array((string)$_SESSION['role'], $allowedRoles, true)
-) {
+if (empty($_SESSION['admin_id'])) {
+    jsonOut(false, 'Your session has expired. Please sign in again.', [], 401);
+}
+require_once __DIR__ . '/auth.php';
+
+if (!admin_role_allowed(['Administrator', 'MEAL Lead', 'Programs Lead', 'Reviewer', 'Project Officer'])) {
     jsonOut(false, 'Access denied.', [], 403);
 }
 
 if (strtoupper($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     jsonOut(false, 'Invalid request method. Use POST.', [], 405);
-}
-
-if (!isset($conn) || !($conn instanceof mysqli)) {
-    jsonOut(false, 'Database connection unavailable.', [], 500);
 }
 
 mysqli_report(MYSQLI_REPORT_OFF);
@@ -122,8 +127,7 @@ if ($rrId === null || $appId === null) {
     jsonOut(false, 'Missing risk rating or application ID.', [], 422);
 }
 
-$currentUserId   = (int)($_SESSION['user_id'] ?? 0);
-$currentUserRole = trim((string)($_SESSION['role'] ?? ''));
+$currentUserId   = (int)($_SESSION['admin_id'] ?? 0);
 
 $checkSql = "
     SELECT
@@ -169,9 +173,9 @@ if (!$record) {
 |--------------------------------------------------------------------------
 | Adjust these rules if your workflow should be stricter.
 */
-$roleCanPrepare = in_array($currentUserRole, ['Administrator', 'Reviewer', 'Project Officer', 'project Officer', 'Programs Lead', 'MEAL Lead'], true);
-$roleCanReview  = in_array($currentUserRole, ['Administrator', 'Reviewer', 'Programs Lead', 'MEAL Lead'], true);
-$roleCanApprove = in_array($currentUserRole, ['Administrator', 'Programs Lead', 'MEAL Lead'], true);
+$roleCanPrepare = admin_role_allowed(['Administrator', 'Reviewer', 'Project Officer', 'Programs Lead', 'MEAL Lead']);
+$roleCanReview  = admin_role_allowed(['Administrator', 'Reviewer', 'Programs Lead', 'MEAL Lead']);
+$roleCanApprove = admin_role_allowed(['Administrator', 'Programs Lead', 'MEAL Lead']);
 
 /*
 |--------------------------------------------------------------------------
@@ -223,7 +227,7 @@ foreach ($signatureSections as $prefix => $cfg) {
     if ($sig !== null && $cfg['can_sign']) {
         $userId = $currentUserId;
         if ($name === '') {
-            $name = cleanString($_SESSION['full_name'] ?? $_SESSION['name'] ?? '', 255);
+            $name = cleanString($_SESSION['admin_name'] ?? '', 255);
         }
     }
 
@@ -298,8 +302,17 @@ try {
     }
     $updateStmt->close();
 
-    $service = new RiskRatingReportService($conn);
-    $pdf = $service->generatePdf($rrId, $currentUserId);
+    if (!class_exists('RiskRatingReportService')) {
+        // Keep the signatures even when the PDF service is not deployed.
+        $conn->commit();
+        jsonOut(true, 'Signatures saved. The PDF was not regenerated because the report service is not installed.', [
+            'rr_id'          => $rrId,
+            'application_id' => $appId,
+            'changes_made'   => $changesMade,
+        ]);
+    }
+
+    $pdf = risk_report_service($conn)->generatePdf($rrId, $currentUserId);
 
     if (empty($pdf['path']) || empty($pdf['name'])) {
         throw new RuntimeException('PDF regeneration failed - missing output path.');

@@ -78,7 +78,7 @@ $site_name = function_exists('get_setting')
 <header class="admin-topbar">
   <div class="topbar-left">
     <div class="topbar-breadcrumb">
-      <a href="index.php">Dashboard</a> › <strong>Messages</strong>
+      <a href="./">Dashboard</a> › <strong>Messages</strong>
 
       <?php if ($unread > 0): ?>
         <span class="badge badge-orange legacy-style-5dd2a67868">
@@ -118,22 +118,22 @@ $site_name = function_exists('get_setting')
 </div>
 
 <div class="tabs legacy-style-905d8b3da3">
-  <a href="messages.php" class="tab-btn <?= $filter === '' ? 'active' : '' ?>">
+  <a href="messages" class="tab-btn <?= $filter === '' ? 'active' : '' ?>">
     All Messages
   </a>
 
-  <a href="messages.php?status=unread" class="tab-btn <?= $filter === 'unread' ? 'active' : '' ?>">
+  <a href="messages?status=unread" class="tab-btn <?= $filter === 'unread' ? 'active' : '' ?>">
     Unread
     <?php if ($unread > 0): ?>
       <span class="badge badge-orange"><?= (int)$unread ?></span>
     <?php endif; ?>
   </a>
 
-  <a href="messages.php?status=read" class="tab-btn <?= $filter === 'read' ? 'active' : '' ?>">
+  <a href="messages?status=read" class="tab-btn <?= $filter === 'read' ? 'active' : '' ?>">
     Read
   </a>
 
-  <a href="messages.php?status=replied" class="tab-btn <?= $filter === 'replied' ? 'active' : '' ?>">
+  <a href="messages?status=replied" class="tab-btn <?= $filter === 'replied' ? 'active' : '' ?>">
     Replied
   </a>
 </div>
@@ -167,7 +167,7 @@ $statusClass = $msg['status'] === 'unread'
 
 $isActive = $view_msg && (int)$view_msg['id'] === (int)$msg['id'];
 
-$viewUrl = 'messages.php?view=' . (int)$msg['id'];
+$viewUrl = 'messages?view=' . (int)$msg['id'];
 
 if ($filter !== '') {
     $viewUrl .= '&status=' . urlencode($filter);
@@ -250,7 +250,7 @@ if ($filter !== '') {
       </p>
     </div>
 
-    <a href="messages.php<?= $filter ? '?status=' . urlencode($filter) : '' ?>" class="btn btn-sm btn-secondary">
+    <a href="messages<?= $filter ? '?status=' . urlencode($filter) : '' ?>" class="btn btn-sm btn-secondary">
       <i class="fa fa-times"></i>
     </a>
   </div>

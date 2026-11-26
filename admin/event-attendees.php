@@ -205,8 +205,8 @@ $site_name = function_exists('get_setting')
 <header class="admin-topbar">
     <div class="topbar-left">
         <div class="topbar-breadcrumb">
-            <a href="index.php">Dashboard</a> &gt;
-            <a href="events.php">Events</a> &gt;
+            <a href="./">Dashboard</a> &gt;
+            <a href="events">Events</a> &gt;
             <strong><?= $event ? h($event['title']) : 'All Attendees' ?></strong>
         </div>
     </div>
@@ -304,7 +304,7 @@ $site_name = function_exists('get_setting')
         </button>
 
         <?php if ($search !== '' || $filter_attended !== '' || $event_id > 0): ?>
-            <a href="event-attendees.php" class="btn btn-sm legacy-style-2af7847e65">
+            <a href="event-attendees" class="btn btn-sm legacy-style-2af7847e65">
                 <i class="fa fa-times"></i> Clear
             </a>
         <?php endif; ?>

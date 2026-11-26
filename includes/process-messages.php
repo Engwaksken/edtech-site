@@ -36,8 +36,8 @@ function pm_redirect(
     string $query = ''
 ): never {
     $base = defined('SITE_URL')
-        ? rtrim((string)SITE_URL, '/') . '/messages.php'
-        : '/messages.php';
+        ? rtrim((string)SITE_URL, '/') . '/messages'
+        : '/messages';
 
     if ($query !== '') {
         $base .= '?' . ltrim($query, '?');

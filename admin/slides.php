@@ -76,7 +76,7 @@ $site_name = function_exists('get_setting')
 <header class="admin-topbar">
   <div class="topbar-left">
     <div class="topbar-breadcrumb">
-      <a href="index.php">Dashboard</a> > <strong>Slides</strong>
+      <a href="./">Dashboard</a> > <strong>Slides</strong>
     </div>
   </div>
 </header>

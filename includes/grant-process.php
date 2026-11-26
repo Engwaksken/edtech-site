@@ -37,7 +37,7 @@ if (!in_array($action, ['download_loa_template', 'download_loa', 'download_signe
 define('LOA_OUTPUT_DIR', __DIR__ . '/../uploads/loa/');
 define('TRANCHE_UPLOAD_DIR', __DIR__ . '/../uploads/tranche-evidence/');
 
-function redirect_back(string $fallback = '../sessions.php'): void
+function redirect_back(string $fallback = '../sessions'): void
 {
     $ref = $_SERVER['HTTP_REFERER'] ?? $fallback;
     header('Location: ' . $ref);
@@ -406,7 +406,7 @@ function loa_upload_error_message(int $errorCode): string
 
 function loa_redirect_admin(array $query): never
 {
-    header('Location: ../admin/loa-template.php?' . http_build_query($query));
+    header('Location: ../admin/loa-template?' . http_build_query($query));
     exit;
 }
 
@@ -583,7 +583,7 @@ function grant_process_admin_redirect(
     }
 
     header(
-        'Location: ../admin/grant-tracking.php?'
+        'Location: ../admin/grant-tracking?'
         . http_build_query($query)
     );
 
@@ -705,7 +705,7 @@ switch ($action) {
 
         if ($templateRow === null || empty($templateRow['file_data'])) {
             redirect_back(
-                '../admin/grant-tracking.php?venture_id='
+                '../admin/grant-tracking?venture_id='
                 . $ventureId
                 . '&message=loa_template_missing'
             );
@@ -821,7 +821,7 @@ switch ($action) {
             $conn->query("CALL seed_standard_tranches({$ventureId})");
         }
 
-        redirect_back('../admin/grant-tracking.php?venture_id=' . $ventureId . '&message=loa_generated');
+        redirect_back('../admin/grant-tracking?venture_id=' . $ventureId . '&message=loa_generated');
         break;
     }
 
@@ -939,7 +939,7 @@ switch ($action) {
 
         activate_loa_template($conn, $templateId);
 
-        redirect_back('../admin/loa-template.php?activated=1');
+        redirect_back('../admin/loa-template?activated=1');
         break;
     }
 
@@ -1103,7 +1103,7 @@ switch ($action) {
         $update->execute();
         $update->close();
 
-        redirect_back('../tranches.php?signed_uploaded=1');
+        redirect_back('../tranches?signed_uploaded=1');
         break;
     }
 
@@ -1128,7 +1128,7 @@ switch ($action) {
         $update->execute();
         $update->close();
 
-        redirect_back('../admin/grant-tracking.php?signed_confirmed=1');
+        redirect_back('../admin/grant-tracking?signed_confirmed=1');
         break;
     }
 
@@ -1300,7 +1300,7 @@ switch ($action) {
         $update->execute();
         $update->close();
 
-        redirect_back('../tranches.php?submitted=1');
+        redirect_back('../tranches?submitted=1');
         break;
     }
 
@@ -1380,7 +1380,7 @@ switch ($action) {
         $update2->execute();
         $update2->close();
 
-        redirect_back('../admin/grant-tracking.php?venture_id=' . $sub['venture_id']);
+        redirect_back('../admin/grant-tracking?venture_id=' . $sub['venture_id']);
         break;
     }
 
@@ -1848,7 +1848,7 @@ switch ($action) {
 
         unlock_next_tranche($conn, $ventureId, $trancheId);
 
-        redirect_back('../admin/grant-tracking.php?venture_id=' . $ventureId . '&message=disbursement_recorded');
+        redirect_back('../admin/grant-tracking?venture_id=' . $ventureId . '&message=disbursement_recorded');
         break;
     }
 

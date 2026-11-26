@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     flash('sections', 'Page sections updated successfully.');
-    header('Location: sections.php' . (isset($_POST['tab']) ? '?tab=' . urlencode($_POST['tab']) : ''));
+    header('Location: sections' . (isset($_POST['tab']) ? '?tab=' . urlencode($_POST['tab']) : ''));
     exit;
 }
 
@@ -356,7 +356,7 @@ function render_bg_panel(string $section, array $all, bool $has_video = true): v
     <header class="admin-topbar">
         <div class="topbar-left">
             <div class="topbar-breadcrumb">
-                <a href="index.php">Dashboard</a> &gt; <strong>Page Sections</strong>
+                <a href="./">Dashboard</a> &gt; <strong>Page Sections</strong>
             </div>
         </div>
 
@@ -689,7 +689,7 @@ function render_bg_panel(string $section, array $all, bool $has_video = true): v
                         <div class="alert alert-info legacy-style-1b0f4999d2">
                             <i class="fa fa-info-circle"></i>
                             Individual eligibility criteria items are managed under
-                            <a href="eligibility.php" class="legacy-style-eed0f8fb89">Eligibility Criteria</a>.
+                            <a href="eligibility" class="legacy-style-eed0f8fb89">Eligibility Criteria</a>.
                         </div>
                     </div>
 
@@ -724,7 +724,7 @@ function render_bg_panel(string $section, array $all, bool $has_video = true): v
                         <div class="alert alert-info legacy-style-1b0f4999d2">
                             <i class="fa fa-info-circle"></i>
                             Partner logos and links are managed under
-                            <a href="partners.php" class="legacy-style-eed0f8fb89">Partners</a>.
+                            <a href="partners" class="legacy-style-eed0f8fb89">Partners</a>.
                         </div>
                     </div>
 
