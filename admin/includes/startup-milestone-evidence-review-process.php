@@ -1,11 +1,13 @@
 <?php
 declare(strict_types=1);
 
-require_once 'config.php';
+require_once __DIR__ . '/../../includes/config.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+if (empty($_SESSION['admin_id'])) {
+    header('Location: ../login');
+    exit;
 }
+require_once __DIR__ . '/auth.php';
 
 check_role([
     'Administrator','Programs Lead','Program Director','Program Manager',
@@ -19,8 +21,8 @@ $conn->set_charset('utf8mb4');
 
 function redirect_with_message(string $message, string $type = 'danger', string $location = '../startup-milestones-dashboard?active_tab=evidence'): void
 {
-    if (function_exists('send_notification') && isset($_SESSION['user_id'])) {
-        send_notification((int)$_SESSION['user_id'], $message, $type);
+    if (function_exists('send_notification') && isset($_SESSION['admin_id'])) {
+        send_notification((int)$_SESSION['admin_id'], $message, $type);
     } else {
         $_SESSION['message'] = $message;
         $_SESSION['message_type'] = $type;
@@ -58,7 +60,7 @@ $evidenceId = (int)($_POST['evidence_id'] ?? 0);
 $score = isset($_POST['reviewer_score']) && $_POST['reviewer_score'] !== '' ? (float)$_POST['reviewer_score'] : null;
 $comments = clean_text((string)($_POST['reviewer_comments'] ?? ''));
 $status = clean_text((string)($_POST['review_status'] ?? 'Reviewed')) ?? 'Reviewed';
-$userId = (int)($_SESSION['user_id'] ?? 0);
+$userId = (int)($_SESSION['admin_id'] ?? 0);
 
 $allowedStatus = ['Pending', 'Reviewed', 'Accepted', 'Needs Improvement', 'Rejected'];
 
